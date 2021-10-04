@@ -1,0 +1,75 @@
+\usepackage{array}		% erweiterte Tabellen
+
+% Schriftzeichen, Format
+\usepackage{latexsym}		% Latex-Symbole
+\usepackage[latin1]{inputenc}	% Eingabekodierungen
+\usepackage[english,ngerman]{babel}	% Mehrsprachenumgebung
+
+% Layout
+\usepackage{geometry}                    % Seitenränder
+\geometry{a4paper, top=30mm, bottom=30mm, left=30mm, right=30mm}
+\addtolength{\footskip}{-0.5cm}          % Seitenzahlen höher setzen
+\usepackage{xcolor}                      % Farben
+
+
+% Tabellen und Listen
+\usepackage{float}		        % Gleitobjekte 
+\usepackage[flushright]{paralist}       % Bessere Behandlung der Auflistungen
+
+% Bilder
+\usepackage[final]{graphicx}            % Graphiken einbinden
+
+\usepackage{caption}                    % Beschriftungen
+\usepackage{subcaption}                 % Beschriftungen f\"ur Unterteilung
+
+%%%%%%
+% Falls Zeichnungen mit pstricks erstellt werden sollen (Ausgabeprofil muss auf LaTeX -> PS -> PDF eingestellt werden)
+%%%%%%
+%\usepackage{pst-all}                    % Zeichnungen in Latex (kein pdflatex)
+%\usepackage{pstricks-add}               % zus\"atzliches von pstricks
+%\usepackage{pst-3dplot}                 % dreidimensionale Zeichnungen
+%\usepackage{pst-eucl}                   % euklidisches Paket
+
+\numberwithin{figure}{section}	% Abbildungsnummern in Section
+
+%% My personal packages and config
+
+\usepackage[super]{nth} % use superscripts for 1st, 2nd, 3rd
+\usepackage{physics} % norm
+\usepackage{bbm} % double struck numbers
+\usepackage[activate=true,final,tracking=true,kerning=true,factor=1100,stretch=10,shrink=10]{microtype} % even better line spacing
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref} % better "\autoref"
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage{xargs} % Use more than one optional parameter in a new commands
+\usepackage{enumitem} % changing enumeration styles
+\usepackage[sort, numbers, square]{natbib} % citeauthor, citet
+
+% Captions for figures
+\captionsetup{justification=raggedright, format=plain, font=small,labelfont=bf}
+
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=orange,backgroundcolor=orange!25,bordercolor=orange,#1]{#2}}
+\newcommandx{\Todo}[2][1=]{\todo[linecolor=yellow,backgroundcolor=yellow!25,bordercolor=yellow,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{#2}}
+
+% Centered, equally spaced columns
+\newcolumntype{Y}{>{\centering\arraybackslash}X} % centered equidistant columns
+
+\setenumerate{label=(\arabic*),itemsep=0mm} 
+
+\renewcommand{\epsilon}{\varepsilon}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\JSD}{JS}
+\DeclareMathOperator{\KL}{KL}
+\newcommand{\T}{\mathrm{T}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\fL}{\mathfrak{L}}

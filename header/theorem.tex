@@ -1,0 +1,105 @@
+% Mathematische Zeichens\"atze und Umgebungen
+\usepackage{amsfonts, amssymb}	% Definition einer Liste mathematischer Fontbefehle und Symbole
+\usepackage[intlimits,		% Integralgrenzen \"uber und unter dem Integral
+	    sumlimits]		% Summationsgrenzen \"uber und unter der Summe
+           {amsmath}		% mathematische Verbesserungen
+\usepackage{amsthm}		% spezielle theorem Stile
+\usepackage{aliascnt} 
+
+%-----------------------------------------------------------------------------------
+% Hilfreiche Befehle
+%-----------------------------------------------------------------------------------
+\newcommand{\betrag}[1]{\lvert #1 \rvert}	        % Betrag
+\newcommand{\norm}[1]{\lVert #1 \rVert}		        % Norm
+\providecommand*{\Lfloor}{\left\lfloor}                 % gro\ss{}es Abrunden
+\providecommand*{\Rfloor}{\right\rfloor}                % gro\ss{}es Abrunden
+\providecommand*{\Floor}[1]{\Lfloor #1 \Rfloor}         % gro\ss{}es ganzes Abrunden
+\providecommand*{\Ceil}[1]{\left\lceil #1 \right\rceil} % gro\ss{}es ganzes Aufrunden
+
+\DeclareMathOperator{\e}{ex}
+\DeclareMathOperator{\ma}{mate}
+\DeclareMathOperator{\Ex}{Ex}
+
+%-----------------------------------------------------------------------------------
+%   Befehle f\"ur Nummerierung der Ergebnisse
+%   fortlaufend innerhalb eines Abschnittes
+%-----------------------------------------------------------------------------------
+\theoremstyle{plain}            % normaler Stil
+\newtheorem{theorem}{Theorem}[section]
+% Lemma
+\newaliascnt{lemma}{theorem}  
+\newtheorem{lemma}[lemma]{Lemma}  
+\aliascntresetthe{lemma}  
+% Satz
+\newaliascnt{satz}{theorem}  
+\newtheorem{satz}[satz]{Satz} 
+\aliascntresetthe{satz}
+% Korollar
+\newaliascnt{korollar}{theorem}  
+\newtheorem{korollar}[korollar]{Korollar} 
+\aliascntresetthe{korollar}
+% Proposition
+\newaliascnt{proposition}{theorem}  
+\newtheorem{proposition}[proposition]{Proposition} 
+\aliascntresetthe{proposition}
+%-----------------------------------------------------------------------------------
+\theoremstyle{definition}	% Definitionsstil
+% Definition
+\newaliascnt{definition}{theorem}  
+\newtheorem{definition}[definition]{Definition} 
+\aliascntresetthe{definition}
+% Beispiel
+\newaliascnt{beispiel} {theorem}  
+\newtheorem{beispiel}[beispiel]{Beispiel} 
+\aliascntresetthe{beispiel} 
+% Problem
+\newaliascnt{problem}{theorem}  
+\newtheorem{problem}[problem]{Problem} 
+\aliascntresetthe{problem}
+% Algorithmus
+\newaliascnt{algorithmus}{theorem}  
+\newtheorem{algorithmus}[algorithmus]{Algorithmus} 
+\aliascntresetthe{algorithmus} 
+%-----------------------------------------------------------------------------------
+\theoremstyle{remark}		% Bemerkungsstil
+% Bemerkung
+\newaliascnt{bemerkung}{theorem}  
+\newtheorem{bemerkung}[bemerkung]{Bemerkung}  
+\aliascntresetthe{bemerkung} 
+% Vermutung
+\newaliascnt{vermutung}{theorem}  
+\newtheorem{vermutung}[vermutung]{Vermutung}  
+\aliascntresetthe{vermutung} 
+% Notation
+\newaliascnt{notation}{theorem}  
+\newtheorem{notation}[notation]{Notation} 
+\aliascntresetthe{notation}
+
+%-----------------------------------------------------------------------------------
+% automatische Referenzen mit interaktivem Text
+%-----------------------------------------------------------------------------------
+
+% Texte
+\newcommand{\theoremautorefname}{Theorem}
+\newcommand{\lemmaautorefname}{Lemma}
+\newcommand{\satzautorefname}{Satz}
+\newcommand{\korollarautorefname}{Korollar}
+\newcommand{\propositionautorefname}{Proposition}
+
+\newcommand{\definitionautorefname}{Definition}
+\newcommand{\beispielautorefname}{Beispiel}
+\newcommand{\problemautorefname}{Problem}
+\newcommand{\algorithmusautorefname}{Algorithmus}
+
+\newcommand{\bemerkungautorefname}{Bemerkung}
+\newcommand{\vermutungautorefname}{Vermutung}
+\newcommand{\notationautorefname}{Notation}
+
+%-----------------------------------------------------------------------------------
+% Nummerierung der Gleichungen innerhalb der obersten Ebene
+%-----------------------------------------------------------------------------------
+\ifx\chapter\undefined 			% Kapitel sind definiert
+  \numberwithin{equation}{section}	% Gleichungsnummern in Section
+\else					% Kapitel sind nicht definiert
+  \numberwithin{equation}{chapter}	% Gleichungsnummern in Kapiteln
+\fi

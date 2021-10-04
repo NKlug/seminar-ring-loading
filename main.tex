@@ -1,0 +1,60 @@
+\documentclass[paper=a4, 	% Seitenformat
+		fontsize=11pt, 		% Schriftgr\"o\ss{}e
+		abstract=true, 	% mit Abstrakt
+		headsepline, 	% Trennlinie f\"ur die Kopfzeile
+		notitlepage	% keine extra Titelseite
+		]{scrartcl}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Zusammenfassung einiger nützlicher Pakete und Befehle
+\input{header/kopf}			    % Befehle und Pakete f\"ur Titelseite
+\input{header/theorem}			% Mathematische Befehle und Pakete
+\input{header/referenz}			% Befehle und Pakete für Referenzen
+\input{header/rest}			    % restliche Befehle und Pakete
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Start des Dokuments
+\begin{document}		
+
+\ownautorefnames		% Änderung einiger automatischen Texte von hyperref (wie in referenz.tex definiert)
+\parindent0em 			% kein Einzug nach einer Leerzeile
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Titelseite
+\thispagestyle{empty}		% leerer Seitenstil, also keine Seitennummer auf der Titelseite
+\begin{titlepage}
+\seminarkopf 			% Titelblatt (wie in kopf.tex definiert)
+\begin{abstract} 
+	This will be the abstract.
+\end{abstract} 
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inhaltsverzeichnis
+%\thispagestyle{empty}	
+%\tableofcontents		% Inhaltsverzeichnis
+%%\listoffigures			% Abbildungsverzeichnis (eventuell einfügen)
+%%\listoftables			% Tabellenverzeichnis (eventuell einfügen)
+%\setcounter{page}{0}% Eigentlicher Inhalt beginnt auf Seite 1
+%\clearpage          % neue Seite für eigentlichen Inhalt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Eigentlicher Inhalt der Seminararbeit; die einzelnen Teile werden hier (aus Gründen der Übersichtlichkeit) über \input{file} eingebunden
+
+\input{chapters/introduction}
+
+\input{chapters/conclusion}
+
+\clearpage          % neue Seite für Literaturverzeichnis
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Literaturverzeichnis
+%\nocite*  % Nicht zitierte Quellen werden auch ins Literaturverzeichnis aufgenommen
+\thispagestyle{empty}
+\bibliography{bibliography}
+\bibliographystyle{plainnat}  % Literaturverzeichnis liegt in der Datei seminararbeit.bib
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ende des Dokuments
+\end{document}			
