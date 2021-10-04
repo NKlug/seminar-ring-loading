@@ -1,0 +1,143 @@
+
+\documentclass[8pt]{beamer}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{pdfpages}
+\usepackage{color}
+\usepackage{graphicx, import}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{physics} % norm
+\usepackage{tikz}
+\usepackage{tkz-euclide}
+\usepackage{enumitem}
+\usepackage{pgfplots}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage[numbers, square]{natbib}
+\usepackage{mathtools}
+\usepackage{transparent}
+\usepackage{caption} % change style of figure 
+\usepackage{subcaption}
+\usepackage{csquotes} % automatic left quotation marks
+\usepackage{booktabs}
+\usepackage[noline]{algorithm2e}
+\usepackage[super]{nth}
+\usepackage{autonum} % auto equation numbering
+\usepackage{bbm}
+
+\captionsetup*[subfigure]{position=bottom}
+
+\MakeOuterQuote{"}
+
+\usetikzlibrary{positioning,backgrounds, fit, patterns,shapes, snakes, chains, arrows, decorations.markings, arrows.meta}
+%\tikzexternalize[prefix=out/figures/]
+\newcolumntype{Y}{>{\centering\arraybackslash}X} % centered equidistant columns
+
+\bibliographystyle{plainnat}
+\usetheme[block=transparent]{metropolis}
+%\usecolortheme{orchid}
+%\setbeamercolor{block body}{use=structure,fg=black,bg=blue!20!white}
+%\setbeamercolor{block title}{use=structure,fg=black,bg=blue!40!white}
+\setbeamertemplate{frame footer}{\insertshortauthor\hfill\insertshortinstitute}
+\setbeamercolor{footline}{fg=gray}
+
+\DeclarePairedDelimiterX{\infdiv}[2]{(}{)}{%
+	#1\;\delimsize\|\;#2%
+}
+
+\renewcommand{\epsilon}{\varepsilon}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\JSD}{JS}
+\DeclareMathOperator{\KL}{KL}
+\newcommand{\T}{\mathrm{T}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\fL}{\mathfrak{L}}
+
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
+\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\def\iid{\emph{i.i.d}\onedot} \def \Iid{\emph{I.i.d}\onedot}
+\def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+\def\etal{\emph{et al}\onedot}
+\makeatother
+
+\newcommand{\pdata}{{p_{data}}}
+\newcommand{\pmodel}{{p_{model}}}
+
+%\theoremstyle{theorem}
+%\newtheorem{lemma}[definition]{Lemma}
+%\newtheorem{corollary}[definition]{Corollary}
+%\newtheorem{remark}[definition]{Remark}
+%\newtheorem{proposition}[definition]{Proposition}
+%\theoremstyle{break}
+%\newtheorem{theorem}[definition]{Theorem}
+%\newtheorem{condition}[definition]{Condition}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}{\leavevmode\leftskip=3.2em\rlap{\hskip-2em\inserttocsectionnumber.\inserttocsubsectionnumber}\inserttocsubsection\par}
+\setbeamercolor{section in toc}{fg=black}
+\setbeamercolor{subsection in toc}{fg=black}
+\setbeamercolor{toc}{fg=black}
+
+\AtBeginSection[]{}
+
+\title[]{The Ring Loading Problem}
+%\subtitle{Seminar \glqq Mathematische Aspekte des maschinellen Lernens\grqq}
+\author[Nikolas Klug]{Nikolas Klug}
+\institute[University of Augsburg]{University of Augsburg}
+\date{\nth{16} December 2021}
+
+
+\begin{document}
+	{
+	\setbeamertemplate{footline}{}
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	}
+	\addtocounter{framenumber}{-1}
+
+	\begin{frame}{Overview}
+%		\begin{NoHyper}
+%			\tableofcontents[]
+%		\end{NoHyper}
+
+		Main sources:\\
+		\emph{The Ring Loading Problem}\\
+		 Alexander Schrijver, Paul Seymour, Peter Winkler, 2020.\\
+	\end{frame}
+	
+	\section{Stochastical basics}
+	\begin{frame}{Training data}
+		\begin{definition}
+			For $1 \leq i \leq N$, let $x_i: (\Omega, \cF) \rightarrow (\R^n, \cB(\R^n))$ be independent and identically distributed random variables with $x_i \sim P_{data}$.\\
+			$P_{data}$ is the distribution of the training data over the sample space $\R^n$.\\
+			The \emph{training data} is a realization $(x_1(\omega), x_2(\omega), \dots, x_N(\omega))$ of random variables $x_i$ for some $\omega \in \Omega$.
+		\end{definition}
+		We write $X_i \coloneqq x_i(\omega)$ and $(X_1, \dots, X_n)$.
+	\end{frame}
+
+	
+	\begin{frame}[allowframebreaks]
+		\nocite{*}
+		\bibliography{bibliography.bib}
+	\end{frame}
+
+
+\end{document}
