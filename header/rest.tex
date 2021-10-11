@@ -43,6 +43,8 @@
 \usepackage{xargs} % Use more than one optional parameter in a new commands
 \usepackage{enumitem} % changing enumeration styles
 \usepackage[sort, numbers, square]{natbib} % citeauthor, citet
+\usepackage{mathtools}
+\usepackage{xspace} 
 
 % Captions for figures
 \captionsetup{justification=raggedright, format=plain, font=small,labelfont=bf}
@@ -68,8 +70,27 @@
 \newcommand{\cG}{\mathcal{G}}
 \newcommand{\cD}{\mathcal{D}}
 \newcommand{\cF}{\mathcal{F}}
+\newcommand{\cO}{\mathcal{O}}
 \newcommand{\cZ}{\mathcal{Z}}
 \newcommand{\cB}{\mathcal{B}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\E}{\mathbb{E}}
+\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\fL}{\mathfrak{L}}
+\newcommand{\RL}{\textsc{Ring Loading}\xspace}
+\newcommand{\RRL}{\textsc{Relaxed Ring Loading}\xspace}
+
+% boxed problem environment
+\newenvironment{problem}[1]
+{
+%	\noindent\begin{fbox}
+%		\begin{parbox}{\textwidth}
+			\begin{center}
+				\textsc{#1}
+			\end{center}
+}
+{
+
+%		\end{parsbox}
+%	\end{fbox}
+}

@@ -1,0 +1,52 @@
+\section{Ring Loading Problems}
+
+Definition of (Integer) Ring Loading also as decision problem
+
+Definition of Relaxed Ring Loading also as decision problem
+
+Complexity of Ring Loading and Relaxed Ring Loading
+
+Interval-notation for ring interpreted as equivalence classes of finite ring.
+
+\begin{notation}
+	Let $1 \leq i < j \leq n$.
+	Then we write $[i, j) \coloneqq \{i, i+1, \ldots, j-2, j-1\}$.
+	We also define $[j, i) \coloneqq \{j, j+1, \ldots, n-1, n, 1, \ldots, i-2, i-1\}$.
+	Open, half-open and closed intervals are to be interpreted in the same manner as real intervals.
+\end{notation}
+
+\begin{problem}{Ring Loading}
+	\textbf{In:} Ring of size $n \in \N$, demands $d_{ij} \in \R^+$ for $1 \leq i < j \leq n$.\\
+	\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow \{0, 1\}$ such that
+	$\max_{1 \leq i \leq n} L_i$ is minimal.
+\end{problem}
+
+\begin{theorem}
+	\RL in its decision form is NP-complete.
+\end{theorem}
+\begin{proof}
+	A function $\Phi$ of the desired form can be encoded using $\cO(n^2)$ space, e.g. as a binary array, and serves as witness for \RL.
+	This implies that \RL is in NP.
+	In order to show NP-completeness, we provide a polynomial-reduction of the \textsc{Partition} problem \cite{karp72}.
+	Given $m$ integers $\{z_1, \ldots, z_m\}$, this problem asks whether there exists a set $S \subseteqq [m]$ such that 
+	\begin{equation}
+		\sum_{i \in S} z_i = \sum_{j \in [m] \setminus S} z_j \ .
+	\end{equation}
+	
+\end{proof}
+
+\begin{definition}
+	Let $1 \leq g < h \leq n$.
+	A \emph{cut} $\{g, h\}$ is a set of two links $\{\{g, g+1\}, \{h, h+1\}\}$.
+	A demand $d_{ij}$ is said to \emph{cross} a cut $\{g, h\}$ if exactly one of $i$ and $j$ lies within $[g, h)$.
+	The \emph{total demand across $\{g, h\}$} is defined as
+	\begin{equation}
+		D_{gh} \coloneqq \sum_{\{d_{ij}~|~d_{ij}\ \text{crosses}\ \{g, h\}\}} d_{ij} \ .
+	\end{equation}
+	This is the sum of the demands that must cross either $\{g, g+1\}$ or $\{h, h+1\}$.
+\end{definition}
+
+\begin{problem}{Relaxed Ring Loading}
+	\textbf{In:} Ring of size $n \in \N$, demands $d_{ij} \in \R^+$ for $1 \leq i < j \leq n$.\\
+		\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow [0, 1]$ such that $\max_{1 \leq i \leq n} L_i$ is minimal.
+\end{problem}
