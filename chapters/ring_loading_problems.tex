@@ -1,4 +1,4 @@
-\section{Ring Loading Problems}
+\section{Ring Loading Problems and Complexity}
 
 Definition of (Integer) Ring Loading also as decision problem
 
@@ -18,7 +18,10 @@ Interval-notation for ring interpreted as equivalence classes of finite ring.
 \begin{problem}{Ring Loading}
 	\textbf{In:} Ring of size $n \in \N$, demands $d_{ij} \in \R^+$ for $1 \leq i < j \leq n$.\\
 	\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow \{0, 1\}$ such that
-	$\max_{1 \leq i \leq n} L_i$ is minimal.
+	$\max_{1 \leq i \leq n} L_i$ is minimal, where
+	\begin{equation}
+		L_i \coloneqq \ldots
+	\end{equation}
 \end{problem}
 
 \begin{theorem}
@@ -46,7 +49,18 @@ Interval-notation for ring interpreted as equivalence classes of finite ring.
 	This is the sum of the demands that must cross either $\{g, g+1\}$ or $\{h, h+1\}$.
 \end{definition}
 
+\input{figures/ring_cut_example}
+
+We can formulate a relaxed version of \RL, which allows demands to be routed both ways around the ring.
 \begin{problem}{Relaxed Ring Loading}
 	\textbf{In:} Ring of size $n \in \N$, demands $d_{ij} \in \R^+$ for $1 \leq i < j \leq n$.\\
-		\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow [0, 1]$ such that $\max_{1 \leq i \leq n} L_i$ is minimal.
+	\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow [0, 1]$ such that $\max_{1 \leq i \leq n} L_i^\ast$ is minimal, where
+	\begin{equation}
+		L_i^\ast \coloneqq \ldots
+	\end{equation}
 \end{problem}
+In contrast to its binary version, \RRL can be solved in polynomial time, as it can be formulated as a linear problem:
+\begin{align}
+	\min t\\
+	s.t. t \geq L_i^\ast(\Phi) \forall 1 \leq i \leq n
+\end{align}
