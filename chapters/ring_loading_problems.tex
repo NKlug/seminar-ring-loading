@@ -20,18 +20,25 @@ Interval-notation for ring interpreted as equivalence classes of finite ring.
 	\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow \{0, 1\}$ such that
 	$\max_{1 \leq i \leq n} L_i$ is minimal, where
 	\begin{equation}
-		L_i \coloneqq \ldots
+		L_i(\phi) \coloneqq \ldots
 	\end{equation}
 \end{problem}
+Ring loading is a routing problem where traffic must be routed either through the front or the back.
+
+$\phi(i, j) = 1$ means that the traffic from the demand $d_{ij}$ is routed through the path $\{i, i+1, \ldots, j-1, j\}$.
+This route is called the \emph{front route}.
+Otherwise, if $\phi(i, j) = 0$, the traffic is routed through $\{j, j+1, \ldots, n-1, n, 1, \ldots, i\}$, which is called the \emph{back route}.
+The back route always contains the link $\{n, 1\}$.
 
 \begin{theorem}
 	\RL in its decision form is NP-complete.
 \end{theorem}
 \begin{proof}
+	\Todo{Input can be encoded in O(n**2) space}
 	A function $\Phi$ of the desired form can be encoded using $\cO(n^2)$ space, e.g. as a binary array, and serves as witness for \RL.
 	This implies that \RL is in NP.
 	In order to show NP-completeness, we provide a polynomial-reduction of the \textsc{Partition} problem \cite{karp72}.
-	Given $m$ integers $\{z_1, \ldots, z_m\}$, this problem asks whether there exists a set $S \subseteqq [m]$ such that 
+	Given $m$ integers $\{z_1, \ldots, z_m\}$, this problem asks whether there exists a set $S \subseteq [m]$ such that 
 	\begin{equation}
 		\sum_{i \in S} z_i = \sum_{j \in [m] \setminus S} z_j \ .
 	\end{equation}
@@ -54,13 +61,14 @@ Interval-notation for ring interpreted as equivalence classes of finite ring.
 We can formulate a relaxed version of \RL, which allows demands to be routed both ways around the ring.
 \begin{problem}{Relaxed Ring Loading}
 	\textbf{In:} Ring of size $n \in \N$, demands $d_{ij} \in \R^+$ for $1 \leq i < j \leq n$.\\
-	\textbf{Goal:} Find a function $\Phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow [0, 1]$ such that $\max_{1 \leq i \leq n} L_i^\ast$ is minimal, where
+	\textbf{Goal:} Find a function $\phi: \{(i, j)~|~1 \leq i < j \leq n\} \rightarrow [0, 1]$ such that $\max_{1 \leq i \leq n} L_i^\ast$ is minimal, where
 	\begin{equation}
-		L_i^\ast \coloneqq \ldots
+		L_i^\ast(\phi) \coloneqq \ldots
 	\end{equation}
 \end{problem}
-In contrast to its binary version, \RRL can be solved in polynomial time, as it can be formulated as a linear problem:
-\begin{align}
-	\min t\\
-	s.t. t \geq L_i^\ast(\Phi) \forall 1 \leq i \leq n
-\end{align}
+In contrast to its binary version, \RRL can be solved in polynomial time, as it can be formulated as the following linear problem
+\begin{alignat}{2}
+	&\min &\quad& L\\
+	&s.t. &\quad& L \geq L_i^\ast(\Phi)\quad \forall 1 \leq i \leq n \ .
+\end{alignat}
+Note that the $L_i$ are linear functions.

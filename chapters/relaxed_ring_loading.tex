@@ -1,1 +1,98 @@
 \section{An Algorithm for Relaxed Ring Loading}
+
+\begin{definition}
+	An optimal solution $\phi^\ast$ to \RRL is said to be \emph{minimal} if for every other optimal there exists at least one $1 \leq i \leq n$ for which $L_i' > L_i^\ast$.
+\end{definition}
+This definition is equivalent for a minimal solution $\phi^\ast$ there exists no other optimal solution with $L_i' \leq L_i^\ast$ for all $1 \leq i \leq n$ and $L_j' < L_j^\ast$ for at least one $j$.
+
+If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front and the back route, that is if $\phi^\ast$ $\phi^\ast(i, j) \in (0, 1)$, we say that $\phi^\ast$is \emph{splits} the demand $d_{ij}$.
+
+\begin{theorem}
+	\label{theo:parallel-demands-non-crossing}
+	Let $\phi^\ast$ be a minimal solution to an instance of \RRL.
+	Then no link in between two parallel demands $d_{ij}$ and $d_{gh}$ carries traffic from both demands.
+\end{theorem}
+
+\begin{proof}
+	Let $\phi^\ast$ be a minimal solution.
+	Assume that the link $\{k, k+1\}$ lies in between the demands $d_{ij}$ and $d_{gh}$ and that $\phi^\ast$ routes traffic from both demands through $\{k, k+1\}$.
+	Let $\alpha$ and $\beta$ be the amounts of traffic from $d_{ij}$ and $d_{gh}$, respectively, that is routed through $\{k, k+1\}$.
+	Furthermore, assume without loss of generality that $\alpha \leq \beta$.
+	We now construct a new routing $\phi'$ from $\phi^\ast$ by rerouting traffic $\alpha$ of both demands such that it no longer passes through $\{k, k+1\}$.
+	\Todo{Explain the cases how parallel demands can occur, and when \{k, k+1\} must lie on the back and when on the front route}
+	Then $\{k, k+1\}$ no longer carries traffic from $d_{ij}$ and the new load on this link is $L_k' = L_k^\ast - 2 \alpha < L_k^\ast$.
+	
+	\input{figures/parallel_demands}
+	
+	Parallel demands can occur in three types of configurations, which can be seen in \cref{fig:parallel-demands}.
+	We distinguish the three cases:
+	\begin{enumerate}[align=left]
+		\item[\textbf{Cases 1 and 2:} $[i, j) \subset [g, h)$ or $[g, h) \subset [i,j)$]{\mbox{}\\
+			We assume $[i, j) \subset [g, h)$; the other case is reasoned analogously.
+			Then the rerouting of the traffic results $\phi'$ given by
+			\begin{align}
+				\phi'(i, j) = 1 \ ,\quad
+				\phi'(g, h) = \frac{\beta - \alpha}{d_{gh}}
+			\end{align}
+			and $\phi'(u, v) = \phi^\ast(u, v)$ for all other demands $d_{uv}$.
+			For all $1 \leq m \leq n$, the new link loads are given by
+			\begin{equation}
+				L_m' = L_m^\ast + \alpha (\dOne_{\{m \in [i, j)\}} - \dOne_{\{m \notin [i, j)\}} + 
+				\dOne_{\{m \notin [g, h)\}} - \dOne_{\{m \in [g, h)\}}) \ ,
+			\end{equation}
+			$\dOne$ being the indicator function.
+			If $m \in [i, j)$, then $m \in [g, h)$ and $L_m' = L_m^\ast$.
+			If $m \notin [i, j)$, then  $L_m' \leq L_m^\ast$.
+		}
+		\item[\textbf{Case 3:} $[i, j) \cap [g, h) = \emptyset$]{\mbox{}\\
+			In this case the routing $\phi'$ is given by
+			\Todo{Explain where this comes from}
+			\begin{align}
+				\phi'(i, j) = 1 \ ,\quad
+				\phi'(g, h) = 1 - \frac{\beta - \alpha}{d_{gh}}
+			\end{align}
+			and $\phi'(u, v) = \phi^\ast(u, v)$ for all other demands $d_{uv}$.
+			The new link loads are given by
+			\begin{equation}
+				L_m' = L_m^\ast + \alpha (\dOne_{\{m \in [i, j)\}} - \dOne_{\{m \notin [i, j)\}} + 
+				\dOne_{\{m \in [g, h)\}} - \dOne_{\{m \notin [g, h)\}}) \ .
+			\end{equation}
+			Similar to the cases 1 and 2, we get $L_m' \leq L_m^\ast$, as we assumed that $[i, j) \cap [g, h) = \emptyset$.
+		}
+	\end{enumerate}
+	In total, the routing $\phi'$ has link loads $L_m' \leq L_m^\ast$ for all $1 \leq m \leq n$ and $L_k' < L_k^\ast$.
+	This contradicts the minimality of $\phi^\ast$.
+\end{proof}
+
+
+\begin{theorem}
+	\label{theo:cut-condition}
+	Let $I$ be an instance of \RRL.
+	If for all cuts in $I$ satisfy the cut condition, $I$ is solvable.
+\end{theorem}
+\begin{proof}
+	TBD
+\end{proof}
+
+\input{figures/rll_algorithm}
+
+\begin{theorem}
+	Let $I$ be an instance of size $n$ of \RRL that satisfies the cut condition.
+	Then \cref{algo:rll} computes a minimal solution of $I$ in $\cO(?)$ time using $\cO(?)$ space.
+\end{theorem}
+\begin{proof}
+	TBD
+\end{proof}
+
+\begin{lemma}
+	At the end of \cref{algo:rll} at most $\lfloor\frac{n}{2}\rfloor$ demands are split.
+\end{lemma}
+\begin{proof}
+	Let $\phi^\ast$ be the routing that results from the execution of \cref{algo:rll}.
+	Furthermore, let $S \coloneqq \{(i, j)\ |\ d_{ij}\ \text{is split by}\ \phi^\ast \}$ and $(i, j), (g, h) \in S$.
+	\cref{theo:parallel-demands-non-crossing} implies that $d_{ij}$ and $d_{gh}$ cannot be parallel as otherwise there would be a link $\{k, k+1\}$ that carries traffic from both demands.
+	This means that $d_{ij}$ and $d_{gh}$ are crossing, which can by definition only occur if $i, j, g, h$ are mutually distinct.
+	
+	This implies that every $1 \leq i \leq n$ can occur in at most one tuple in $S$.
+	As the tuples in $S$ each consist of two elements, there can be at most $\lfloor\frac{n}{2}\rfloor$ such tuples.
+\end{proof}
