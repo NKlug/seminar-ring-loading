@@ -64,14 +64,16 @@ If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front
 	This contradicts the minimality of $\phi^\ast$.
 \end{proof}
 
+We imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
 
 \begin{theorem}
 	\label{theo:cut-condition}
 	Let $I$ be an instance of \RRL.
-	If for all cuts in $I$ satisfy the cut condition, $I$ is solvable.
+	If all cuts in $I$ satisfy the cut condition, $I$ is solvable.
 \end{theorem}
 \begin{proof}
-	TBD
+	We conduct the proof by assuming there are instances that satisfy the cut condition, but are not solvable.
+	Let $I$ be the smallest of these instances in terms of ring size $n$ and the number of non-zero demands.
 \end{proof}
 
 \input{figures/rll_algorithm}
@@ -88,10 +90,11 @@ If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front
 	At the end of \cref{algo:rll} at most $\lfloor\frac{n}{2}\rfloor$ demands are split.
 \end{lemma}
 \begin{proof}
-	Let $\phi^\ast$ be the routing that results from the execution of \cref{algo:rll}.
+	Let $\phi^\ast$ be the minimal routing that results from the execution of \cref{algo:rll}.
 	Furthermore, let $S \coloneqq \{(i, j)\ |\ d_{ij}\ \text{is split by}\ \phi^\ast \}$ and $(i, j), (g, h) \in S$.
-	\cref{theo:parallel-demands-non-crossing} implies that $d_{ij}$ and $d_{gh}$ cannot be parallel as otherwise there would be a link $\{k, k+1\}$ that carries traffic from both demands.
-	This means that $d_{ij}$ and $d_{gh}$ are crossing, which can by definition only occur if $i, j, g, h$ are mutually distinct.
+	If the demands $d_{ij}$ and $d_{gh}$ were parallel, there would be a link $\{k, k+1\}$ that carries traffic from both demands, as they both are split.
+	However, it follows from the minimality of $\phi^\ast$ and \cref{theo:parallel-demands-non-crossing} that this cannot be the case, which implies that $d_{ij}$ and $d_{gh}$ are crossing.
+	This can, by definition, only occur if $i, j, g, h$ are mutually distinct.
 	
 	This implies that every $1 \leq i \leq n$ can occur in at most one tuple in $S$.
 	As the tuples in $S$ each consist of two elements, there can be at most $\lfloor\frac{n}{2}\rfloor$ such tuples.
