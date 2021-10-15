@@ -67,17 +67,20 @@ If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front
 We can imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
 
 \begin{definition}
-	The \emph{demand across the cut} $\{g, h\}$ is the sum of demands with endpoints on both sides of the cut:
+	The \emph{demand across the cut} $\{g, h\}$ with $g \neq h$ is the sum of demands with endpoints on both sides of the cut:
 	\begin{equation}
-		D_{gh} \coloneqq \sum_{d_{ij} \in \{d_{ij}\ |\ \abs{[i, j) \cap (g, h]} = 1\}} 
+		D_{gh} \coloneqq \sum_{d_{ij} \in \{d_{ij}\ |\ \abs{[i, j) \cap (g, h]} = 1\}} \ .
 	\end{equation}
+	For the degenerate cuts $\{g, g\}$ we define $D_{gg} \coloneqq 2 C_g$.
 \end{definition}
 
 \begin{definition}[Cut Condition]
-	A cut $\{g, h\}$ is said to satisfy the \emph{cut condition} if
+	An cut $\{g, h\}$ is said to satisfy the \emph{cut condition} if
 	\begin{equation}
-		D_{gh} \leq C_g + C_h
+		D_{gh} \leq C_g + C_h \ .
 	\end{equation}
+	An instance $I$ satisfies the cut condition if each cut does.
+	$C_g + C_h - D_{gh}$ is called the \emph{slack} of the cut $\{g, h\}$.
 \end{definition}
 
 In an instance of \RRL, is there is a cut $\{g, h\}$ which violates the cut condition, the instance is not solvable:
@@ -91,6 +94,7 @@ The links $\{g, g+1\}$ and $\{h, h+1\}$ pose a bottleneck to the demands that cr
 \end{theorem}
 For the proof, we will need the following lemma:
 \begin{lemma}
+	\label{lemma:parallel-diagonal-cuts}
 	Let $\{g, h\}$, $\{g', h'\}$ be two parallel cuts.
 	Then every demand crosses as many of the cuts $\{g, h\}$, $\{g', h'\}$ as it crosses cuts $\{g, g'\}, \{h, h'\}$
 \end{lemma}
@@ -101,7 +105,54 @@ For the proof, we will need the following lemma:
 	We conduct the proof by assuming there are instances that satisfy the cut condition, but are not solvable.
 	Let $I$ be the smallest of these instances in terms of ring size $n$ and the number of non-zero demands.
 	
-	Pick any non-zero demand $d_ij$ and let 
+	We now construct a new non-solvable instance $I'$ with one less non-zero demand and show that this instance still satisfies the cut condition.
+	This will contradict the minimality of $I$, implying that no such instance exists.
+	
+	For that, pick any non-zero demand $d_{ij}$ with $j - i \geq 2$.
+	
+	If none exists, all non-zero demands in $I$ must be of the form $d_{i, i+1}$.
+	Pick any such demand $d_{i, i+1}$ of which there must be at least one, as otherwise any routing solves $I$.
+	Then, renumber the nodes and links by "rotating" such that $d_{i, i+1}$ corresponds to $d_{1, n}$ in the renumbered instance, which still satisfies minimality in the above sense.
+	Continue with the new instance in which it is possible to pick a non-zero demand $d_{ij}$ with $j - i \geq 2$.
+	
+	Hence, we have a non-zero demand with $j - i \geq 2$. 
+	Let $\{g, h\}$ be a cut with minimal slack $M$ along the front route of $d_{ij}$, that is a cut $\{g, h\}$ with $i \leq g < h < j$ that minimizes $C_g + C_h - D_{gh}$.
+	We construct a new instance $I'$ by pretending to route $\frac{M}{2}$ traffic of $d_{ij}$ along the front route and the remaining $d_{ij} - \frac{M}{2}$ along the back route.
+	We decrease the capacities of the new instance accordingly, that is $C_k' = C_k - \frac{M}{2}$ for links on the front route and $C_k' = C_k - (d_{ij} - \frac{M}{2})$ on the back route.
+	The demands remain the same with the exception of $d_{ij}$, which is now 0.
+	It is easy to see that the new instance is still not solvable; otherwise we could use any feasible routing for $I'$ to construct a solution to $I$.
+	
+	
+	By construction, all cuts $\{s, t\}$ in $I'$ that lie on the front route of $d_{ij}$ still satisfy the cut condition:
+	\begin{equation}
+		D_{st}' = D_{st} \leq C_{s} + C_{t} - M = (C_{s} - \frac{M}{2}) + (C_{t} - \frac{M}{2}) \stackrel{\mathrm{Def.}}{=} C_{s}' + C_{t}' \ .
+	\end{equation}
+	The first equality follows from the fact that $d_{ij}$ does not contribute to $D_{st}$ and $D_{st}'$, the inequality from the choice of $M$.
+	Similarly, all cuts $\{s, t\}$ that $d_{ij}$ crosses satisfy the cut condition.
+	Assume $s \notin [i, j), t \in [i, j)$ without loss of generality, then the following holds true:
+	\begin{equation}
+		D_{st}' = D_{st} - d_{ij} \leq C_s + C_t - d_{ij} = (C_s - (d_{ij} - \frac{M}{2})) + (C_t - \frac{M}{2}) \stackrel{\mathrm{Def.}}{=} C_s' + C_t' \ .
+	\end{equation}
+	Here, the first equality results from $d_{ij}$ no longer contribution to the demand of cuts which it crosses.
+	The inequality is simply the cut condition in $I$.
+	
+	Now, pick any cut $\{s, t\}$ which lies on the back route of $d_{ij}$ and assume that it does not satisfy the cut condition.
+	This means that
+	\begin{equation}
+		D_{st} = D_{st}' > C_s' + C_h' = C_s + C_h - 2(d_{ij} - \frac{M}{2}) \ .
+	\end{equation}
+	or equivalently $D_{st} +  2(d_{ij} - \frac{M}{2}) > C_s + C_h
+	This and \cref{lemma:parallel-diagonal-cuts} implies that
+	\begin{align}
+		D_{sg} + D_{th} \geq D_{st} + D_
+	\end{align}
+	
+	
+	We now show that $I'$ still satisfies the cut condition by contradiction.
+	Thus, assume there is a cut $\{g', h'\}$ in $I'$ which does ot satisfy the cut condition.
+
+
+	
 \end{proof}
 
 \input{figures/rll_algorithm}
