@@ -64,21 +64,50 @@ If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front
 	This contradicts the minimality of $\phi^\ast$.
 \end{proof}
 
-We imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
+We can imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
+
+\begin{definition}
+	The \emph{demand across the cut} $\{g, h\}$ is the sum of demands with endpoints on both sides of the cut:
+	\begin{equation}
+		D_{gh} \coloneqq \sum_{d_{ij} \in \{d_{ij}\ |\ \abs{[i, j) \cap (g, h]} = 1\}} 
+	\end{equation}
+\end{definition}
+
+\begin{definition}[Cut Condition]
+	A cut $\{g, h\}$ is said to satisfy the \emph{cut condition} if
+	\begin{equation}
+		D_{gh} \leq C_g + C_h
+	\end{equation}
+\end{definition}
+
+In an instance of \RRL, is there is a cut $\{g, h\}$ which violates the cut condition, the instance is not solvable:
+The links $\{g, g+1\}$ and $\{h, h+1\}$ pose a bottleneck to the demands that cross the cut and hinder every demand from being satisfied.
+
 
 \begin{theorem}
 	\label{theo:cut-condition}
 	Let $I$ be an instance of \RRL.
 	If all cuts in $I$ satisfy the cut condition, $I$ is solvable.
 \end{theorem}
+For the proof, we will need the following lemma:
+\begin{lemma}
+	Let $\{g, h\}$, $\{g', h'\}$ be two parallel cuts.
+	Then every demand crosses as many of the cuts $\{g, h\}$, $\{g', h'\}$ as it crosses cuts $\{g, g'\}, \{h, h'\}$
+\end{lemma}
 \begin{proof}
+	By distinction of cases.
+\end{proof}
+\begin{proof}[Proof of \cref{theo:cut-condition}]
 	We conduct the proof by assuming there are instances that satisfy the cut condition, but are not solvable.
 	Let $I$ be the smallest of these instances in terms of ring size $n$ and the number of non-zero demands.
+	
+	Pick any non-zero demand $d_ij$ and let 
 \end{proof}
 
 \input{figures/rll_algorithm}
 
 \begin{theorem}
+	\label{theo:rll-algo-correct}
 	Let $I$ be an instance of size $n$ of \RRL that satisfies the cut condition.
 	Then \cref{algo:rll} computes a minimal solution of $I$ in $\cO(?)$ time using $\cO(?)$ space.
 \end{theorem}
