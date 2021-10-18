@@ -1,7 +1,10 @@
 \begin{figure}[ht]
 	\begin{algorithm}[H]
-%		\KwData{Training data $x_1, \ldots, x_N$ drawn from distribution $\Pdata$, gradient-based learning rule $R$, batch size $B \in \N$, discriminator iterations $k \in \N$.}
-%		Initialize $\theta_G$ and $\theta_D$\;
+		\KwData{Ring size $n \in \N$, demands $d_{ij}$, $1 \leq i < j \leq n$.}
+		$M = \max_{1 \leq i < j \leq n} D_{ij}$\;
+		\For{$i=1, \ldots, n$}{
+			$C_i = \min \left(\min_{1 \leq j < i}(D_{ji} - C_j), \min_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ \;
+		}
 %		\While{not converged}{
 %			\For{$i=1, \ldots, k$}{
 %				Sample batch of $B$ samples $z_1, \ldots, z_B$ from $p_z$\;
@@ -16,6 +19,6 @@
 %			Update $\theta_G$ by descending the gradient according to the learning rule $R$\;
 %		}
 		\caption{Algorithm for \RRL}
-		\label{algo:rll}
+		\label{algo:rrl}
 	\end{algorithm}
 \end{figure}
