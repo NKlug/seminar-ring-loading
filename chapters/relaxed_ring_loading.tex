@@ -12,7 +12,6 @@ If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front
 	Let $\phi^\ast$ be a minimal solution to an instance of \RRL.
 	Then no link in between two parallel demands $d_{ij}$ and $d_{gh}$ carries traffic from both demands.
 \end{theorem}
-
 \begin{proof}
 	Let $\phi^\ast$ be a minimal solution.
 	Assume that the link $\{k, k+1\}$ lies in between the demands $d_{ij}$ and $d_{gh}$ and that $\phi^\ast$ routes traffic from both demands through $\{k, k+1\}$.
@@ -88,8 +87,8 @@ The links $\{g, g+1\}$ and $\{h, h+1\}$ pose a bottleneck to the demands that cr
 
 \begin{theorem}
 	\label{theo:cut-condition}
-	Let $I$ be an instance of \RRL.
-	If all cuts in $I$ satisfy the cut condition, $I$ is solvable.
+	Let $I$ be an instance of \RRL that satisfies the cut condition.
+	Then $I$ is solvable.
 \end{theorem}
 For the proof, we will need the following lemma:
 \begin{lemma}
@@ -172,17 +171,70 @@ The method is described in \cref{algo:rrl}
 
 \input{figures/demand_cuts_algorithm}
 
+\begin{align}
+	M &\coloneqq \max_{1 \leq i < j \leq n} D_{ij}\\
+	\label{eq:minimal-capacities}
+	C_i &\coloneqq \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)
+\end{align}
+
+\begin{lemma}
+	Let $I$ be an instance of \RRL and let the capacities $C_i$ be defined as in \cref{eq:minimal-capacities}.
+	Then $C_i \leq \frac{M}{2}$ for all $1 \leq i \leq n$.
+\end{lemma}
+\begin{proof}
+	We conduct the proof by induction over $i$. 
+	The beginning $i=1$ is covered in Case 2 below. 
+	Thus, Let $2 \leq i \leq n$.
+	We distinguish two cases:
+	\begin{enumerate}[align=left]
+		\item[Case 1: $C_i = \max_{1 \leq j < i}(D_{ji} - C_j)$]{\mbox{}\\
+			Then we have
+			\begin{align}
+				C_i &= D_{ji} - C_j \\
+				&\geq D_{ji} - (\max_{j < k \leq n} D_{jk} - \frac{M}{2})\\
+				&= (D_{ji} - \max_{j < k \leq n} D_{jk}) + \frac{M}{2} \ .
+			\end{align}
+			Because of $j < i$, $(D_{ji} - \max_{j < k \leq n} D_{jk}) < 0$, proving that $C_i \leq \frac{M}{2}$.
+		}
+		\item[Case 2: $C_i = \max_{i < j \leq n}(D_{ij} - \frac{M}{2})$]{\mbox{}\\
+			Then $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
+		}
+	\end{enumerate}
+\end{proof}
+
 \begin{lemma}
 	Let $I$ be an instance of \RRL.
-	Let $M \coloneqq \max_{1 \leq i < j \leq n} D_{ij}$ and define $C_i \coloneqq \min \left(\min_{1 \leq j < i}(D_{ji} - C_j), \min_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ inductively from $i = 1$ to $n$.
-	Then any routing $\phi$ which does not violate the capacities $C_i$ is minimal with ring load $L = \frac{M}{2}$.
+	Let $M \coloneqq \max_{1 \leq i < j \leq n} D_{ij}$ and let $C_i$ be such as to satisfy $C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ for all $1 \leq i \leq n$.
+	Then any routing $\phi$ for $I$ which does not violate the capacities $C_i$ is minimal with ring load $L = \frac{M}{2}$.
 \end{lemma}
 \begin{proof}
 	Let $\{g, h\}$ be the cut for which the maximum $M$ is attained.
 	Then in any feasible routing, at least $\frac{M}{2}$ traffic must be routed through either of the links $\{g, g+1\}$, $\{h, h+1\}$, implying that $L \geq \frac{M}{2}$.
-	However, the instance $I$ together with the capacities $C_i = \frac{M}{2}$ satisfies the cut constraint.
+	However, the instance $I$ together with the capacities $C_i = \frac{M}{2}$ for all $1 \leq i \leq n$ satisfies the cut constraint.
 	It follows from \cref{theo:cut-condition} that a solution exists, which by construction has a ring load $L \leq \frac{M}{2}$.
 	Together we get $L = \frac{M}{2}$.
+	
+	The capacities $C_i$ are such that $I$ satisfies the cut condition:
+	For $1 \leq i < j \leq n$ we have
+	\begin{equation}
+		C_j = \max \left(\max_{1 \leq k < j}(D_{ki} - C_k), \max_{j < k \leq n}(D_{jk} - \frac{M}{2})\right) \geq D_{ij} - C_i \ ,
+	\end{equation}
+	which implies $D_{ij} \leq C_i + C_j$.
+	Thence by \cref{theo:cut-condition} there exists a solution to $I$ which does not violate the link capacities.
+	Let $\phi$ such a routing with link loads $L_i$.
+	We still have to show that $\phi$ is minimal.
+	
+	Assume that $\phi$ is not minimal and let $\phi'$ with link loads $L_i'$ be a witness.
+	We define new capacities $C_i' \coloneqq L_i'$ for all $1 \leq i \leq n$.
+	Especially, we have $C_i' \leq C_i$ for all $i$ and $C_k' < C_k$ for at least one $k$.
+	Let $j$ be the smallest index for which $C_k' < C_k$.
+	We now show that there is a cut $\{j, l\}$ which violates the cut condition.
+	
+	We conduct the proof by showing that there is no set of capacities $C_i'$ with $C_i' \leq C_i$ for all $1 \leq i \leq n$ and $C_j' < C_j$ for at least one $n$. by showing that the chosen capacities $C_i$ are minimal in the same sense.
+	
+	Assume there 
+	
+	
 \end{proof}
 
 The following theorem guarantees that the algorithm works correctly.
@@ -212,12 +264,14 @@ The following theorem guarantees that the algorithm works correctly.
 	\end{equation}
 	Applying the maximum operator to the $\binom{n}{2}$ values $D_{ij}$ also takes $\cO(n^2)$ time.
 	
-	The computation 
+	The computation of the capacities $C_i$ can be carried out in $\cO(n^2)$ time:
+	Each iteration of the for-loop takes time linear in $n$, as the maximum of at most $n$ values is taken.
 	
 \end{proof}
 
 
 \begin{lemma}
+	\label{lemma:number-of-split-demands}
 	At the end of \cref{algo:rrl} at most $\lfloor\frac{n}{2}\rfloor$ demands are split.
 \end{lemma}
 \begin{proof}

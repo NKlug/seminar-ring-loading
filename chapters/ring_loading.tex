@@ -1,7 +1,17 @@
 \section{An Algorithm for Ring Loading}
 
+The idea for solving an instance of \RL is the following:
+First, we compute a solution to the same instance in \RRL.
+As \cref{lemma:number-of-split-demands} states, \cref{algo:rrl} yields a solution $\phi$ in which at most $\lfloor\frac{n}{2}\rfloor$ demands are split; the remainder is either routed all front or all back.
+Now, we iteratively unsplit those demands.
+Of course, this does not always yield the optimal solution $L^\mathrm{opt}$ to the ring loading instance.
+However, the way in which we unsplit the demands approximates $L^\mathrm{opt}$ with an additive error of at most $\frac{3}{2}D$, where $D$ is the largest demand.
+
+The procedure for unsplitting is given in \cref{algo:rl}.
+
 \input{figures/rl_algorithm}
 
+The following theorem and its proof guarantee the quality of the produced solution.
 \begin{theorem}
 	\label{theo:ring-loading-algorithm}
 	Let $I$ be an instance of size $n$ of \RL, $D$ its largest demand and $L^\mathrm{opt}$ its optimal solution.
