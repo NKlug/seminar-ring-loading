@@ -1,6 +1,19 @@
 \begin{figure}[ht]
 	\begin{algorithm}[H]
-%		\KwData{Training data $x_1, \ldots, x_N$ drawn from distribution $\Pdata$, gradient-based learning rule $R$, batch size $B \in \N$, discriminator iterations $k \in \N$.}
+		\KwData{Ring size $n \in \N$, demands $d_{ij}$, $1 \leq i < j \leq n$.}
+		Let $\phi$ be solution to the same instance in \RRL obtained using \cref{algo:rrl} and $S = \{(a_1, b_1), \ldots (a_m, b_m)\}$ the set of indices of split demands\;
+		$D = \max_{1 \leq i < j \leq n} D_{ij}$\;
+		$s = 0$\;
+		\For{$i =1, \ldots, m$}{
+			\If{$s+\phi(a_i, b_i) \leq \frac{D}{2}$}{
+				$s = s + \phi(a_i, b_i)$\;
+				$\phi(a_i, b_i) = 1$\;
+			}
+			\Else{
+				$s = s - (1 - \phi(a_i, b_i))$\;
+				$\phi(a_i, b_i) = 0$\;
+			}
+		}
 %		Initialize $\theta_G$ and $\theta_D$\;
 %		\While{not converged}{
 %			\For{$i=1, \ldots, k$}{
