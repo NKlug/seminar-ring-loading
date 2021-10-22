@@ -188,21 +188,22 @@ The method is described in \cref{algo:rrl}
 	We distinguish two cases:
 	\begin{enumerate}[align=left]
 		\item[Case 1: $C_i = \max_{1 \leq j < i}(D_{ji} - C_j)$]{\mbox{}\\
-			Then we have
+			Then there exists some $1 \leq j < i$ for which we have
 			\begin{align}
 				C_i &= D_{ji} - C_j \\
-				&\geq D_{ji} - (\max_{j < k \leq n} D_{jk} - \frac{M}{2})\\
+				&\stackrel{\mathrm{IH}}{\leq} D_{ji} - \left(\max_{j < k \leq n} D_{jk} - \frac{M}{2}\right)\\
 				&= (D_{ji} - \max_{j < k \leq n} D_{jk}) + \frac{M}{2} \ .
 			\end{align}
-			Because of $j < i$, $(D_{ji} - \max_{j < k \leq n} D_{jk}) < 0$, proving that $C_i \leq \frac{M}{2}$.
+			Because of $j < i$ we have $D_{ji} - \max_{j < k \leq n} D_{jk} < 0$, proving that $C_i \leq \frac{M}{2}$.
 		}
 		\item[Case 2: $C_i = \max_{i < j \leq n}(D_{ij} - \frac{M}{2})$]{\mbox{}\\
-			Then $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
+			Then it immediately follows from the choice of $M$ that $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
 		}
 	\end{enumerate}
 \end{proof}
 
 \begin{lemma}
+	\label{lemma:capacities-bounded}
 	Let $I$ be an instance of \RRL.
 	Let $M \coloneqq \max_{1 \leq i < j \leq n} D_{ij}$ and let $C_i$ be such as to satisfy $C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ for all $1 \leq i \leq n$.
 	Then any routing $\phi$ for $I$ which does not violate the capacities $C_i$ is minimal with ring load $L = \frac{M}{2}$.
@@ -217,24 +218,36 @@ The method is described in \cref{algo:rrl}
 	The capacities $C_i$ are such that $I$ satisfies the cut condition:
 	For $1 \leq i < j \leq n$ we have
 	\begin{equation}
-		C_j = \max \left(\max_{1 \leq k < j}(D_{ki} - C_k), \max_{j < k \leq n}(D_{jk} - \frac{M}{2})\right) \geq D_{ij} - C_i \ ,
+		C_j = \max \left(\max_{1 \leq k < j}(D_{kj} - C_k), \max_{j < k \leq n}(D_{jk} - \frac{M}{2})\right) \geq D_{ij} - C_i \ ,
 	\end{equation}
 	which implies $D_{ij} \leq C_i + C_j$.
 	Thence by \cref{theo:cut-condition} there exists a solution to $I$ which does not violate the link capacities.
 	Let $\phi$ such a routing with link loads $L_i$.
-	We still have to show that $\phi$ is minimal.
+	We now show that $\phi$ is minimal by contraposition.
 	
-	Assume that $\phi$ is not minimal and let $\phi'$ with link loads $L_i'$ be a witness.
+	Therefore, assume that $\phi$ is not minimal and let $\phi'$ with link loads $L_i'$ be a witness.
 	We define new capacities $C_i' \coloneqq L_i'$ for all $1 \leq i \leq n$.
 	Especially, we have $C_i' \leq C_i$ for all $i$ and $C_k' < C_k$ for at least one $k$.
-	Let $j$ be the smallest index for which $C_k' < C_k$.
-	We now show that there is a cut $\{j, l\}$ which violates the cut condition.
-	
-	We conduct the proof by showing that there is no set of capacities $C_i'$ with $C_i' \leq C_i$ for all $1 \leq i \leq n$ and $C_j' < C_j$ for at least one $n$. by showing that the chosen capacities $C_i$ are minimal in the same sense.
-	
-	Assume there 
-	
-	
+	Let $j$ be the smallest index for which $C_j' < C_j$.
+	We now show that there is a cut $\{j, l\}$ which violates the cut condition for the capacities $C_i'$ by distinguishing the two possible cases:
+	\begin{enumerate}[align=left]
+		\item[Case 1: $C_j = \max_{1 \leq k < j}(D_{kj} - C_k)$]{\mbox{}\\
+			The we especially have $C_j' < C_j = \max_{1 \leq k < j}(D_{kj} - C_k)$ and by the choice of $j$ as the smallest index $C_i' = C_i$ for all $1 \leq i < j$.
+			This means that there exists a $1 \leq k \leq j$ such that $C_j' < D_{kj} - C_k = C_j' < D_{kj} - C_k'$, implying that $D_{kj} > C_k' + C_j'$.
+			Thus, the cut $\{k, j\}$ is violated.
+		}
+		\item[Case 2: $C_j = \max_{j < k \leq n}(D_{jk} - \frac{M}{2})$]{\mbox{}\\
+			Then $C_j' < C_j = \max_{j < k \leq n}(D_{jk} - \frac{M}{2})$.
+			This means that there exists a $j < k \leq n$ such that $C_j' < D_{jk} - \frac{M}{2}$.
+			Using \cref{lemma:capacities-bounded} we then get 
+			\begin{equation}
+				C_j' + C_k' \leq C_j' + C_k \leq C_j' + \frac{M}{2} < D_{jk} \ ,
+			\end{equation}
+			again showing that the cut $\{k, j\}$ is violated.
+		}
+	\end{enumerate}
+	In total this shows that the instance $I'$ with capacities $C_i'$ does not satisfy the cut condition.
+	Thus there exists no witness $\phi'$, proving that $\phi$ already was minimal.
 \end{proof}
 
 The following theorem guarantees that the algorithm works correctly.
