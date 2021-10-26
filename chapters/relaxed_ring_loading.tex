@@ -287,14 +287,42 @@ The following theorem guarantees that the algorithm works correctly.
 	
 \end{proof}
 
-\begin{invariant}
-	Before each iteration of the while-loop in \cref{algo:rrl}, there exists a tight cut.
-	\Todo{maybe even more: Each link is part of a tight cut}
-\end{invariant}
+\begin{lemma}
+	At the beginning of the while-loop in \cref{algo:rrl}, for every $i \in [n]$ there exists a $j \neq i$ such that $\{i, j\}$ is a tight cut.
+\end{lemma}
 \begin{proof}
-	
+	Assume the contrary, that is there is an $i \in [n]$ which is not part of any tight cut.
+	Let $M \coloneqq \min_{j \neq i} C_i + C_j - D_{ij}$.
+	Then $M > 0$ by assumption.
+	Define $C_i' = C_i - M$ and $C_j' = C_j$ for all $j \neq i$.
+	Then every cut still satisfies the cut condition.
+	But in the proof of \cref{lemma:minimal-solution} we showed that no such set of capacities can exist.
 \end{proof}
 
+\begin{lemma}
+	Once a cut becomes tight in \cref{algo:rrl}, it remains tight.
+\end{lemma}
+\begin{proof}
+	There are two points in \cref{algo:rrl} where the slack of a cut can change:
+	When the capacities are decreased and when the $D_{ij}$ change.
+	First, note that decreasing the capacities can only decrease slack.
+	This cannot un-tighten any cut.
+	Second, when any $D_{ij}$ changes it must be due to a crossing demand $d_{gh}$ being routed either way.
+	This means that the new demand across the cut is $D_{ij}' = D_{ij} - d_{gh}$.
+	However, in this case the capacity of either $\{i, i+1\}$ or $\{j, j+1\}$ is also decreased by $d_{gh}$, meaning that
+	$C_i' + C_j' = C_i + C_j - d_{gh}$.
+	In total we get $C_i' + C_j' - D_{ij}' = C_i + C_j - D_{ij}$, showing that the slack does not change.
+\end{proof}
+
+\begin{lemma}
+	Let $d_{ij}$ be a demand and $\{u, v\}$ a tight cut that is parallel to $d_{ij}$.
+	Then $d_{ij}$ must be routed to miss the cut.
+\end{lemma}
+\begin{proof}
+	In any solution, all demands that cross the cut $\{u, v\}$ must route their traffic through $\{u, u+1\}$ or $\{v, v+1\}$ (or both).
+	The sum of all such demands is just $D_{uv} = C_u + C_v$, which means that these demands already saturate both $\{u, u+1\}$ and $\{v, v+1\}$.
+	This implies that no other demand can be routed through those links. 
+\end{proof}
 
 \begin{lemma}
 	\label{lemma:number-of-split-demands}
@@ -309,4 +337,12 @@ The following theorem guarantees that the algorithm works correctly.
 	
 	This implies that every $1 \leq i \leq n$ can occur in at most one tuple in $S$.
 	As the tuples in $S$ each consist of two elements, there can be at most $\lfloor\frac{n}{2}\rfloor$ such tuples.
+\end{proof}
+
+\subsection{Correctness}
+
+\subsection{Runtime}
+
+
+\begin{proof}
 \end{proof}
