@@ -5,6 +5,13 @@
 		\For{$i=1, \ldots, n$}{
 			$C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ \;
 		}
+		\While{$\exists \text{parallel demands } d_{ij}, d_{gh}$}{
+			Choose link $\{k, k+1\}$ that lies in between $d_{ij}$ and $d_{gh}$\;
+			$\{k, l\} \coloneqq \min_{l \neq k} C_k + C_l - D_{kl}$\;
+			Assume $d_{ij}$ crosses $\{k, l\}$\;
+			Route $d_{gh}$ such that it misses $\{k, l\}$\;
+			// Wollen cut constraint als Invariante idealerweise
+		}
 %		\While{not converged}{
 %			\For{$i=1, \ldots, k$}{
 %				Sample batch of $B$ samples $z_1, \ldots, z_B$ from $p_z$\;

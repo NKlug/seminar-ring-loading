@@ -178,6 +178,7 @@ The method is described in \cref{algo:rrl}
 \end{align}
 
 \begin{lemma}
+	\label{lemma:capacities-bounded}
 	Let $I$ be an instance of \RRL and let the capacities $C_i$ be defined as in \cref{eq:minimal-capacities}.
 	Then $C_i \leq \frac{M}{2}$ for all $1 \leq i \leq n$.
 \end{lemma}
@@ -203,7 +204,7 @@ The method is described in \cref{algo:rrl}
 \end{proof}
 
 \begin{lemma}
-	\label{lemma:capacities-bounded}
+	\label{lemma:minimal-solution}
 	Let $I$ be an instance of \RRL.
 	Let $M \coloneqq \max_{1 \leq i < j \leq n} D_{ij}$ and let $C_i$ be such as to satisfy $C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ for all $1 \leq i \leq n$.
 	Then any routing $\phi$ for $I$ which does not violate the capacities $C_i$ is minimal with ring load $L = \frac{M}{2}$.
@@ -279,6 +280,18 @@ The following theorem guarantees that the algorithm works correctly.
 	
 	The computation of the capacities $C_i$ can be carried out in $\cO(n^2)$ time:
 	Each iteration of the for-loop takes time linear in $n$, as the maximum of at most $n$ values is taken.
+	
+	For the correctness we just have to understand that the algorithm does indeed compute a solution $\phi$ which does not violate the capacities $C_i$.
+	\cref{lemma:minimal-solution} then guarantees the minimality of the solution.
+	
+	
+\end{proof}
+
+\begin{invariant}
+	Before each iteration of the while-loop in \cref{algo:rrl}, there exists a tight cut.
+	\Todo{maybe even more: Each link is part of a tight cut}
+\end{invariant}
+\begin{proof}
 	
 \end{proof}
 
