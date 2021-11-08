@@ -195,7 +195,7 @@ The method is described in \cref{algo:rrl}
 				&\stackrel{\mathrm{IH}}{\leq} D_{ji} - \left(\max_{j < k \leq n} D_{jk} - \frac{M}{2}\right)\\
 				&= (D_{ji} - \max_{j < k \leq n} D_{jk}) + \frac{M}{2} \ .
 			\end{align}
-			Because of $j < i$ we have $D_{ji} - \max_{j < k \leq n} D_{jk} < 0$, proving that $C_i \leq \frac{M}{2}$.
+			Because of $j < i$ we have $D_{ji} - \max_{j < k \leq n} D_{jk} \leq 0$, proving that $C_i \leq \frac{M}{2}$.
 		}
 		\item[Case 2: $C_i = \max_{i < j \leq n}(D_{ij} - \frac{M}{2})$]{\mbox{}\\
 			Then it immediately follows from the choice of $M$ that $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
@@ -266,7 +266,7 @@ The following theorem guarantees that the algorithm works correctly.
 	\begin{equation}
 		D_{i, j} = \begin{cases}
 			\sum_{k < i+1} d_{k,i+1} + \sum_{k > i+1} d_{i+1, k}, & \text{if } j = i+1 \\
-			D_{i, i+1} + D_{i+1, j} - A_{i+1, j}, & \text{if } j > i+1
+			D_{i, i+1} + D_{i+1, j} - 2 A_{i+1, j}, & \text{if } j > i+1
 		\end{cases}
 	\end{equation}
 	in which we used the auxiliary variable
@@ -288,6 +288,21 @@ The following theorem guarantees that the algorithm works correctly.
 \end{proof}
 
 \begin{lemma}
+	For all $i \in [n]$ let $L_i^f$ and $L_i^b$ be the total traffic that is routed forward and backward, respectively, through the link $\{i, i+1\}$.
+	Then for any routing $\phi$, the following recursions hold true.
+	\begin{align}
+		L_i^f &\coloneqq \begin{cases}
+			\sum_{j = 2}^n d_{1j} \cdot \phi(1, j), & \text{if } i = 1 \\
+			L_{i-1}^f - \sum_{j = 1}^{i-1} d_{ji} \cdot \phi(j, i) + \sum_{j = i}^{n} d_{ij} \cdot \phi(i, j) & \text{if } i > 1 \\
+		\end{cases} \\
+		L_i^b &\coloneqq \begin{cases}
+		\sum_{i = 1}^n \sum_{j = i+1}^n d_{ij} \cdot (1 - \phi(i, j)) & \text{if } i = n\\
+		L_{(i-1)\mod n} - \sum_{j = i}^{n} d_{i, j} \cdot (1 - \phi(i, j)) + \sum_{j = 1}^{i-1} d_{ij} \cdot(1 - \phi(i, j)) & \text{if } i < n
+		\end{cases} \ 
+	\end{align}
+\end{lemma}
+
+\begin{lemma}
 	At the beginning of the while-loop in \cref{algo:rrl}, for every $i \in [n]$ there exists a $j \neq i$ such that $\{i, j\}$ is a tight cut.
 \end{lemma}
 \begin{proof}
@@ -298,6 +313,16 @@ The following theorem guarantees that the algorithm works correctly.
 	Then every cut still satisfies the cut condition.
 	But in the proof of \cref{lemma:minimal-solution} we showed that no such set of capacities can exist.
 \end{proof}
+
+\begin{theorem}
+	Let $T$ be the set of tight cuts at the beginning of \cref{algo:rrl} and let $Q$ be the set of demands that cross all cuts in $T$.
+	Then:
+	\begin{itemize}
+		\item all demands in $Q$ are mutually crossing.
+		\item $\abs{Q} \leq n$ (probably even $\abs{Q} \leq \frac{n}{2}$)
+		\item Let $m$ be the minimal number of cuts such that there exists a set $M$ with $m = \abs{M}$ and every demand crosses at least one cut in $M$. Then $\abs{T} \geq m$.
+	\end{itemize}
+\end{theorem}
 
 \begin{lemma}
 	Once a cut becomes tight in \cref{algo:rrl}, it remains tight.
@@ -315,13 +340,13 @@ The following theorem guarantees that the algorithm works correctly.
 \end{proof}
 
 \begin{lemma}
-	Let $d_{ij}$ be a demand and $\{u, v\}$ a tight cut that is parallel to $d_{ij}$.
-	Then $d_{ij}$ must be routed to miss the cut.
+	Let $\{u, v\}$ be a tight cut and $d_{ij}$ be a demand parallel to $\{u, v\}$.
+	Then in any solution, $d_{ij}$ must be routed to miss the cut.
 \end{lemma}
 \begin{proof}
 	In any solution, all demands that cross the cut $\{u, v\}$ must route their traffic through $\{u, u+1\}$ or $\{v, v+1\}$ (or both).
-	The sum of all such demands is just $D_{uv} = C_u + C_v$, which means that these demands already saturate both $\{u, u+1\}$ and $\{v, v+1\}$.
-	This implies that no other demand can be routed through those links. 
+	The sum of all such demands is just $D_{uv} = C_u + C_v$, which means that these demands already saturate both links $\{u, u+1\}$ and $\{v, v+1\}$.
+	This implies that no demand that does not cross the cut can be routed through those links. 
 \end{proof}
 
 \begin{lemma}
