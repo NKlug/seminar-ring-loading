@@ -1,9 +1,29 @@
 \section{Introduction}
 
-In this work, the 1999 paper "The Ring Loading Problem" by Schrijver and Seymour will be presented and discussed.
-This will be the introduction.
+The ring loading problem first arose in the planning of \textbf{S}ynchronous \textbf{O}ptical \textbf{Net}working rings.
+In SONET, several add-drop multiplexers (ADMs) and other components are connected by mostly optical fibers.
+One possible SONET topology is the bidirectional path-switched ring, which are safe to the failure of a single link or node due to their connectivity.
+In a SONET ring, the routing of node-to-node network traffic is fixed: The traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
+The ring loading problem arises in the planning of SONET rings.
+ADMs have a limited capacity of traffic they can send or receive through any link.
+Hence the maximal workload on any link must be determined from estimated node-to-node demands during planning.
+This involves computing the optimal routing of these demands around the ring.
+As it turns out, determining such a routing is NP-complete.
 
-This work is based on \citet{schrijver99}.
+In their paper "The Ring Loading Problem" from 1999, the authors Schrijver, Seymour and Winkler \cite{schrijver99} derived an approximation algorithm for the ring loading problem.
+Parts of this paper are presented and discussed here.
+
+We begin by formalizing the problem.
+The SONET ring is modeled through an undirected cycle graph consisting of $n \in \N$ nodes $V \coloneqq [n]$ and $n$ edges $E \coloneqq \{\{i, i+1\}\ |\ i \in [n-1]\} \cup \{\{n, 1\}\}$.
+For every two nodes $i \neq j$ we are given a non-negative demand $d_{i, j}$.
+In practice, the demands from $i$ to $j$ and $j$ to $i$ can differ.
+As XYZ have shown, we can without loss of generality combine these two demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
+
+A routing can then be defined as a function $\phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow \{0, 1\}$.
+For every edge (within the ring loading problem, edges are also referred to as links)  
+
+Within the terminology of ring loading, the edges are also referred to as links.
+
 
 Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
 
@@ -13,9 +33,10 @@ It is therefore still sensible to review and understand the algorithm presented 
 
 The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
 
-In this work, I show that the ideas presented by \citet{schrijver99} lead to an algorithm that runs in $\cO(n^2)$.
-This is almost optimal, as the encoding of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
-This algorithm fist computes a solution to \RRL, which is then transformed into an approximate solution to the original \RL problem.
+In this work, I show that the ideas presented by \citet{schrijver99} can be extended to obtain an algorithm that runs in $\cO(n^2)$.
+This is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
+The modified algorithm strongly relies on the principles of dynamic programming and uses a different, more efficient way of routing demands.
+
 
 This seems to be a novel result which is interesting for several reasons:
 \begin{itemize}
