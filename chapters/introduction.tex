@@ -11,5 +11,19 @@ Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from 
 This bound has since been improved to $1.3$ but the improvement based on the same algorithm.
 It is therefore still sensible to review and understand the algorithm presented by \citet{schrijver99} in the late 1990s.
 
+The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
 
-Furthermore, I show that the algorithm can actually be implemented such that it takes $\cO(kn) = \cO(n^3)$ time rather than the $\cO(kn^2) = \cO(n^4)$ claimed by the authors.
+In this work, I show that the ideas presented by \citet{schrijver99} lead to an algorithm that runs in $\cO(n^2)$.
+This is almost optimal, as the encoding of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
+This algorithm fist computes a solution to \RRL, which is then transformed into an approximate solution to the original \RL problem.
+
+This seems to be a novel result which is interesting for several reasons:
+\begin{itemize}
+	\item The best currently known runtime for computing an $L^\mathrm{opt} + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
+	The proposed algorithm improves this runtime by a factor of $k$.
+	\item The best currently known algorithm for solving \RRL with integer demands is $O(k + t_k)$ for integer demands, where $t_k$ is the time for sorting $k$ integers.
+	For real demands, the best known runtime is $O(\min\{kn, n^2\})$.
+	The proposed algorithm also works for real demands and almost matches the runtime of the latter algorithm.
+	\item The proposed algorithm computes the same solution to \RL and \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
+	This means that the runtimes of all algorithms that use Schrijver et al.'s algorithm as a subroutine are improved as well, in particular that of the $(1 + \epsilon)$ algorithm by \citet{khanna97}.
+\end{itemize}
