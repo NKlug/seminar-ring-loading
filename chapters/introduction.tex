@@ -1,28 +1,78 @@
 \section{Introduction}
 
-The ring loading problem first arose in the planning of \textbf{S}ynchronous \textbf{O}ptical \textbf{Net}working rings.
+The ring loading problem first arose in the planning of \textbf{S}ynchronous \textbf{O}ptical \textbf{Net}working (SONET) rings.
 In SONET, several add-drop multiplexers (ADMs) and other components are connected by mostly optical fibers.
-One possible SONET topology is the bidirectional path-switched ring, which are safe to the failure of a single link or node due to their connectivity.
+One prominent SONET topology is the bidirectional path-switched ring, which is safe to the failure of a single link or node due to its connectivity.
 In a SONET ring, the routing of node-to-node network traffic is fixed: The traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
 The ring loading problem arises in the planning of SONET rings.
 ADMs have a limited capacity of traffic they can send or receive through any link.
-Hence the maximal workload on any link must be determined from estimated node-to-node demands during planning.
+Hence the maximal workload on any link must be determined from estimated node-to-node network traffic demands during planning.
 This involves computing the optimal routing of these demands around the ring.
-As it turns out, determining such a routing is NP-complete.
+As it turns out, determining such a routing is quite difficult.
 
-In their paper "The Ring Loading Problem" from 1999, the authors Schrijver, Seymour and Winkler \cite{schrijver99} derived an approximation algorithm for the ring loading problem.
+In their paper "The Ring Loading Problem" from 1999, the Schrijver, Seymour and Winkler~\cite{schrijver99} derived an approximation algorithm for the ring loading problem.
 Parts of this paper are presented and discussed here.
 
 We begin by formalizing the problem.
-The SONET ring is modeled through an undirected cycle graph consisting of $n \in \N$ nodes $V \coloneqq [n]$ and $n$ edges $E \coloneqq \{\{i, i+1\}\ |\ i \in [n-1]\} \cup \{\{n, 1\}\}$.
-For every two nodes $i \neq j$ we are given a non-negative demand $d_{i, j}$.
+The SONET ring is modeled by an undirected cycle graph consisting of $n \in \N$ nodes.
+We number the nodes consecutively in the counter-clockwise direction with the numbers $1, 2, \dots, n$.
+For the ease of notation, it makes sense to interpret the node numbers as representatives of the equivalence classes of $\Z/n\Z$.
+This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$.
+Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the traffic that has to be routed through from node $i$ to node $j$.
 In practice, the demands from $i$ to $j$ and $j$ to $i$ can differ.
-As XYZ have shown, we can without loss of generality combine these two demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
+However, XYZ have shown that we can without loss of generality combine these two demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
+Thus, we focus on the case where for every two nodes $i < j$, we have one demand $d_{i,j}$.
 
-A routing can then be defined as a function $\phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow \{0, 1\}$.
-For every edge (within the ring loading problem, edges are also referred to as links)  
+A demand $d_{i, j}$ can be routed two ways around the ring.
+We say that a demand is routed \emph{forward} or \emph{through the front}, if it does not use the edge $\{n, 1\}$.
+Otherwise, we say that the demand is routed \emph{backwards} or \emph{through the back}.
 
-Within the terminology of ring loading, the edges are also referred to as links.
+Next, we can formally define routings in a ring of size $n$.
+\begin{definition}[Routing]
+	\label{def:routing}
+	A \emph{real routing} is a function 
+	\begin{equation}
+		\Phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow [0, 1] \ .
+	\end{equation}
+	A \emph{binary routing}, or simply \emph{routing}, is a real routing $\Phi$ only takes values in $\{0, 1\}$. 
+\end{definition}
+We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ that is routed through the front.
+
+\begin{definition}[Edge load, Ringload]
+	\label{def:edge-load}
+	Let $\Phi$ be a (real) routing.
+	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{load} $L_k$ as the total traffic that is routed through that edge:
+	\begin{equation}
+		\label{eq:edge-load}
+		L_k(\Phi) \coloneqq \sum_{\substack{i < j\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{i < j\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
+	\end{equation}
+	The \emph{ringload} $L(\Phi)$ is the maximal load under the routing $\Phi$.
+\end{definition}
+In \cref{def:edge-load}, we have $k \in [i, j)$ if and only if the edge $\{k, k+1\}$ lies on the front route of the demand $d_{i, j}$.
+
+
+With these preparations, we can now formulate the ring loading problem in mathematical terms:
+\begin{center}
+	\begin{mdframed}
+		\centering
+		\textsc{Ring Loading} (\textsc{RL})\\[0.7em]
+		\begin{tabular}{rl}
+			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
+			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L = \max_{i \in [n]} L_i(\Phi)$.
+		\end{tabular}
+	\end{mdframed}
+\end{center}
+If we omit any zero demands, we can encode an instance of \RL in (approximately) $\cO(k)$ space, where $k \in N$ is the number of non-zero demands.
+
+\RL can be formulated 
+As mentioned above, \RL is an NP-complete problem.
+\begin{theorem}
+	\RL is NP-complete.
+\end{theorem}
+\begin{proof}
+	A routing provides a 
+\end{proof}
+
 
 
 Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
