@@ -3,15 +3,15 @@
 The ring loading problem first arose in the planning of \textbf{S}ynchronous \textbf{O}ptical \textbf{Net}working (SONET) rings.
 In SONET, several add-drop multiplexers (ADMs) and other components are connected by mostly optical fibers.
 One prominent SONET topology is the bidirectional path-switched ring, which is safe to the failure of a single link or node due to its connectivity.
-In a SONET ring, the routing of node-to-node network traffic is fixed: The traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
+In a SONET ring, the routing of node-to-node network traffic is fixed: Unless a failure occurs, the traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
 The ring loading problem arises in the planning of SONET rings.
 ADMs have a limited capacity of traffic they can send or receive through any link.
 Hence the maximal workload on any link must be determined from estimated node-to-node network traffic demands during planning.
 This involves computing the optimal routing of these demands around the ring.
 As it turns out, determining such a routing is quite difficult.
 
-In their paper "The Ring Loading Problem" from 1999, the Schrijver, Seymour and Winkler~\cite{schrijver99} derived an approximation algorithm for the ring loading problem.
-Parts of this paper are presented and discussed here.
+In the paper "The Ring Loading Problem" from 1999, the authors Schrijver, Seymour and Winkler~\cite{schrijver99} derived an approximation algorithm for the ring loading problem.
+In this work parts of this paper are presented.
 
 We begin by formalizing the problem.
 The SONET ring is modeled by an undirected cycle graph consisting of $n \in \N$ nodes.
@@ -20,7 +20,7 @@ For the ease of notation, it makes sense to interpret the node numbers as repres
 This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$.
 Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the traffic that has to be routed through from node $i$ to node $j$.
 In practice, the demands from $i$ to $j$ and $j$ to $i$ can differ.
-However, XYZ have shown that we can without loss of generality combine these two demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
+However, XYZ have shown that we can without loss of generality combine these two opposing demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
 Thus, we focus on the case where for every two nodes $i < j$, we have one demand $d_{i,j}$.
 
 A demand $d_{i, j}$ can be routed two ways around the ring.
@@ -34,7 +34,7 @@ Next, we can formally define routings in a ring of size $n$.
 	\begin{equation}
 		\Phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow [0, 1] \ .
 	\end{equation}
-	A \emph{binary routing}, or simply \emph{routing}, is a real routing $\Phi$ only takes values in $\{0, 1\}$. 
+	A \emph{binary routing}, or simply \emph{routing}, is a real routing $\Phi$ which only takes values in $\{0, 1\}$. 
 \end{definition}
 We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ that is routed through the front.
 
@@ -44,7 +44,7 @@ We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ tha
 	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{load} $L_k$ as the total traffic that is routed through that edge:
 	\begin{equation}
 		\label{eq:edge-load}
-		L_k(\Phi) \coloneqq \sum_{\substack{i < j\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{i < j\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
+		L_k(\Phi) \coloneqq \sum_{\substack{1 \leq i < j \leq n,\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{1 \leq i < j \leq n,\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
 	\end{equation}
 	The \emph{ringload} $L(\Phi)$ is the maximal load under the routing $\Phi$.
 \end{definition}
@@ -55,24 +55,83 @@ With these preparations, we can now formulate the ring loading problem in mathem
 \begin{center}
 	\begin{mdframed}
 		\centering
-		\textsc{Ring Loading} (\textsc{RL})\\[0.7em]
+		\textsc{RingLoading} (\textsc{RL})\\[0.7em]
 		\begin{tabular}{rl}
 			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
 			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L = \max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
 \end{center}
-If we omit any zero demands, we can encode an instance of \RL in (approximately) $\cO(k)$ space, where $k \in N$ is the number of non-zero demands.
+We can encode an instance of \RL in $\cO(k \log D + \log n)$ space, where $k \in \N$ is the number of non-zero demands and $D = \max_{1 \leq i < j \leq n}d_{i, j}$.
+In general, we have $k \in \cO(n^2)$.
 
-\RL can be formulated 
-As mentioned above, \RL is an NP-complete problem.
+As mentioned above, determining the optimal ringload of any \RL instance is quite difficult.
+If we formulate \RL as a decision problem, by asking
+\begin{quote}
+	"Given an instance of \RL and $T \in \N$, does there exist a binary routing $\Phi$ with ringload $L(\Phi) \leq T$?",
+\end{quote}
+the problem is NP-complete.
 \begin{theorem}
-	\RL is NP-complete.
+	\RL in its decision form is NP-complete.
 \end{theorem}
+
+We will sketch the main ideas of the proof.
 \begin{proof}
-	A routing provides a 
+	A routing $\Phi$ restricted to the non-zero demands serves a witness of size $\cO(k)$.
+	Using \cref{eq:edge-load} we can determine the maximal edge load $L$ in polynomial time and check if $L \leq T$.
+	Thus, \RL is in NP.
+	
+	To show NP-completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
+	This problem asks whether, given $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ such that 
+	\begin{equation}
+		\sum_{i \in S} z_i = \frac{1}{2}  \sum_{i \in [m]} z_i = \sum_{j \in [m] \setminus S} z_j\ .
+	\end{equation}
+	We construct a \RL instance $J'$ of size $m + 3$ with the following demands:
+	\begin{align}
+			d_{i, m+2} &= z_i \quad \forall i \in [m], \\
+			d_{m, m+1} &= d_{m+1, m+2} = \frac{1}{2}  \sum_{i \in [m]} z_i \ . 
+	\end{align}
+	All other demands are set to $0$.
+	The constructed instance is visualized in \cref{fig:partition-rl-instance}.
+	Furthermore we set, $T = \sum_{i \in [m]} z_i$.
+	
+	Now, let $J$ be a Yes-instance of \textsc{Partition}.
+	Then there exists a solution $A \subseteq [m]$.
+	Consider the binary routing
+	\begin{align}
+		\Phi(i, m+2) &= 1 \quad \forall i \in A \\
+		\Phi(i, m+2) &= 0 \quad \forall i \in [m] \setminus A \\
+		\Phi(m+1, m+2) & = \Phi(m+2, m+3) = 1 \ .
+	\end{align}
+	We observe that $L_i \leq T$ for all $i \in [m]$ and that $L_{m+1} = L_{m+2} = T$.
+%	The loads $L_{m+1}, L_{m+2}$ are
+%	\begin{equation}
+%		L_{m+1} = \frac{1}{2} \sum_{i \in S} z_i + \sum_{i \in A} z_i 
+%		= T
+%		= \frac{1}{2} \sum_{i \in S} z_i + \sum_{i \in [m] \setminus A} z_i 
+%		= L_{m+2} \ .
+%	\end{equation}
+	This implies that the constructed instance is a Yes-instance of \RL as $L(\Phi) = T$.
+	
+	Similarly, it can be shown that if $J'$ is a Yes-instance with routing $\Phi$, the set 
+	\begin{equation}
+		A' \coloneqq \{i \ |\ i \in [m] \text{ and } \Phi(i, m+2) = 1\}
+	\end{equation} 
+	is a solution to the \textsc{Partition} instance $J$.
+	
+	This shows NP-completeness.
+%	In fact, the routing $\Phi$ is the only routing with ringload $\leq T$ in $J'$.
+%	To see this, let $\Phi'$ be another routing and assume that any of the demands $d_{m+1, m+2}, d_{m+2, m+3}$ is routed backwards, w.l.o.g. $d_{m+1, m+2}$.
+%	Then we have
+%	\begin{equation}
+%		L_{m+2}(\Phi) \geq d_{m+2, m+3} + d_{m+1, m+2}  
+%		= \frac{1}{2} \sum_{i \in S} z_i + \frac{1}{2} \sum_{i \in S} z_i 
+%		= T \ .
+%	\end{equation}
+%	Now, no other demand can be routed through the edge $\{m+2, m+3\}$
 \end{proof}
 
+\input{figures/partition_rl_instance}
 
 
 Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
@@ -83,7 +142,7 @@ It is therefore still sensible to review and understand the algorithm presented 
 
 The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
 
-In this work, I show that the ideas presented by \citet{schrijver99} can be extended to obtain an algorithm that runs in $\cO(n^2)$.
+In this work, I show that the ideas presented by \citet{schrijver99} can be extended to an algorithm that has a time-complexity in $\cO(n^2)$.
 This is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
 The modified algorithm strongly relies on the principles of dynamic programming and uses a different, more efficient way of routing demands.
 
