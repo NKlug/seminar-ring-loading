@@ -1,13 +1,13 @@
 \section{Introduction}
 
 The ring loading problem first arose in the planning of \textbf{S}ynchronous \textbf{O}ptical \textbf{Net}working (SONET) rings.
-In SONET, several add-drop multiplexers (ADMs) and other components are connected by mostly optical fibers.
+In SONET, several add-drop multiplexers (ADMs) and other components are connected by predominantly optical fibers.
 One prominent SONET topology is the bidirectional path-switched ring, which is safe to the failure of a single link or node due to its connectivity.
 In a SONET ring, the routing of node-to-node network traffic is fixed: Unless a failure occurs, the traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
 The ring loading problem arises in the planning of SONET rings.
 ADMs have a limited capacity of traffic they can send or receive through any link.
 Hence the maximal workload on any link must be determined from estimated node-to-node network traffic demands during planning.
-This involves computing the optimal routing of these demands around the ring.
+This involves computing the optimal routing of these demands around the ring, that is, the routing that minimizes the maximal load on any link
 As it turns out, determining such a routing is quite difficult.
 
 In the paper "The Ring Loading Problem" from 1999, the authors Schrijver, Seymour and Winkler~\cite{schrijver99} derived an approximation algorithm for the ring loading problem.
@@ -41,7 +41,7 @@ We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ tha
 \begin{definition}[Edge load, Ringload]
 	\label{def:edge-load}
 	Let $\Phi$ be a (real) routing.
-	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{load} $L_k$ as the total traffic that is routed through that edge:
+	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{edge load} $L_k$ as the total traffic that is routed through that edge:
 	\begin{equation}
 		\label{eq:edge-load}
 		L_k(\Phi) \coloneqq \sum_{\substack{1 \leq i < j \leq n,\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{1 \leq i < j \leq n,\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
@@ -57,12 +57,12 @@ With these preparations, we can now formulate the ring loading problem in mathem
 		\centering
 		\textsc{RingLoading} (\textsc{RL})\\[0.7em]
 		\begin{tabular}{rl}
-			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
+			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j} \in \R_{\geq 0}$ for all $1 \leq i<j\leq n$.\\
 			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L = \max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
 \end{center}
-We can encode an instance of \RL in $\cO(k \log D + \log n)$ space, where $k \in \N$ is the number of non-zero demands and $D = \max_{1 \leq i < j \leq n}d_{i, j}$.
+We can encode an instance of \RL in $\cO(k \log D + \log n)$ space, where $k \in \N$ is the number of non-zero demands and $D = \max_{1 \leq i < j \leq n}d_{i, j}$ the maximal demand.
 In general, we have $k \in \cO(n^2)$.
 
 As mentioned above, determining the optimal ringload of any \RL instance is quite difficult.
@@ -81,7 +81,7 @@ We will sketch the main ideas of the proof.
 	Using \cref{eq:edge-load} we can determine the maximal edge load $L$ in polynomial time and check if $L \leq T$.
 	Thus, \RL is in NP.
 	
-	To show NP-completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
+	To show completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
 	This problem asks whether, given $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ such that 
 	\begin{equation}
 		\sum_{i \in S} z_i = \frac{1}{2}  \sum_{i \in [m]} z_i = \sum_{j \in [m] \setminus S} z_j\ .
@@ -103,7 +103,7 @@ We will sketch the main ideas of the proof.
 		\Phi(i, m+2) &= 0 \quad \forall i \in [m] \setminus A \\
 		\Phi(m+1, m+2) & = \Phi(m+2, m+3) = 1 \ .
 	\end{align}
-	We observe that $L_i \leq T$ for all $i \in [m]$ and that $L_{m+1} = L_{m+2} = T$.
+	We observe that $L_i \leq T$ for all $i \in [m] \cup \{m+3\}$ and that $L_{m+1} = L_{m+2} = T$.
 %	The loads $L_{m+1}, L_{m+2}$ are
 %	\begin{equation}
 %		L_{m+1} = \frac{1}{2} \sum_{i \in S} z_i + \sum_{i \in A} z_i 
@@ -111,7 +111,7 @@ We will sketch the main ideas of the proof.
 %		= \frac{1}{2} \sum_{i \in S} z_i + \sum_{i \in [m] \setminus A} z_i 
 %		= L_{m+2} \ .
 %	\end{equation}
-	This implies that the constructed instance is a Yes-instance of \RL as $L(\Phi) = T$.
+	This implies that the constructed instance is a Yes-instance of \RL, as $L(\Phi) = T$.
 	
 	Similarly, it can be shown that if $J'$ is a Yes-instance with routing $\Phi$, the set 
 	\begin{equation}
@@ -119,7 +119,7 @@ We will sketch the main ideas of the proof.
 	\end{equation} 
 	is a solution to the \textsc{Partition} instance $J$.
 	
-	This shows NP-completeness.
+	This shows NP-completeness and concludes the proof.
 %	In fact, the routing $\Phi$ is the only routing with ringload $\leq T$ in $J'$.
 %	To see this, let $\Phi'$ be another routing and assume that any of the demands $d_{m+1, m+2}, d_{m+2, m+3}$ is routed backwards, w.l.o.g. $d_{m+1, m+2}$.
 %	Then we have
@@ -133,21 +133,20 @@ We will sketch the main ideas of the proof.
 
 \input{figures/partition_rl_instance}
 
+The fact hat \RL is NP-complete motivates the search for an approximation algorithm.
+One such algorithm was presented by \citet{schrijver99}.
+This algorithm achieves a ringload of $L \leq L^{\mathrm{opt}} + \frac{3}{2}D$, where $L^{opt}$ is the optimal ringload and $D$ the maximal demand.
+The basic idea behind the algorithm is to first determine a special kind of optimal real routing which all but at most $\lfloor \frac{n}{2} \rfloor$ demands sent both ways around the ring.
+This routing is then transformed into an approximation of an optimal binary routing.
 
-Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
+In this work, the algorithm is presented and its correctness proven.
+This involves two steps: First, deriving an algorithm for computing an optimal real routing and second, transforming it into a binary routing.
 
-\citet{schrijver99} achieve an additive bound of $L^\mathrm{opt} + \frac{3}{2}D$.
-This bound has since been improved to $1.3$ but the improvement based on the same algorithm.
-It is therefore still sensible to review and understand the algorithm presented by \citet{schrijver99} in the late 1990s.
+\citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
+In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
+This runtime is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
 
-The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
-
-In this work, I show that the ideas presented by \citet{schrijver99} can be extended to an algorithm that has a time-complexity in $\cO(n^2)$.
-This is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
-The modified algorithm strongly relies on the principles of dynamic programming and uses a different, more efficient way of routing demands.
-
-
-This seems to be a novel result which is interesting for several reasons:
+The improved time-complexity is interesting for several reasons:
 \begin{itemize}
 	\item The best currently known runtime for computing an $L^\mathrm{opt} + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
 	The proposed algorithm improves this runtime by a factor of $k$.
@@ -157,3 +156,17 @@ This seems to be a novel result which is interesting for several reasons:
 	\item The proposed algorithm computes the same solution to \RL and \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
 	This means that the runtimes of all algorithms that use Schrijver et al.'s algorithm as a subroutine are improved as well, in particular that of the $(1 + \epsilon)$ algorithm by \citet{khanna97}.
 \end{itemize}
+
+We begin by deriving an algorithm to obtain a real routing.
+
+%Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
+%
+%\citet{schrijver99} achieve an additive bound of $L^\mathrm{opt} + \frac{3}{2}D$.
+%This bound has since been improved to $1.3$ but the improvement based on the same algorithm.
+%It is therefore still sensible to review and understand the algorithm presented by \citet{schrijver99} in the late 1990s.
+%
+%The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
+%
+%In this work, I show that the ideas presented by \citet{schrijver99} can be extended to an algorithm that has a time-complexity in $\cO(n^2)$.
+%This is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
+%The modified algorithm strongly relies on the principles of dynamic programming and uses a different, more efficient way of routing demands.
