@@ -1,82 +1,91 @@
 \section{An Algorithm for Relaxed Ring Loading}
 \label{sec:relaxed-ring-loading}
 
-We begin by deriving an algorithm to obtain a real routing.
-The problem of obtaining a real routing can be formulated as follows.
-\begin{center}
-	\begin{mdframed}
-		\centering
-		\textsc{Relaxed Ring Loading} (\textsc{RRL})\\[0.7em]
-		\begin{tabular}{rl}
-			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
-			{\bfseries Output}: & Real routing $\Phi$ that minimizes $\max_{i \in [n]} L_i(\Phi)$.
-		\end{tabular}
-	\end{mdframed}
-\end{center}
-
+We begin by deriving an algorithm for \RRL.
+We aim to find a special kind of solution:
 
 \begin{definition}
-	An optimal solution $\phi^\ast$ to \RRL is said to be \emph{minimal} if for every other optimal there exists at least one $1 \leq i \leq n$ for which $L_i' > L_i^\ast$.
+	Let $\Phi^\ast$ be an optimal solution to an instance of \RRL.
+	We say that $\Phi^\ast$ is \emph{minimal} if there exists no other optimal routing $\Phi'$ such that $L_i(\Phi') \leq L_i(\Phi^\ast)$ for all $1 \leq i \leq n$ and $L_j(\Phi') < L_j(\Phi^\ast)$ for at least one $j$.
 \end{definition}
-This definition is equivalent for a minimal solution $\phi^\ast$ there exists no other optimal solution with $L_i' \leq L_i^\ast$ for all $1 \leq i \leq n$ and $L_j' < L_j^\ast$ for at least one $j$.
-
-If a routing $\phi^\ast$ routes traffic of the demand $d_{ij}$ through the front and the back route, that is if $\phi^\ast$ $\phi^\ast(i, j) \in (0, 1)$, we say that $\phi^\ast$is \emph{splits} the demand $d_{ij}$.
+While this definition might seem arbitrary at first glance, minimal solutions are of a particularly aesthetic form.
 
 \begin{theorem}
-	\label{theo:parallel-demands-non-crossing}
-	Let $\phi^\ast$ be a minimal solution to an instance of \RRL.
-	Then no link in between two parallel demands $d_{ij}$ and $d_{gh}$ carries traffic from both demands.
+	\label{theo:number-of-splits}
+	Let $\Phi^\ast$ be a minimal solution to an instance of \RRL of size $n$.
+	Then $\Phi^\ast$ splits at most $\lfloor \frac{n}{2} \rfloor$ demands.
 \end{theorem}
-\begin{proof}
-	Let $\phi^\ast$ be a minimal solution.
-	Assume that the link $\{k, k+1\}$ lies in between the demands $d_{ij}$ and $d_{gh}$ and that $\phi^\ast$ routes traffic from both demands through $\{k, k+1\}$.
-	Let $\alpha$ and $\beta$ be the amounts of traffic from $d_{ij}$ and $d_{gh}$, respectively, that is routed through $\{k, k+1\}$.
-	Furthermore, assume without loss of generality that $\alpha \leq \beta$.
-	We now construct a new routing $\phi'$ from $\phi^\ast$ by rerouting traffic $\alpha$ of both demands such that it no longer passes through $\{k, k+1\}$.
-	\Todo{Explain the cases how parallel demands can occur, and when \{k, k+1\} must lie on the back and when on the front route}
-	Then $\{k, k+1\}$ no longer carries traffic from $d_{ij}$ and the new load on this link is $L_k' = L_k^\ast - 2 \alpha < L_k^\ast$.
-	
-	\input{figures/parallel_demands}
-	
-	Parallel demands can occur in three types of configurations, which can be seen in \cref{fig:parallel-demands}.
-	We distinguish the three cases:
-	\begin{enumerate}[align=left]
-		\item[\textbf{Cases 1 and 2:} $[i, j) \subset [g, h)$ or $[g, h) \subset [i,j)$]{\mbox{}\\
-			We assume $[i, j) \subset [g, h)$; the other case is reasoned analogously.
-			Then the rerouting of the traffic results $\phi'$ given by
-			\begin{align}
-				\phi'(i, j) = 1 \ ,\quad
-				\phi'(g, h) = \frac{\beta - \alpha}{d_{gh}}
-			\end{align}
-			and $\phi'(u, v) = \phi^\ast(u, v)$ for all other demands $d_{uv}$.
-			For all $1 \leq m \leq n$, the new link loads are given by
-			\begin{equation}
-				L_m' = L_m^\ast + \alpha (\dOne_{\{m \in [i, j)\}} - \dOne_{\{m \notin [i, j)\}} + 
-				\dOne_{\{m \notin [g, h)\}} - \dOne_{\{m \in [g, h)\}}) \ ,
-			\end{equation}
-			$\dOne$ being the indicator function.
-			If $m \in [i, j)$, then $m \in [g, h)$ and $L_m' = L_m^\ast$.
-			If $m \notin [i, j)$, then  $L_m' \leq L_m^\ast$.
-		}
-		\item[\textbf{Case 3:} $[i, j) \cap [g, h) = \emptyset$]{\mbox{}\\
-			In this case the routing $\phi'$ is given by
-			\Todo{Explain where this comes from}
-			\begin{align}
-				\phi'(i, j) = 1 \ ,\quad
-				\phi'(g, h) = 1 - \frac{\beta - \alpha}{d_{gh}}
-			\end{align}
-			and $\phi'(u, v) = \phi^\ast(u, v)$ for all other demands $d_{uv}$.
-			The new link loads are given by
-			\begin{equation}
-				L_m' = L_m^\ast + \alpha (\dOne_{\{m \in [i, j)\}} - \dOne_{\{m \notin [i, j)\}} + 
-				\dOne_{\{m \in [g, h)\}} - \dOne_{\{m \notin [g, h)\}}) \ .
-			\end{equation}
-			Similar to the cases 1 and 2, we get $L_m' \leq L_m^\ast$, as we assumed that $[i, j) \cap [g, h) = \emptyset$.
-		}
+
+Before proving the theorem, it is sensible to introduce some additional notation and terminology.
+From now on, for the sake of simpler notation, we consider the \RRL instance size $n \in \N$ as fixed.
+\begin{notation}
+	Let $i, j \in \N$ with $i < j$.
+	We define half-open intervals
+	\begin{enumerate}
+ 		\item $[i, j) \coloneqq \{i, i+1, \ldots, j-1\}$;
+ 		\item $[j, i) \coloneqq \{j, j+1, \ldots, n-1, n, 1, 2, \ldots, i-1\}$.
 	\end{enumerate}
-	In total, the routing $\phi'$ has link loads $L_m' \leq L_m^\ast$ for all $1 \leq m \leq n$ and $L_k' < L_k^\ast$.
-	This contradicts the minimality of $\phi^\ast$.
+	Open and closed intervals are defined similarly.
+\end{notation}
+\begin{definition}
+	Let $i, j, u, v \in [n]$, $i < j, u < v$ and $d_{i,j}, d_{u, v}$ be two demands of a \RRL instance.
+	We say that
+	\begin{enumerate}
+		\item $d_{i, j}$ and $d_{u, v}$ are \emph{crossing} if $i, j, u, v$ are pairwise distinct and $i < u < j < h$ or $u < i < h < j$.
+		\item $d_{i, j}$ and $d_{u, v}$ are \emph{parallel} if they are not crossing.
+		\item If $d_{i, j}$ and $d_{u, v}$ are parallel, the edge $\{k, k+1\}$ is \emph{in between}
+		$d_{i,j}$ and $d_{u, v}$ if it lies on the front route of exactly one of the demands.
+	\end{enumerate}
+\end{definition}
+Crossing and parallel demands are most easily understood visually.
+See \cref{fig:parallel-demands} for some examples.
+
+\input{figures/parallel_demands}
+
+Next, we prove the following lemma.
+
+\begin{lemma}
+	\label{lemma:parallel-demands}
+	Let $\Phi^\ast$ be a minimal routing and $d_{i, j}$ and $d_{u, v}$ be parallel demands.
+	Then no edge in between $d_{i, j}$ and $d_{u, v}$ carries traffic from both demands.
+\end{lemma}
+\begin{proof}
+	Let $\Phi^\ast$ be a minimal solution.
+	We first show that no edge $\{k, k+1\}$ that lies in between two parallel demands $d_{i, j}, d_{u, v}$ can carry traffic from both demands.
+	To see this, assume the contrary and let $\alpha$ and $\beta$ be the amounts of traffic from $d_{i,j}$ and $d_{u, v}$, respectively, that are routed through $\{k, k+1\}$.
+	Furthermore, assume w.l.o.g. that $\alpha \leq \beta$ and that $\{k, k+1\}$ lies on the front route of $d_{i, j}$ (the other cases can be reasoned analogously).
+	
+	We now construct a new routing $\Phi'$ from $\Phi^\ast$ by rerouting traffic $\alpha$ of both demands such that it no longer passes through $\{k, k+1\}$.
+	This results in $d_{i, j}$ being routed all front or all back.
+	The rerouting of $d_{i, j}$ causes the loads on all edges on its front route to decrease by $\alpha$ and those on the back route to increase by $\alpha$.
+	Similarly, the rerouting of $d_{u, v}$ increases the loads on all edges on its back route by $\alpha$ and decreases those on its front route by $\alpha$.
+	
+	Let $\{l, l+1\}$ be any edge.
+	Then we can write the load under the new routing as
+	\begin{equation}
+	L_l(\Phi') = L_l(\Phi^\ast) 
+	+ \alpha (\dOne_{\{l \notin [i, j)\}} - \dOne_{\{l \in [i, j)\}} +  \dOne_{\{l \in [g, h)\}} - \dOne_{\{l \notin [g, h)\}} )
+	\end{equation}
+	Here, $\dOne_{\{\ldots\}}$ is the indicator function that is $1$ if the condition in the index is true and $0$ else.
+	We assumed that $\{k, k+1\}$ lies on the front route of $d_{i, j}$, but also that it lies in between $d_{i, j}$ and $d_{g, h}$.
+	This implies that $[g, h] \subset [i, j]$.
+	Hence $l \notin [i, j)$ and $l \in [g, h)$ cannot both be true at the same time.
+	This shows that $L_l(\Phi') \leq L_l(\Phi^\ast)$.
+	Furthermore, $k \in [i, j)$ and $k \notin [g, h)$ by definition of $k$.
+	Thus we have $L_k(\Phi') < L_k(\Phi^\ast)$.
+	In total, the existence of the routing $\Phi'$ contradicts the minimality of $\Phi^\ast$.
 \end{proof}
+
+With these preparations, we can now conduct the proof of \cref{theo:number-of-splits}.
+\begin{proof}[Proof of \cref{theo:number-of-splits}]
+	Let $\Phi^\ast$ be a minimal routing and let $B$ be the set of demands that are split by $\Phi^\ast$.
+	Therefore, we have shown that in a minimal routing and any two
+\end{proof}
+
+Remember that in general, we have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ demands.
+This means \cref{theo:number-of-splits} implies that in any minimal routing, most demands are either routed entirely through the front or through the back.
+As we will see in \cref{sec:ring-loading}, starting from such a routing, it is easy to obtain an approximation to the optimal binary solution.
+
 
 We can imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
 
