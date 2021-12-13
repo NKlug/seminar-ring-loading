@@ -134,30 +134,40 @@ We will sketch the main ideas of the proof.
 \input{figures/partition_rl_instance}
 
 The fact hat \RL is NP-complete motivates the search for an approximation algorithm.
-One such algorithm was presented by \citet{schrijver99}.
-This algorithm achieves a ringload of $L \leq L^{\mathrm{opt}} + \frac{3}{2}D$, where $L^{opt}$ is the optimal ringload and $D$ the maximal demand.
-The basic idea behind the algorithm is to first determine a special kind of optimal real routing which all but at most $\lfloor \frac{n}{2} \rfloor$ demands sent both ways around the ring.
-This routing is then transformed into an approximation of an optimal binary routing.
+One such algorithm was invented by \citet{schrijver99}.
+This algorithm achieves a ringload of $L \leq \Lopt + \frac{3}{2}D$, where $\Lopt$ is the optimal ringload and $D$ the maximal demand.
+The basic idea is to first solve the following problem.
+\begin{center}
+	\begin{mdframed}
+		\centering
+		\textsc{Relaxed Ring Loading} (\textsc{RRL})\\[0.7em]
+		\begin{tabular}{rl}
+			{\bfseries Input}: & Ring size $n \in \N$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
+			{\bfseries Output}: & Real routing $\Phi$ that minimizes $\max_{i \in [n]} L_i(\Phi)$.
+		\end{tabular}
+	\end{mdframed}
+\end{center}
+As we will see, this problem always has solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
+From such a routing an approximation of an optimal binary routing can be easily obtained.
 
-In this work, the algorithm is presented and its correctness proven.
+In this work, Schrijver et al.'s algorithm is presented and its correctness proven.
 This involves two steps: First, deriving an algorithm for computing an optimal real routing and second, transforming it into a binary routing.
 
 \citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
 In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
-This runtime is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
+This runtime is almost optimal, since in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
 
 The improved time-complexity is interesting for several reasons:
 \begin{itemize}
-	\item The best currently known runtime for computing an $L^\mathrm{opt} + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
-	The proposed algorithm improves this runtime by a factor of $k$.
-	\item The best currently known algorithm for solving \RRL with integer demands is $O(k + t_k)$ for integer demands, where $t_k$ is the time for sorting $k$ integers.
+	\item The best currently known runtime for computing an $\Lopt + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
+	The proposed modifications improve this runtime by a factor of $k$.
+	\item The best currently known algorithm for solving \RRL is $O(k + t_k)$ for integer demands, where $t_k$ is the time for sorting $k$ integers.
 	For real demands, the best known runtime is $O(\min\{kn, n^2\})$.
 	The proposed algorithm also works for real demands and almost matches the runtime of the latter algorithm.
 	\item The proposed algorithm computes the same solution to \RL and \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
-	This means that the runtimes of all algorithms that use Schrijver et al.'s algorithm as a subroutine are improved as well, in particular that of the $(1 + \epsilon)$ algorithm by \citet{khanna97}.
+	This means that the runtimes of all algorithms that use Schrijver et al.'s algorithm as a subroutine are improved as well, in particular that of the PTAS algorithm by \citet{khanna97}.
 \end{itemize}
 
-We begin by deriving an algorithm to obtain a real routing.
 
 %Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
 %
