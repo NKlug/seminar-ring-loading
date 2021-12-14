@@ -2,6 +2,9 @@
 \label{sec:relaxed-ring-loading}
 
 We begin by deriving an algorithm for \RRL.
+
+\subsection{Minimal Solutions}
+
 We aim to find a special kind of solution:
 
 \begin{definition}
@@ -16,11 +19,15 @@ While this definition might seem arbitrary at first glance, minimal solutions ar
 	Then $\Phi^\ast$ splits at most $\lfloor \frac{n}{2} \rfloor$ demands.
 \end{theorem}
 
+This result is quite remarkable, as we can have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ non-zero demands.
+This means that a minimal solution to \RRL is already almost binary.
+We will later use this fact to obtain a true binary routing which approximates the optimal routing in the corresponding \RL instance.
+
 Before proving the theorem, it is sensible to introduce some additional notation and terminology.
 From now on, for the sake of simpler notation, we consider the \RRL instance size $n \in \N$ as fixed.
 \begin{notation}
 	Let $i, j \in \N$ with $i < j$.
-	We define half-open intervals
+	We define the half-open intervals
 	\begin{enumerate}
  		\item $[i, j) \coloneqq \{i, i+1, \ldots, j-1\}$;
  		\item $[j, i) \coloneqq \{j, j+1, \ldots, n-1, n, 1, 2, \ldots, i-1\}$.
@@ -50,9 +57,8 @@ Next, we prove the following lemma.
 	Then no edge in between $d_{i, j}$ and $d_{u, v}$ carries traffic from both demands.
 \end{lemma}
 \begin{proof}
-	Let $\Phi^\ast$ be a minimal solution.
-	We first show that no edge $\{k, k+1\}$ that lies in between two parallel demands $d_{i, j}, d_{u, v}$ can carry traffic from both demands.
-	To see this, assume the contrary and let $\alpha$ and $\beta$ be the amounts of traffic from $d_{i,j}$ and $d_{u, v}$, respectively, that are routed through $\{k, k+1\}$.
+	Let $\Phi^\ast$ be a minimal solution and assume that the edge $\{k, k+1\}$ lies in between two parallel demands $d_{i, j}, d_{u, v}$ and carries traffic from both demands.
+	Let $\alpha$ and $\beta$ be the amounts of traffic from $d_{i,j}$ and $d_{u, v}$, respectively, that are routed through $\{k, k+1\}$.
 	Furthermore, assume w.l.o.g. that $\alpha \leq \beta$ and that $\{k, k+1\}$ lies on the front route of $d_{i, j}$ (the other cases can be reasoned analogously).
 	
 	We now construct a new routing $\Phi'$ from $\Phi^\ast$ by rerouting traffic $\alpha$ of both demands such that it no longer passes through $\{k, k+1\}$.
@@ -73,21 +79,48 @@ Next, we prove the following lemma.
 	This shows that $L_l(\Phi') \leq L_l(\Phi^\ast)$.
 	Furthermore, $k \in [i, j)$ and $k \notin [g, h)$ by definition of $k$.
 	Thus we have $L_k(\Phi') < L_k(\Phi^\ast)$.
-	In total, the existence of the routing $\Phi'$ contradicts the minimality of $\Phi^\ast$.
+	Altogether, the existence of the routing $\Phi'$ contradicts the minimality of $\Phi^\ast$.
 \end{proof}
 
 With these preparations, we can now conduct the proof of \cref{theo:number-of-splits}.
 \begin{proof}[Proof of \cref{theo:number-of-splits}]
-	Let $\Phi^\ast$ be a minimal routing and let $B$ be the set of demands that are split by $\Phi^\ast$.
-	Therefore, we have shown that in a minimal routing and any two
+	Let $\Phi^\ast$ be a minimal routing and let $S \coloneqq \{(i, j)\ |\ 0 < \Phi^\ast(i, j) < 1\}$ be the set of indices of demands that are split by $\Phi^\ast$.
+	Furthermore, let $(i, j), (u, v) \in S$.
+	
+	If the demands $d_{i,j}$ and $d_{u, v}$ were parallel, there would be a link $\{k, k+1\}$ that carries traffic from both demands, as they are both split.
+	However, it follows from the minimality of $\Phi^\ast$ and \cref{lemma:parallel-demands} that this cannot be the case, which implies that $d_{i,j}$ and $d_{u, v}$ are crossing.
+	This requires, by definition, that $i, j, u, v$ are mutually distinct.
+	
+	This implies that every element of $[n]$ can occur in at most one tuple in $S$.
+	As the tuples in $S$ each consist of two elements, there can be at most $\lfloor\frac{n}{2}\rfloor$ such tuples.
 \end{proof}
 
-Remember that in general, we have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ demands.
-This means \cref{theo:number-of-splits} implies that in any minimal routing, most demands are either routed entirely through the front or through the back.
-As we will see in \cref{sec:ring-loading}, starting from such a routing, it is easy to obtain an approximation to the optimal binary solution.
+The existence of minimal solutions is not clear, a priori.
+In the following, we will show that minimal solutions always exist by providing an algorithm.
 
+\subsection{Constructing a Minimal Solution}
 
-We can imagine a cut $\{i, j\}$ as a chord connecting the link $\{i, i+1\}$ with the link $\{j, j+1\}$ and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
+In order to construct a minimal solution, we first consider a generalization of \RRL by appending edge capacities $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
+The resulting problem, \textsc{RelaxedRingLoadingWithCapacities (RRLWC)}, is to determine a real-valued routing $\Phi^\ast$ such that $L_k(\Phi^\ast) \leq C_k$ for all $k \in [n]$.
+This problem does not always have feasible solutions.
+In the following, we show a necessary and sufficient condition for the existence of feasible solutions.
+
+\begin{definition}
+	A \emph{cut} is a set of two distinct edges.
+	For $g, h \in [n], g \neq h$, we denote the cut by $\{g, h\}$ instead of $\{\{g, g+1\}, \{h, h+1\}\}$.
+\end{definition}
+
+We can imagine a cut $\{g, h\}$ as a chord connecting the edges $\{g, g+1\}$ with the link $\{h, h+1\}$.
+A cut therefore "splits" the ring into two parts.
+
+\begin{definition}
+	Let $d_{i, j}$ be a demand.
+	We say that $d_{i, j}$ \emph{crosses} the cut $\{g, h\}$, if the endpoints of $d_{i, j}$ are on both sides of the cut.
+	Formally, this is the case if and only if $\abs{[i, j) \cap (g, h]} = 1$.
+\end{definition}
+
+This visualization 
+A cut therefore splits the ring into two connected components and can therefore also use the same terms to describe their properties as for demands, such as \emph{crossing} and \emph{parallel}.
 
 \begin{definition}
 	The \emph{demand across the cut} $\{g, h\}$ with $g \neq h$ is the sum of demands with endpoints on both sides of the cut:
