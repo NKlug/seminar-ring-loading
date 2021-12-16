@@ -1,7 +1,7 @@
 \section{An Algorithm for Relaxed Ring Loading}
 \label{sec:relaxed-ring-loading}
 
-We begin by deriving an algorithm for \RRL.
+We begin by deriving an exact, polynomial-time algorithm for \RRL.
 
 \subsection{Minimal Solutions}
 
@@ -98,10 +98,11 @@ With these preparations, we can now conduct the proof of \cref{theo:number-of-sp
 The existence of minimal solutions is not clear, a priori.
 In the following, we will show that minimal solutions always exist by providing an algorithm.
 
-\subsection{Constructing a Minimal Solution}
+\subsection{\RRL with Capacities}
 
-In order to construct a minimal solution, we first consider a generalization of \RRL by appending edge capacities $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
+In order to construct a minimal solution, we first consider a generalization of \RRL by appending an edge capacity $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
 The resulting problem, \textsc{RelaxedRingLoadingWithCapacities} (\RRLWC), is to determine a real-valued routing $\Phi^\ast$ such that $L_k(\Phi^\ast) \leq C_k$ for all $k \in [n]$.
+We denote instance of this problem with $(I, C)$, where $I$ is an \RRL instance and $C = (C_k)_{k \in [n]}$ the capacities.
 This problem does not always have feasible solutions.
 In the following, we show a necessary and sufficient condition for the existence of feasible solutions.
 
@@ -135,6 +136,7 @@ A cut therefore "splits" the ring into two parts.
 	A \RRLWC instance $I$ \emph{satisfies the cut condition} if each cut does.
 	$C_g + C_h - D_{g,h}$ is called the \emph{slack} of the cut $\{g, h\}$.
 \end{definition}
+
 The cut condition is quite similar to the message of the max-flow-min-cut theorem from the theory of network flows:
 The maximum flow passing through any (source-target) cut must never be greater than the cut's capacity.
 In the framework of \RRLWC, we get a similar result:
@@ -225,28 +227,110 @@ The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple di
 	This contradicts the minimality of $I$ which shows that no such instance can exist.
 \end{proof}
 
-As we have seen, \RRL can be formulated as a linear program and thus be solved as such.
-This can be done e.g. using XXYYs algorithm, which requires $\cO(??)$ time in our application.
-There is, however, another method which is significantly faster.
-The method is described in \cref{algo:rrl}
+With the help of \cref{theo:cut-condition} it is easy to determine the optimal ringload for an instance of \RRL.
+\begin{corollary}
+	Let $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
+	Then the optimal ringload $L^\ast$ of an instance $I$ of \RRL is $\frac{M}{2}$.
+\end{corollary}
+\begin{proof}
+	It is easy to see that the instance $I$ with capacities $C_k = \frac{M}{2}$, $k \in [n]$ satisfies the cut condition.
+	Hence $L^\ast \leq \frac{M}{2}$.
+	
+	Let $\{g, h\}$ be a cut for which $D_{g, h}$ is maximal.
+	Then in any feasible routing, at least $\frac{M}{2}$ traffic must be routed through either of the links $\{g, g+1\}$, $\{h, h+1\}$, implying that $L^\ast \geq \frac{M}{2}$.
+%	Then $M = D_{g, h}$ traffic must pass through the edges $\{g, g+1\}$ and $\{h, h+1\}$, which means that the for at least one of the edges, the edge load must be $\geq \frac{M}{2}$. 
+\end{proof}
+\subsection{Determining a Minimal Solution}
 
+We now have almost all the tools we need to formulate an algorithm.
+Starting with a \RRL instance $I$, the basic idea is the following:
+First, choose capacities such that (1) the cut condition is satisfied and (2) every solution complying with the capacities is minimal.
+Then, route the demands all front or all back until only mutually crossing demands remain (we will see how this can be done in the following).
+Finally, split the remaining demands using the strategy used in the proof of \cref{theo:cut-condition}.
+
+Let $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
+We construct the capacities $C = (C_k)_{k \in [n]}$ in an iterative fashion, starting at $k = 1$:
+\begin{equation}
+	\label{eq:minimal-capacities}
+	C_k \coloneqq \max \left(\max_{1 \leq g < k}(D_{g, k} - C_g), \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})\right)
+\end{equation}
+
+We note that:
+\begin{proposition}
+	The instance $(I, C)$ is feasible.
+\end{proposition}
+This follows immediately from the first argument in the outer maximum in \cref{eq:minimal-capacities}.
+
+\begin{lemma}
+	\label{lemma:capacities-bounded}
+	It holds that $C_k \leq \frac{M}{2}$ for all $k \in [n]$.
+\end{lemma}
+\begin{proof}
+	Let $k \in [n]$.
+	We distinguish the two cases in \cref{eq:minimal-capacities}:
+	\begin{enumerate}[align=left]
+		\item[Case 1: $C_k = \max_{1 \leq h < k}(D_{g, k} - C_g)$]{\mbox{}\\
+			Then there exists some index $g$, $1 \leq g < k$, for which we have
+			\begin{align}
+				C_k &= D_{g, k} - C_g 
+				\stackrel{\mathrm{Def. } C_g}{\leq} D_{g, k} - \left(\max_{g < h \leq n} D_{g,h} - \frac{M}{2}\right)\\
+				&= (D_{g, k} - \max_{g < h \leq n} D_{g, h}) + \frac{M}{2} \ .
+			\end{align}
+			Because of $g < k$ we have $D_{g, k} - \max_{g < h \leq n} D_{g, h} \leq 0$, proving that $C_k \leq \frac{M}{2}$.
+		}
+		\item[Case 2: $C_k = \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})$]{\mbox{}\\
+			Then it immediately follows from the choice of $M$ that $C_k \leq M - \frac{M}{2} = \frac{M}{2}$.
+		}
+	\end{enumerate}
+\end{proof}
+
+
+\begin{theorem}
+	\label{theo:routing-with-capacities-is-minimal}
+	Any routing complying with the capacities defined in \cref{eq:minimal-capacities} is minimal.
+\end{theorem}
+\begin{proof}	
+	Let $\Phi$ a feasible real-valued routing with link loads $L_k$.
+	The optimal ringload is $L^\ast = \frac{M}{2}$
+	
+	Assume that $\Phi$ is not minimal and let $\Phi'$ another routing with link loads $L_k'$ that serves as a witness.
+	That means $L_k' \leq L_k$ for all $k \in [n]$ and $L_l' < L_l$ for at least one $l \in [n]$.
+	We now define new capacities $C_k' \coloneqq L_k'$ for $k \in [n]$.
+	The routing $\Phi'$ obviously complies with these capacities, hence they must be feasible.
+	
+	Now, let $h \in [n]$ be the smallest index for which $C_gh' < C_h$.
+	We now show that there is a cut $\{g, h\}$ which violates the cut condition for the new capacities by distinction of the two terms responsible for the choice of $C_h$ in \cref{eq:minimal-capacities}.
+	\begin{enumerate}[align=left]
+		\item[Case 1: $C_h = \max_{1 \leq g < h}(D_{g,h} - C_g)$]{\mbox{}\\
+			Especially, we then have $C_h'= L_h' < L_h \leq C_h = \max_{1 \leq g < h}(D_{g, h} - C_g)$ and by the choice of $h$ as the smallest index, it follows that $C_k' = C_k$ for all $1 \leq k < h$.
+			This means that there exists an index $g$, $1 \leq g < h$, such that $C_h' < C_h = D_{g, h} - C_g = D_{g, h} - C_g'$, implying that $D_{g, h} > C_g' + C_h'$.
+			Thus, the cut $\{g, h\}$ is violated for the new capacities.
+		}
+		\item[Case 2: $C_h = \max_{h < g \leq n}(D_{h, g} - \frac{M}{2})$]{\mbox{}\\
+			Then $C_h' < C_h = \max_{h < g \leq n}(D_{h,g} - \frac{M}{2})$.
+			This means that there exists an index $g$, $h < g \leq n$, such that $C_h' < D_{h,g} - \frac{M}{2}$.
+			Using \cref{lemma:capacities-bounded} we then get 
+			\begin{equation}
+				C_h' + C_g' \leq C_h' + C_g \leq C_h' + \frac{M}{2} < D_{h, g} \ ,
+			\end{equation}
+			again showing that the cut $\{k, h\}$ is violated for the new capacities.
+		}
+	\end{enumerate}
+	In total this shows that the instance $I$ with capacities $C_i'$ does not satisfy the cut condition.
+	Thus there exists no witness $\phi'$, proving that $\phi$ already was minimal.
+\end{proof}
 
 \input{figures/rll_algorithm}
 
 \input{figures/demand_cuts_algorithm}
 
-\begin{align}
-	M &\coloneqq \max_{1 \leq i < j \leq n} D_{ij}\\
-	\label{eq:minimal-capacities}
-	C_i &\coloneqq \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)
-\end{align}
 
-\begin{lemma}
-	\label{lemma:capacities-bounded}
-	Let $I$ be an instance of \RRL and let the capacities $C_i$ be defined as in \cref{eq:minimal-capacities}.
-	Then $C_i \leq \frac{M}{2}$ for all $1 \leq i \leq n$.
-\end{lemma}
-\begin{proof}
+%\begin{lemma}
+%	\label{lemma:capacities-bounded}
+%	Let $I$ be an instance of \RRL and let the capacities $C_i$ be defined as in \cref{eq:minimal-capacities}.
+%	Then $C_i \leq \frac{M}{2}$ for all $1 \leq i \leq n$.
+%\end{lemma}
+%\begin{proof}
 	We conduct the proof by induction over $i$. 
 	The beginning $i=1$ is covered in Case 2 below. 
 	Thus, Let $2 \leq i \leq n$.
@@ -265,7 +349,7 @@ The method is described in \cref{algo:rrl}
 			Then it immediately follows from the choice of $M$ that $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
 		}
 	\end{enumerate}
-\end{proof}
+%\end{proof}
 
 \begin{lemma}
 	\label{lemma:minimal-solution}
@@ -347,8 +431,6 @@ The following theorem guarantees that the algorithm works correctly.
 	
 	For the correctness we just have to understand that the algorithm does indeed compute a solution $\phi$ which does not violate the capacities $C_i$.
 	\cref{lemma:minimal-solution} then guarantees the minimality of the solution.
-	
-	
 \end{proof}
 
 \begin{lemma}
