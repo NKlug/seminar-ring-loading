@@ -1,0 +1,104 @@
+\section{Runtime Improvements}
+\label{sec:runtime}
+
+In this section I show that with some modifications, Schrijver et al.'s \cite{schrijver99} algorithm for \RRL (and therefore also \RL) can be improved to $\cO(n^2)$.
+
+We do this by examining the steps of \cref{algo:rrl}.
+In Step 1, the demands across all cuts are computed.
+Doing this in the naïve way -- by using the definition in \cref{eq:cut-demand-definition} takes $O(n^2)$ time per cut, which means $O(n^4)$ time in total.
+A more efficient way can be derived from the following lemma.
+\begin{lemma}
+	The following recursion holds true for all $g, h \in [n]$, $g < h$:
+	\begin{equation}
+		\label{eq:recursive-dac}
+		D_{g, h} = \begin{cases}
+			\sum_{k < g+1} d_{k,g+1} + \sum_{k > g+1} d_{g+1, k}, & \text{if } h = g+1 \\
+			D_{g, g+1} + D_{g+1, h} - 2 A_{g+1, h}, & \text{if } h > g+1
+		\end{cases} \ ,
+	\end{equation}
+	where the auxiliary variables $A_{g, h}$ are defined as:
+	\begin{equation}
+		A_{g, h} \coloneqq \begin{cases}
+			d_{g, g+1}, & \text{if } h = g+1\\
+			d_{g, h} + A_{g, h-1}, &\text{if } h > g+1\\
+		\end{cases} \ .
+	\end{equation}
+\end{lemma}
+%We note that \cref{eq:recursive-dac} is in fact a recursion, since in the case of $h > g+1$, only demands across "smaller" cuts are used.
+\begin{proof}
+	Let $\{g, h\}$, $g < h$ be a cut.
+	If $h = g+1$, the demand across $\{g, h\}$ is exactly the sum of all demands with one of their endpoints equal to $g+1$.
+	
+	Now, let $h > g+1$ and let $B$ be the set of all demands with exactly one endpoint in $(g, h]$, meaning that $D_{g, h}$ is the sum over $B$.	
+	In the following, let w.l.o.g $i \in (g, h]$.
+	We rewrite $B$ as: 
+	\begin{align}
+		B &= \{d_{i, j}\ |\ \abs{\{i, j\} \cap (g, h]} = 1\} \\
+ 		&=\{d_{i, j}\ |\ i = g+1 \text{ and } j \notin(g, h]\} \cup \{d_{i, j}\ |\ i \in (g+1, h] \text{ and } j \notin(g, h]\} \\
+		&= (\underbrace{\{d_{i, j}\ |\ \abs{\{i, j\} \cap (g, g+1]} = 1\}}_{\eqqcolon B_1} \setminus \underbrace{\{d_{i, j}\ |\ i = g+1 \text{ and } j \in (g+1, h]\}}_{\eqqcolon A})\\
+		& \cup
+			(\underbrace{\{d_{k, i}\ |\ \abs{\{k, i\} \cap (g+1, h]} = 1 \}}_{\eqqcolon B_2} \setminus \underbrace{\{d_{k, i}\ |\ k = g+1 \in  \text{ and } i \in (g+1, h]\}}_{= A}) \ .
+	\end{align}
+	Now, the sum over $B_1$ and $B_2$ is $D_{g, g+1}$ and $D_{g+1, h}$, respectively.
+	The sum over $A$ is $\sum_{a = g+1}^h d_{g, a}$.
+	Hence $D_{g, h} = D_{g, g+1} + D_{g+1, h} - 2 \sum_{a = g+1}^h d_{g, a}$.
+	One can verify that $A_{g+1, h} = \sum_{a = g+1}^h d_{g, a}$, concluding the proof.
+\end{proof}
+The recursion in \cref{eq:recursive-dac} can be implemented using $\cO(n^2)$ time.
+This is quite remarkable, as it means that in $\cO(n^2)$ time, we can either compute the demand across one cut, or the demands across all cuts.
+
+Using \cref{eq:minimal-capacities}, Step 2 runs in $\cO(n^2)$.
+
+In Step 3, all but at most $\lfloor \frac{n}{2} \rfloor$ demands are routed all front or all back.
+The result of \cref{lemma:tight-cuts-remain-tight} is that we can find a tight cut for each edge in the beginning and reuse those, instead of searching for new tight cuts in each iteration.
+Effectively, this means that in Step 3, all demands that are parallel to one of these initial tight cuts are routed all front or all back -- or at least could be without harm due to \cref{lemma:parallel-to-tight-cut}.
+This observation also alleviates adjusting capacities and recomputing the demands across cuts in each iteration.
+Altogether, we can replace Step 3 with the following subroutine:
+
+\begin{algorithm}[H]
+	\begin{mdframed}[backgroundcolor=green!10,linecolor=white,innerleftmargin=25pt,leftmargin=-25pt,rightmargin=15pt]
+		$t[g] = h$, where $h \in [n]$ such that $\{g, h\}$ is a tight cut, for all $g \in [n]$\;
+		$r[i] = i+1$ for all $i \in [n]$\;
+		\For{$g \in [n]$}{
+			\For{$i \in [n]$}{
+				\While{$r[i] \neq i$ and $d_{i, r[i]}$ is parallel to $\{g, t[g]\}$}{
+					 Route $d_{i, j}$ to miss $\{g, h\}$\;
+					 $r[i] = ((r[i] + 1) \mod n) + 1$\;
+				}	
+			}
+		}
+	\end{mdframed}
+	\caption{A $\cO(n^2)$ subroutine replacing Step 3 of \cref{algo:rrl}.}
+	\label{algo:step3}
+\end{algorithm}
+Here, the idea is that at all times, if $r[i] > j$, the demand $d_{i,j}$ (or $d_{j, i}$) has already been routed.
+It can be shown by contraposition that if a demand $d_{i,j}$ is parallel to any of the initial tight cuts $\{g, h\}$, it is routed before or in the $g$-th iteration of the outer for-loop.
+Also, one can show that all demands that are not parallel to any of the initial tight cuts are mutually crossing.
+Hence the new subroutine computes an output with the same properties as Step~3 in \cref{algo:rrl}.
+We furthermore observe that for each $i \in [n]$, $r[i]$ is increased at most $n$ times, implying the runtime is in $\cO(n^2)$.
+
+In \cref{algo:rrl}, while the edge capacities must not be updated in each iteration of Step~3, they must be known before Step~4.
+The residual capacities are simply the difference between the original capacities and the edge loads.
+Again using a recursion, the edge loads resulting from the binary "pre-routing" obtained in Step~3 can be computed in $\cO(n^2)$ time.
+
+\begin{lemma}
+	\label{lemma:link-loads}
+	For all $k \in [n]$ let $L_k^\mathrm{f}$ and $L_k^\mathrm{b}$ be the total traffic that is routed forward and backward, respectively, through the edge $\{k, k+1\}$ and let $\Phi$ be any routing. 
+	With $L_{-1}^\mathrm{b} \coloneqq L_n^\mathrm{b}$, the following holds true:
+		\begin{align}
+		L_k^\mathrm{f} &\coloneqq \begin{cases}
+			\sum_{j = 2}^n d_{1,j} \cdot \phi(1, j), & \text{if } i = 1 \\
+			L_{i-1}^\mathrm{f} - \sum_{j = 1}^{i-1} d_{j,i} \cdot \phi(j, i) + \sum_{j = i}^{n} d_{i,j} \cdot \phi(i, j) & \text{if } i > 1
+		\end{cases} \ , \\
+		L_k^\mathrm{b} &\coloneqq \begin{cases}
+			\sum_{i = 1}^n \sum_{j = i+1}^n d_{i,j} \cdot (1 - \phi(i, j)) & \text{if } i = n\\
+			L_{i-1}^\mathrm{b} - \sum_{j = i}^{n} d_{i, j} \cdot (1 - \phi(i, j)) + \sum_{j = 1}^{i-1} d_{i,j} \cdot(1 - \phi(i, j)) & \text{if } i < n
+		\end{cases} \ .
+	\end{align}
+\end{lemma}
+
+In Step~5 of \cref{algo:rrl}, the minimal slacks on the front routes of the remaining demands have to be determined.
+Doing this the naïve way takes $\cO(n^2)$ time per demand, so $\cO(n^3)$ time in total (again utilizing \cref{eq:recursive-dac}).
+This, too, can be improved to $\cO(n^2)$.
+The precise way to do this cannot be discussed in this work. 
+The interested reader is referred to the appendix.

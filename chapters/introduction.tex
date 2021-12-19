@@ -75,11 +75,9 @@ the problem is NP-complete.
 \begin{theorem}
 	\RL in its decision form is NP-complete.
 \end{theorem}
-
-We will sketch the main ideas of the proof.
-\begin{proof}
+\begin{proof}[Proof (Sketch)]
 	A routing $\Phi$ restricted to the non-zero demands serves a witness of size $\cO(k)$.
-	Using \cref{eq:edge-load} we can determine the maximal edge load $L$ in polynomial time and check if $L \leq T$.
+	Using \cref{eq:edge-load} we can determine the maximal edge load $L$ in polynomial time and check whether $L \leq T$.
 	Thus, \RL is in NP.
 	
 	To show completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
