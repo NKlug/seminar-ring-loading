@@ -341,6 +341,7 @@ The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a disti
 	This means that $d_{i ,j}$ must be routed parallel to $\{g, h\}$.
 \end{proof}
 \begin{lemma}
+	\label{lemma:edge-in-tight-cut}
 	For each edge $\{g, g+1\}$ there exists an edge $\{h, h+1\}$ such that the cut $\{g, h\}$ is tight.
 \end{lemma}
 \begin{proof}
@@ -351,202 +352,60 @@ The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a disti
 	But in the proof of \cref{theo:routing-with-capacities-is-minimal} we have shown that no such set of capacities can exist.
 \end{proof}
 
-Using the results from \cref{theo:number-of-splits}, \cref{theo:cut-condition} and \cref{lemma:parallel-to-tight-cut},
-we can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
+We can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
 
 \input{figures/rll_algorithm}
 
+The basic idea of the algorithm is the following:
+After computing the demands across the cuts and the capacities, the demands are routed all front or all back until only mutually crossing demands remain.
+In each iteration, an edge $\{g, g+1\}$ in between two parallel demands $d_{i, j}$, $d_{u, v}$ is selected.
+Let $\{g, h\}$ be a tight cut, whose existence is guaranteed by \cref{lemma:edge-in-tight-cut}.
+\cref{lemma:parallel-demands-cross-cut} then implies that at most one of the demands crosses $\{g, h\}$ and \cref{lemma:parallel-to-tight-cut} determines the routing of the non-crossing demand.
+After decreasing the edge capacities accordingly and recomputing the demands across the cuts, we are left with an instance of \RRLWC with one less non-zero demand.
+It remains to see that in \cref{lemma:edge-in-tight-cut} still holds true for the new, smaller instance:
 
+\begin{lemma}
+	\label{lemma:tight-cuts-remain-tight}
+	During the execution of Step 3 of \cref{algo:rrl}, the cut slacks are non-increasing.
+\end{lemma}
+\begin{proof}
+	Let $C_k$, $k \in [n]$ be the capacities before an it an iteration of the while-loop (Step 3) of \cref{algo:rrl} and let $d_{i, j}$ be the demand that is routed during the iteration.
+	Let $\{g, h\}$ be any cut.
+	
+	\begin{enumerate}[align=left]
+		\item[Case 1: $d_{i, j}$ crosses $\{g, h\}$]{\mbox{}\\
+			Then exactly one of the capacities $C_g$, $C_h$ was decreased by $d_{i, j}$.
+			The slack of $\{g, h\}$ does not change:
+			\begin{equation}
+				C_g' + C_h' - D_{g, h}' = (C_g + C_h - d_{i, j}) - (D_{g, h} - d_{i, j}) = C_g + C_h - D_{g, h} \ .
+			\end{equation}
+		}
+		\item[Case 2: $d_{i, j}$ is parallel to $\{g, h\}$]{\mbox{}\\
+			Then the demand across $\{g, h\}$ does not change, but the capacities $C_g$, $C_h$ might have been decreased.
+			Thus, the slack of $\{g, h\}$ does not increase.
+		}
+	\end{enumerate}
+\end{proof}
 
-%\begin{lemma}
-%	\label{lemma:capacities-bounded}
-%	Let $I$ be an instance of \RRL and let the capacities $C_i$ be defined as in \cref{eq:minimal-capacities}.
-%	Then $C_i \leq \frac{M}{2}$ for all $1 \leq i \leq n$.
+This shows that cuts that are tight during any iteration of Step 3 remain tight.
+This is especially the case for all cuts that are tight in the beginning, implying \cref{lemma:edge-in-tight-cut} does indeed hold true in each iteration.
+
+In Step 4 of \cref{algo:rrl}, the remaining cuts are split using the technique from the proof of \cref{theo:cut-condition}.
+
+This shows the correctness of Schrijver et al.'s \cite{schrijver99} algorithm for \RRL.
+It is fairly easy to see that the algorithm's runtime is in $\cO(k n^2)$, as claimed by the authors.
+With some modifications, however, this runtime can be improved to $\cO(n^2)$, as will later be discussed in \cref{sec:runtime}.
+
+%	Once a cut becomes tight in \cref{algo:rrl}, it remains tight.
 %\end{lemma}
 %\begin{proof}
-	We conduct the proof by induction over $i$. 
-	The beginning $i=1$ is covered in Case 2 below. 
-	Thus, Let $2 \leq i \leq n$.
-	We distinguish two cases:
-	\begin{enumerate}[align=left]
-		\item[Case 1: $C_i = \max_{1 \leq j < i}(D_{ji} - C_j)$]{\mbox{}\\
-			Then there exists some $1 \leq j < i$ for which we have
-			\begin{align}
-				C_i &= D_{ji} - C_j \\
-				&\stackrel{\mathrm{IH}}{\leq} D_{ji} - \left(\max_{j < k \leq n} D_{jk} - \frac{M}{2}\right)\\
-				&= (D_{ji} - \max_{j < k \leq n} D_{jk}) + \frac{M}{2} \ .
-			\end{align}
-			Because of $j < i$ we have $D_{ji} - \max_{j < k \leq n} D_{jk} \leq 0$, proving that $C_i \leq \frac{M}{2}$.
-		}
-		\item[Case 2: $C_i = \max_{i < j \leq n}(D_{ij} - \frac{M}{2})$]{\mbox{}\\
-			Then it immediately follows from the choice of $M$ that $C_i \leq M - \frac{M}{2} = \frac{M}{2}$.
-		}
-	\end{enumerate}
+%	There are two points in \cref{algo:rrl} where the slack of a cut can change:
+%	When the capacities are decreased and when the $D_{ij}$ change.
+%	First, note that decreasing the capacities can only decrease slack.
+%	This cannot un-tighten any cut.
+%	Second, when any $D_{ij}$ changes it must be due to a crossing demand $d_{gh}$ being routed either way.
+%	This means that the new demand across the cut is $D_{ij}' = D_{ij} - d_{gh}$.
+%	However, in this case the capacity of either $\{i, i+1\}$ or $\{j, j+1\}$ is also decreased by $d_{gh}$, meaning that
+%	$C_i' + C_j' = C_i + C_j - d_{gh}$.
+%	In total we get $C_i' + C_j' - D_{ij}' = C_i + C_j - D_{ij}$, showing that the slack does not change.
 %\end{proof}
-
-\begin{lemma}
-	\label{lemma:minimal-solution}
-	Let $I$ be an instance of \RRL.
-	Let $M \coloneqq \max_{1 \leq i < j \leq n} D_{ij}$ and let $C_i$ be such as to satisfy $C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ for all $1 \leq i \leq n$.
-	Then any routing $\phi$ for $I$ which does not violate the capacities $C_i$ is minimal with ring load $L = \frac{M}{2}$.
-\end{lemma}
-\begin{proof}
-	Let $\{g, h\}$ be the cut for which the maximum $M$ is attained.
-	Then in any feasible routing, at least $\frac{M}{2}$ traffic must be routed through either of the links $\{g, g+1\}$, $\{h, h+1\}$, implying that $L \geq \frac{M}{2}$.
-	However, the instance $I$ together with the capacities $C_i = \frac{M}{2}$ for all $1 \leq i \leq n$ satisfies the cut constraint.
-	It follows from \cref{theo:cut-condition} that a solution exists, which by construction has a ring load $L \leq \frac{M}{2}$.
-	Together we get $L = \frac{M}{2}$.
-	
-	The capacities $C_i$ are such that $I$ satisfies the cut condition:
-	For $1 \leq i < j \leq n$ we have
-	\begin{equation}
-		C_j = \max \left(\max_{1 \leq k < j}(D_{kj} - C_k), \max_{j < k \leq n}(D_{jk} - \frac{M}{2})\right) \geq D_{ij} - C_i \ ,
-	\end{equation}
-	which implies $D_{ij} \leq C_i + C_j$.
-	Thence by \cref{theo:cut-condition} there exists a solution to $I$ which does not violate the link capacities.
-	Let $\phi$ such a routing with link loads $L_i$.
-	We now show that $\phi$ is minimal by contraposition.
-	
-	Therefore, assume that $\phi$ is not minimal and let $\phi'$ with link loads $L_i'$ be a witness.
-	We define new capacities $C_i' \coloneqq L_i'$ for all $1 \leq i \leq n$.
-	Especially, we have $C_i' \leq C_i$ for all $i$ and $C_k' < C_k$ for at least one $k$.
-	Let $j$ be the smallest index for which $C_j' < C_j$.
-	We now show that there is a cut $\{j, l\}$ which violates the cut condition for the capacities $C_i'$ by distinguishing the two possible cases:
-	\begin{enumerate}[align=left]
-		\item[Case 1: $C_j = \max_{1 \leq k < j}(D_{kj} - C_k)$]{\mbox{}\\
-			The we especially have $C_j' < C_j = \max_{1 \leq k < j}(D_{kj} - C_k)$ and by the choice of $j$ as the smallest index $C_i' = C_i$ for all $1 \leq i < j$.
-			This means that there exists a $1 \leq k \leq j$ such that $C_j' < D_{kj} - C_k = C_j' < D_{kj} - C_k'$, implying that $D_{kj} > C_k' + C_j'$.
-			Thus, the cut $\{k, j\}$ is violated.
-		}
-		\item[Case 2: $C_j = \max_{j < k \leq n}(D_{jk} - \frac{M}{2})$]{\mbox{}\\
-			Then $C_j' < C_j = \max_{j < k \leq n}(D_{jk} - \frac{M}{2})$.
-			This means that there exists a $j < k \leq n$ such that $C_j' < D_{jk} - \frac{M}{2}$.
-			Using \cref{lemma:capacities-bounded} we then get 
-			\begin{equation}
-				C_j' + C_k' \leq C_j' + C_k \leq C_j' + \frac{M}{2} < D_{jk} \ ,
-			\end{equation}
-			again showing that the cut $\{k, j\}$ is violated.
-		}
-	\end{enumerate}
-	In total this shows that the instance $I'$ with capacities $C_i'$ does not satisfy the cut condition.
-	Thus there exists no witness $\phi'$, proving that $\phi$ already was minimal.
-\end{proof}
-
-The following theorem guarantees that the algorithm works correctly.
-\begin{theorem}
-	\label{theo:rll-algo-correct}
-	Let $I$ be an instance of size $n$ of \RRL that satisfies the cut condition.
-	Then \cref{algo:rrl} computes a minimal solution of $I$ in $\cO(n^2)$ time using $\cO(?)$ space.
-\end{theorem}
-\begin{proof}
-	Computing the $\binom{n}{2}$ values $D_{ij}$ can be done in $\cO(n^4)$ time in the obvious way, using the formula in \cref{eq:cut-demand-definition}.
-	However, there exists a more efficient way which is described in \cref{algo:demands-across-cuts}.
-	This improved algorithm completes the task in $\cO(n^2)$, which is optimal (it already takes $\Omega(n^2)$ time to read the $\binom{n}{2}$ inputs $d_{ij}$).
-	This subroutine is based on the following recursion:
-	\Todo{Maybe add proper proof if there is space, otherwise explain basic idea in one sentence.}
-	\begin{equation}
-		D_{i, j} = \begin{cases}
-			\sum_{k < i+1} d_{k,i+1} + \sum_{k > i+1} d_{i+1, k}, & \text{if } j = i+1 \\
-			D_{i, i+1} + D_{i+1, j} - 2 A_{i+1, j}, & \text{if } j > i+1
-		\end{cases}
-	\end{equation}
-	where we used the auxiliary variables $A_{i, j}$ that are defined as follows:
-	\begin{equation}
-		A_{i, j} \coloneqq \begin{cases}
-				d_{i, i+1}, & \text{if } j = i+1\\
-				A_{i, j-1} + d_{i, j}, &\text{if } j > i+1\\
-		\end{cases}
-	\end{equation}
-	Applying the maximum operator to the $\binom{n}{2}$ values $D_{ij}$ also takes $\cO(n^2)$ time.
-	
-	The computation of the capacities $C_i$ can be carried out in $\cO(n^2)$ time:
-	Each iteration of the for-loop takes time linear in $n$, as the maximum of at most $n$ values is taken.
-	
-	For the correctness we just have to understand that the algorithm does indeed compute a solution $\phi$ which does not violate the capacities $C_i$.
-	\cref{lemma:minimal-solution} then guarantees the minimality of the solution.
-\end{proof}
-
-\begin{lemma}
-	For all $i \in [n]$ let $L_i^f$ and $L_i^b$ be the total traffic that is routed forward and backward, respectively, through the link $\{i, i+1\}$.
-	Then for any routing $\phi$, the following recursions hold true.
-	\begin{align}
-		L_i^f &\coloneqq \begin{cases}
-			\sum_{j = 2}^n d_{1j} \cdot \phi(1, j), & \text{if } i = 1 \\
-			L_{i-1}^f - \sum_{j = 1}^{i-1} d_{ji} \cdot \phi(j, i) + \sum_{j = i}^{n} d_{ij} \cdot \phi(i, j) & \text{if } i > 1 \\
-		\end{cases} \\
-		L_i^b &\coloneqq \begin{cases}
-		\sum_{i = 1}^n \sum_{j = i+1}^n d_{ij} \cdot (1 - \phi(i, j)) & \text{if } i = n\\
-		L_{(i-1)\mod n} - \sum_{j = i}^{n} d_{i, j} \cdot (1 - \phi(i, j)) + \sum_{j = 1}^{i-1} d_{ij} \cdot(1 - \phi(i, j)) & \text{if } i < n
-		\end{cases} \ 
-	\end{align}
-\end{lemma}
-
-\begin{lemma}
-	At the beginning of the while-loop in \cref{algo:rrl}, for every $i \in [n]$ there exists a $j \neq i$ such that $\{i, j\}$ is a tight cut.
-\end{lemma}
-\begin{proof}
-	Assume the contrary, that is there is an $i \in [n]$ which is not part of any tight cut.
-	Let $M \coloneqq \min_{j \neq i} C_i + C_j - D_{ij}$.
-	Then $M > 0$ by assumption.
-	Define $C_i' = C_i - M$ and $C_j' = C_j$ for all $j \neq i$.
-	Then every cut still satisfies the cut condition.
-	But in the proof of \cref{lemma:minimal-solution} we showed that no such set of capacities can exist.
-\end{proof}
-
-\begin{theorem}
-	Let $T$ be the set of tight cuts at the beginning of \cref{algo:rrl} and let $Q$ be the set of demands that cross all cuts in $T$.
-	Then:
-	\begin{itemize}
-		\item all demands in $Q$ are mutually crossing.
-		\item $\abs{Q} \leq n$ (probably even $\abs{Q} \leq \frac{n}{2}$)
-		\item Let $m$ be the minimal number of cuts such that there exists a set $M$ with $m = \abs{M}$ and every demand crosses at least one cut in $M$. Then $\abs{T} \geq m$.
-	\end{itemize}
-\end{theorem}
-
-\begin{lemma}
-	Once a cut becomes tight in \cref{algo:rrl}, it remains tight.
-\end{lemma}
-\begin{proof}
-	There are two points in \cref{algo:rrl} where the slack of a cut can change:
-	When the capacities are decreased and when the $D_{ij}$ change.
-	First, note that decreasing the capacities can only decrease slack.
-	This cannot un-tighten any cut.
-	Second, when any $D_{ij}$ changes it must be due to a crossing demand $d_{gh}$ being routed either way.
-	This means that the new demand across the cut is $D_{ij}' = D_{ij} - d_{gh}$.
-	However, in this case the capacity of either $\{i, i+1\}$ or $\{j, j+1\}$ is also decreased by $d_{gh}$, meaning that
-	$C_i' + C_j' = C_i + C_j - d_{gh}$.
-	In total we get $C_i' + C_j' - D_{ij}' = C_i + C_j - D_{ij}$, showing that the slack does not change.
-\end{proof}
-
-\begin{lemma}
-	Let $\{u, v\}$ be a tight cut and $d_{ij}$ be a demand parallel to $\{u, v\}$.
-	Then in any solution, $d_{ij}$ must be routed to miss the cut.
-\end{lemma}
-\begin{proof}
-	In any solution, all demands that cross the cut $\{u, v\}$ must route their traffic through $\{u, u+1\}$ or $\{v, v+1\}$ (or both).
-	The sum of all such demands is just $D_{uv} = C_u + C_v$, which means that these demands already saturate both links $\{u, u+1\}$ and $\{v, v+1\}$.
-	This implies that no demand that does not cross the cut can be routed through those links. 
-\end{proof}
-
-\begin{lemma}
-	\label{lemma:number-of-split-demands}
-	At the end of \cref{algo:rrl} at most $\lfloor\frac{n}{2}\rfloor$ demands are split.
-\end{lemma}
-\begin{proof}
-	Let $\phi^\ast$ be the minimal routing that results from the execution of \cref{algo:rrl}.
-	Furthermore, let $S \coloneqq \{(i, j)\ |\ d_{ij}\ \text{is split by}\ \phi^\ast \}$ and $(i, j), (g, h) \in S$.
-	If the demands $d_{ij}$ and $d_{gh}$ were parallel, there would be a link $\{k, k+1\}$ that carries traffic from both demands, as they are both split.
-	However, it follows from the minimality of $\phi^\ast$ and \cref{theo:parallel-demands-non-crossing} that this cannot be the case, which implies that $d_{ij}$ and $d_{gh}$ are crossing.
-	This can, by definition, only occur if $i, j, g, h$ are mutually distinct.
-	
-	This implies that every $1 \leq i \leq n$ can occur in at most one tuple in $S$.
-	As the tuples in $S$ each consist of two elements, there can be at most $\lfloor\frac{n}{2}\rfloor$ such tuples.
-\end{proof}
-
-\subsection{Correctness}
-
-\subsection{Runtime}
-
-
-\begin{proof}
-\end{proof}

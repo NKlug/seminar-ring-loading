@@ -9,15 +9,15 @@
 			\nl\While{there exist parallel demands $d_{i,j}, d_{u, v}$}{
 				Choose link $\{g, g+1\}$ that lies in between $d_{i,j}$ and $d_{u, v}$\;
 				Find a tight cut $\{g, h\}$\;
-				Route $d_{i, j}$ or $d_{u, v}$ to miss the cut\;
-				Lower capacities accordingly and recompute demands across cuts $D_{i, j}$\;
+				Route $d_{i, j}$ or $d_{u, v}$ to miss the cut $\{g, h\}$\;
+				Decrease capacities accordingly and recompute demands across cuts $D_{i, j}$\;
 			}
 			\nl\ForEach{unrouted demand $d_{i, j}$}{
 				Compute minimal slack $\mu$ on the front route of $d_{i, j}$\;
 				Route $\min(d_{i, j}, \frac{\mu}{2})$ forward and the remainder backwards\;
-				Lower capacities accordingly and recompute demands across cuts $D_{i, j}$.
+				Decrease capacities accordingly and recompute demands across cuts $D_{i, j}$.
 			}
-			\nl\Return{Routing $\Phi$}
+%			\nl\Return{Routing $\Phi$}
 		\end{mdframed}
 		\caption{Schrijver et al.'s \cite{schrijver99} algorithm for computing a minimal solution to an instance of \RRL in its original form.}
 		\label{algo:rrl}
