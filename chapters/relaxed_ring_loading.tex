@@ -135,6 +135,7 @@ A cut therefore "splits" the ring into two parts.
 	\end{equation}
 	A \RRLWC instance $I$ \emph{satisfies the cut condition} if each cut does.
 	$C_g + C_h - D_{g,h}$ is called the \emph{slack} of the cut $\{g, h\}$.
+	A cut is \emph{tight} if its slack is $0$.
 \end{definition}
 
 The cut condition is quite similar to the message of the max-flow-min-cut theorem from the theory of network flows:
@@ -143,7 +144,7 @@ In the framework of \RRLWC, we get a similar result:
 
 \begin{theorem}
 	\label{theo:cut-condition}
-	An instance $I$ of \RRLWC is feasible if and only if it satisfies the cut condition.
+	An instance $(I, C)$ of \RRLWC is feasible if and only if it satisfies the cut condition.
 \end{theorem}
 For the proof, we will need the following lemma.
 \begin{lemma}
@@ -229,8 +230,9 @@ The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple di
 
 With the help of \cref{theo:cut-condition} it is easy to determine the optimal ringload for an instance of \RRL.
 \begin{corollary}
+	\label{cor:ringload}
 	Let $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
-	Then the optimal ringload $L^\ast$ of an instance $I$ of \RRL is $\frac{M}{2}$.
+	Then the optimal ringload $L^\ast$ of an instance $I$ of \RRL is $L^\ast = \frac{M}{2}$.
 \end{corollary}
 \begin{proof}
 	It is easy to see that the instance $I$ with capacities $C_k = \frac{M}{2}$, $k \in [n]$ satisfies the cut condition.
@@ -276,10 +278,10 @@ This follows immediately from the first argument in the outer maximum in \cref{e
 				\stackrel{\mathrm{Def. } C_g}{\leq} D_{g, k} - \left(\max_{g < h \leq n} D_{g,h} - \frac{M}{2}\right)\\
 				&= (D_{g, k} - \max_{g < h \leq n} D_{g, h}) + \frac{M}{2} \ .
 			\end{align}
-			Because of $g < k$ we have $D_{g, k} - \max_{g < h \leq n} D_{g, h} \leq 0$, proving that $C_k \leq \frac{M}{2}$.
+			Because of $g < k \leq n$ we have $D_{g, k} - \max_{g < h \leq n} D_{g, h} \leq 0$, proving that $C_k \leq \frac{M}{2}$.
 		}
 		\item[Case 2: $C_k = \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})$]{\mbox{}\\
-			Then it immediately follows from the choice of $M$ that $C_k \leq M - \frac{M}{2} = \frac{M}{2}$.
+			Because of $D_{k, h} \leq M$ for all $h > k$, it immediately follows that $C_k \leq M - \frac{M}{2} = \frac{M}{2}$.
 		}
 	\end{enumerate}
 \end{proof}
@@ -291,33 +293,42 @@ This follows immediately from the first argument in the outer maximum in \cref{e
 \end{theorem}
 \begin{proof}	
 	Let $\Phi$ a feasible real-valued routing with link loads $L_k$.
-	The optimal ringload is $L^\ast = \frac{M}{2}$
+	As we have seen in \cref{cor:ringload}, the optimal ringload is $L^\ast = \frac{M}{2}$.
 	
-	Assume that $\Phi$ is not minimal and let $\Phi'$ another routing with link loads $L_k'$ that serves as a witness.
-	That means $L_k' \leq L_k$ for all $k \in [n]$ and $L_l' < L_l$ for at least one $l \in [n]$.
+	Assume that $\Phi$ is not minimal and let $\Phi'$ another routing with link loads $L_k'$ with $L_k' \leq L_k$ for all $k \in [n]$ and $L_l' < L_l$ for at least one $l \in [n]$.
 	We now define new capacities $C_k' \coloneqq L_k'$ for $k \in [n]$.
-	The routing $\Phi'$ obviously complies with these capacities, hence they must be feasible.
+	The routing $\Phi'$ obviously complies with these capacities, hence they are feasible.
 	
-	Now, let $h \in [n]$ be the smallest index for which $C_gh' < C_h$.
-	We now show that there is a cut $\{g, h\}$ which violates the cut condition for the new capacities by distinction of the two terms responsible for the choice of $C_h$ in \cref{eq:minimal-capacities}.
+	Now, let $h \in [n]$ be the smallest index for which $C_h' < C_h$.
+	We show that there is a cut $\{g, h\}$ which violates the cut condition for the new capacities by distinction of the two terms responsible for the choice of $C_h$ in \cref{eq:minimal-capacities}.
 	\begin{enumerate}[align=left]
 		\item[Case 1: $C_h = \max_{1 \leq g < h}(D_{g,h} - C_g)$]{\mbox{}\\
-			Especially, we then have $C_h'= L_h' < L_h \leq C_h = \max_{1 \leq g < h}(D_{g, h} - C_g)$ and by the choice of $h$ as the smallest index, it follows that $C_k' = C_k$ for all $1 \leq k < h$.
-			This means that there exists an index $g$, $1 \leq g < h$, such that $C_h' < C_h = D_{g, h} - C_g = D_{g, h} - C_g'$, implying that $D_{g, h} > C_g' + C_h'$.
-			Thus, the cut $\{g, h\}$ is violated for the new capacities.
+			Especially, we then have $C_h'= L_h' < L_h \leq C_h = \max_{1 \leq g < h}(D_{g, h} - C_g)$ and by the choice of $h$ as the smallest index, it follows that $C_k' = C_k$ for all $k < h$.
+			This means that for $g \in \argmax_{1 \leq g < h}(D_{g, h} - C_g)$ we get $C_h' < C_h = D_{g, h} - C_g = D_{g, h} - C_g'$, implying that $D_{g, h} > C_g' + C_h'$.
+			Thus, the cut $\{g, h\}$ violates the cut condition for the new capacities.
 		}
 		\item[Case 2: $C_h = \max_{h < g \leq n}(D_{h, g} - \frac{M}{2})$]{\mbox{}\\
-			Then $C_h' < C_h = \max_{h < g \leq n}(D_{h,g} - \frac{M}{2})$.
-			This means that there exists an index $g$, $h < g \leq n$, such that $C_h' < D_{h,g} - \frac{M}{2}$.
+			Similarly to case 1 we have $C_h'= L_h' < L_h \leq C_h = \max_{h < g \leq n}(D_{h,g} - \frac{M}{2})$.
+			This means that for $g \in \argmax_{h < g \leq n}(D_{h,g} - \frac{M}{2})$ we have $C_h' < D_{h,g} - \frac{M}{2}$.
 			Using \cref{lemma:capacities-bounded} we then get 
 			\begin{equation}
 				C_h' + C_g' \leq C_h' + C_g \leq C_h' + \frac{M}{2} < D_{h, g} \ ,
 			\end{equation}
-			again showing that the cut $\{k, h\}$ is violated for the new capacities.
+			again showing that the cut $\{g, h\}$ violates the cut condition.
 		}
 	\end{enumerate}
-	In total this shows that the instance $I$ with capacities $C_i'$ does not satisfy the cut condition.
-	Thus there exists no witness $\phi'$, proving that $\phi$ already was minimal.
+	Altogether, this shows that the instance $(I, C')$ does not satisfy the cut condition, a contradiction.
+	Thus there exists no such instance $\Phi'$, proving that $\Phi$ is minimal.
+\end{proof}
+
+All that is left now is to see how we can route demands given "minimal" capacities as in \cref{eq:minimal-capacities}.
+For that, we make the following observation.
+\begin{lemma}
+	Let $d_{i, j}$ be parallel to a tight cut $\{g, h\}$.
+	Then $d_{i, j}$ must be routed to miss $\{g, h\}$.
+\end{lemma}
+\begin{proof}
+	s
 \end{proof}
 
 \input{figures/rll_algorithm}
