@@ -293,7 +293,8 @@ This follows immediately from the first argument in the outer maximum in \cref{e
 \end{theorem}
 \begin{proof}	
 	Let $\Phi$ a feasible real-valued routing with link loads $L_k$.
-	As we have seen in \cref{cor:ringload}, the optimal ringload is $L^\ast = \frac{M}{2}$.
+	We have seen in \cref{cor:ringload}, the optimal ringload is $L^\ast = \frac{M}{2}$.
+	Since we also know that $C_k \leq \frac{M}{2}$ from \cref{lemma:capacities-bounded}, $\Phi$ is an optimal solution.
 	
 	Assume that $\Phi$ is not minimal and let $\Phi'$ another routing with link loads $L_k'$ with $L_k' \leq L_k$ for all $k \in [n]$ and $L_l' < L_l$ for at least one $l \in [n]$.
 	We now define new capacities $C_k' \coloneqq L_k'$ for $k \in [n]$.
@@ -322,18 +323,39 @@ This follows immediately from the first argument in the outer maximum in \cref{e
 \end{proof}
 
 All that is left now is to see how we can route demands given "minimal" capacities as in \cref{eq:minimal-capacities}.
-For that, we make the following observation.
+For that, we make the following three observations.
 \begin{lemma}
+	\label{lemma:parallel-demands-cross-cut}
+	Let $d_{i ,j}$ and $d_{u, v}$, $d_{i, j} \neq d_{u, v}$ be parallel demands, $\{g, g+1\}$ an edge in between and $\{g, h\}$ a cut.
+	Then at most one of $d_{i ,j}$ and $d_{u, v}$ crosses $d_{u, v}$.
+\end{lemma}
+The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a distinction over the position of the edge $\{h, h+1\}$.
+\begin{lemma}
+	\label{lemma:parallel-to-tight-cut}
 	Let $d_{i, j}$ be parallel to a tight cut $\{g, h\}$.
-	Then $d_{i, j}$ must be routed to miss $\{g, h\}$.
+	Then in any feasible routing, $d_{i, j}$ must be routed parallel to $\{g, h\}$.
 \end{lemma}
 \begin{proof}
-	s
+	The cut $\{g, h\}$ being tight means that $D_{g, h} = C_g + C_h$, that is, the total traffic of all demands that cross $\{g, h\}$ already saturates the edges $\{g,g+1\}$ and $\{h, h+1\}$.
+	$d_{i, j}$ does not cross ${g, h}$ and can thus not be routed through these edges.
+	This means that $d_{i ,j}$ must be routed parallel to $\{g, h\}$.
 \end{proof}
+\begin{lemma}
+	For each edge $\{g, g+1\}$ there exists an edge $\{h, h+1\}$ such that the cut $\{g, h\}$ is tight.
+\end{lemma}
+\begin{proof}
+	Assume the edge $\{g, g+1\}$ is not contained in a tight cut.
+	Let $\nu \coloneqq \min_{h \neq g} C_g + C_h - D_{g, h}$.
+	Define $C_g' = C_g - \nu$ and $C_k' = C_k$ for all $k \in [n], k \neq g$.
+	Then every cut still satisfies the cut condition and $C_g' < C_g$.
+	But in the proof of \cref{theo:routing-with-capacities-is-minimal} we have shown that no such set of capacities can exist.
+\end{proof}
+
+Using the results from \cref{theo:number-of-splits}, \cref{theo:cut-condition} and \cref{lemma:parallel-to-tight-cut},
+we can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
 
 \input{figures/rll_algorithm}
 
-\input{figures/demand_cuts_algorithm}
 
 
 %\begin{lemma}

@@ -1,32 +1,25 @@
 \begin{figure}[ht]
+	\centering
+%	\DontPrintSemicolon
 	\begin{algorithm}[H]
-		\KwData{Ring size $n \in \N$, demands $d_{ij}$, $1 \leq i < j \leq n$.}
-		$M = \max_{1 \leq i < j \leq n} D_{ij}$\;
-		\For{$i=1, \ldots, n$}{
-			$C_i = \max \left(\max_{1 \leq j < i}(D_{ji} - C_j), \max_{i < j \leq n}(D_{ij} - \frac{M}{2})\right)$ \;
-		}
-		\While{$\exists \text{parallel demands } d_{ij}, d_{gh}$}{
-			Choose link $\{k, k+1\}$ that lies in between $d_{ij}$ and $d_{gh}$\;
-			$\{k, l\} \coloneqq \min_{l \neq k} C_k + C_l - D_{kl}$\;
-			Assume $d_{ij}$ crosses $\{k, l\}$\;
-			Route $d_{gh}$ such that it misses $\{k, l\}$\;
-			// Wollen cut constraint als Invariante idealerweise
-		}
-%		\While{not converged}{
-%			\For{$i=1, \ldots, k$}{
-%				Sample batch of $B$ samples $z_1, \ldots, z_B$ from $p_z$\;
-%				Sample batch $x_{i_1}, \ldots, x_{i_B}$ from the training data\;
-%				Compute the stochastic gradient 
-%				$$\nabla_{\theta_D} \frac{1}{B} \sum_{j=1}^{B} \left( \ln D(x_{i_j}) + \ln(1 - D(G(z_j))) \right);$$
-%				Update $\theta_D$ by ascending the gradient according to the learning rule $R$\;
-%			}
-%			Sample batch of $B$ samples $z_1, \ldots, z_B$ from $p_z$\;
-%			Compute the stochastic gradient
-%			$$\nabla_{\theta_G} \frac{1}{B} \sum_{j=1}^{B} -\ln(D(G(z_j)));$$
-%			Update $\theta_G$ by descending the gradient according to the learning rule $R$\;
-%		}
-		\Return{$\phi$}
-		\caption{Algorithm for \RRL}
+		\begin{mdframed}[backgroundcolor=green!10,linecolor=white,innerleftmargin=25pt,leftmargin=-25pt,rightmargin=15pt]
+			\KwIn{Ring size $n \in \N$, demands $d_{i,j}$, $1 \leq i < j \leq n$.}
+			\nl Compute demands across cuts $D_{i, j}$ and $M = \max_{1 \leq i < j \leq n} D_{i,j}$\;
+			\nl Compute the capacities $C_k$ in \cref{eq:minimal-capacities}\;
+			\nl\While{there exist parallel demands $d_{i,j}, d_{u, v}$}{
+				Choose link $\{g, g+1\}$ that lies in between $d_{i,j}$ and $d_{u, v}$\;
+				Find a tight cut $\{g, h\}$\;
+				Route $d_{i, j}$ or $d_{u, v}$ to miss the cut\;
+				Lower capacities accordingly and recompute demands across cuts $D_{i, j}$\;
+			}
+			\nl\ForEach{unrouted demand $d_{i, j}$}{
+				Compute minimal slack $\mu$ on the front route of $d_{i, j}$\;
+				Route $\min(d_{i, j}, \frac{\mu}{2})$ forward and the remainder backwards\;
+				Lower capacities accordingly and recompute demands across cuts $D_{i, j}$.
+			}
+			\nl\Return{Routing $\Phi$}
+		\end{mdframed}
+		\caption{Schrijver et al.'s \cite{schrijver99} algorithm for computing a minimal solution to an instance of \RRL in its original form.}
 		\label{algo:rrl}
 	\end{algorithm}
 \end{figure}
