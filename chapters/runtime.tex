@@ -98,7 +98,7 @@ Again using a recursion, the edge loads resulting from the binary "pre-routing" 
 \end{lemma}
 
 In Step~4 of \cref{algo:rrl}, the minimal slacks on the front routes of the remaining demands have to be determined.
-Doing this the naïve way takes $\cO(n^2)$ time per demand, so $\cO(n^3)$ time in total (again utilizing \cref{eq:recursive-dac}).
-This, too, can be improved to $\cO(n^2)$.
+Doing this the naive way takes $\cO(n^2)$ time per demand, so $\cO(n^3)$ time in total (again utilizing \cref{eq:recursive-dac}).
+This, too, can be improved to $\cO(n^2)$ by reusing slacks computed in previous iterations of the for-loop and only recomputing those that have changed.
 The precise way to do this is quite lengthy and can hence not be discussed in this work. 
 The interested reader is instead referred to the appendix.

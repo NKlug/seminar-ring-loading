@@ -55,10 +55,10 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 \end{proof}
 \begin{theorem}
 	\label{theo:ring-loading-algorithm}
-	Let $\Phi$ be the routing obtained from \cref{algo:rrl} and $L^\mathrm{opt}$ be the ringload of an optimal binary routing.
+	Let $\Phi$ be the routing obtained from \cref{algo:rrl} and $\Lopt$ be the ringload of an optimal binary routing.
 	Then the demands that are split by $\Phi$ can be rerouted such that the resulting binary routing $\Phi'$ has a ringload of
 	\begin{equation}
-		L(\Phi') \leq L^\mathrm{opt} + \frac{3}{2}D \ ,
+		L(\Phi') \leq \Lopt + \frac{3}{2}D \ ,
 	\end{equation}
 	where $D = \max_{1 \leq i < j \leq n} d_{i, j}$ is the largest demand.
 \end{theorem}
@@ -88,5 +88,5 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 		2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i \in [-\frac{3}{2}D, \frac{3}{2}D] \ .
 	\end{equation}
 	Thus we get $L(\Phi') - L(\Phi) \leq \frac{3}{2}D$, or equivalently $L(\Phi') \leq L(\Phi) + \frac{3}{2}D$.
-	Observing that $L(\Phi) \leq L^\mathrm{opt}$ concludes the proof.
+	Observing that $L(\Phi) \leq \Lopt$ concludes the proof.
 \end{proof}

@@ -34,7 +34,7 @@ Next, we can formally define routings in a ring of size $n$.
 	\begin{equation}
 		\Phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow [0, 1] \ .
 	\end{equation}
-	A \emph{binary routing}, or simply \emph{routing}, is a real routing $\Phi$ which only takes values in $\{0, 1\}$. 
+	A \emph{binary routing} is a real routing $\Phi$ which only takes values in $\{0, 1\}$. 
 \end{definition}
 We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ that is routed through the front.
 If $\Phi(i, j) \in (0, 1)$, we say that $\Phi$ \emph{splits} the demand $d_{i, j}$.
@@ -49,8 +49,7 @@ If $\Phi(i, j) \in (0, 1)$, we say that $\Phi$ \emph{splits} the demand $d_{i, j
 	\end{equation}
 	The \emph{ringload} $L(\Phi)$ is the maximal load under the routing $\Phi$.
 \end{definition}
-In \cref{def:edge-load}, we have $k \in [i, j)$ if and only if the edge $\{k, k+1\}$ lies on the front route of the demand $d_{i, j}$.
-
+Observe that in \cref{def:edge-load}, we have $k \in [i, j)$ if and only if the edge $\{k, k+1\}$ lies on the front route of the demand $d_{i, j}$.
 
 With these preparations, we can now formulate the ring loading problem in mathematical terms:
 \begin{center}
@@ -133,7 +132,7 @@ the problem is NP-complete.
 \input{figures/partition_rl_instance}
 
 The fact hat \RL is NP-complete motivates the search for an approximation algorithm.
-One such algorithm was invented by \citet{schrijver99}.
+One such algorithm was invented by \citet{schrijver99} in the late 1990s.
 This algorithm achieves a ringload of $L \leq \Lopt + \frac{3}{2}D$, where $\Lopt$ is the optimal ringload and $D$ the maximal demand.
 The basic idea is to first solve the following problem.
 \begin{center}
@@ -147,8 +146,8 @@ The basic idea is to first solve the following problem.
 	\end{mdframed}
 \end{center}
 In contrast to \RL, this problem can be solved in polynomial time, as it can be formulated as a linear program.
-As we will see, this problem always has solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
-From such a routing an approximation of an optimal binary routing can be easily obtained.
+We will see in \cref{sec:relaxed-ring-loading} that \RRL always has solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
+From such a routing an approximation of an optimal binary routing can be easily obtained, as will be shown in \cref{sec:ring-loading}.
 
 In this work, Schrijver et al.'s algorithm is presented and its correctness proven.
 This involves two steps: First, deriving an algorithm for computing an optimal real-valued routing and second, transforming it into a binary routing.
@@ -156,16 +155,14 @@ This involves two steps: First, deriving an algorithm for computing an optimal r
 \citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
 In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
 This runtime is almost optimal, since in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
-
 The improved time-complexity is interesting for several reasons:
 \begin{itemize}
 	\item The best currently known runtime for computing an $\Lopt + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
 	The proposed modifications improve this runtime by a factor of $k$.
-	\item The best currently known algorithm for solving \RRL is $O(k + t_k)$ for integer demands, where $t_k$ is the time for sorting $k$ integers.
-	For real demands, the best known runtime is $O(\min\{kn, n^2\})$.
-	The proposed algorithm also works for real demands and almost matches the runtime of the latter algorithm.
-	\item The proposed algorithm computes the same solution to \RL and \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
-	This means that the runtimes of all algorithms that use Schrijver et al.'s algorithm as a subroutine are improved as well, in particular that of the PTAS algorithm by \citet{khanna97}.
+	\item The best currently known runtime for solving \RRL is $O(k + t_k)$ for integer demands \cite{wang05}, where $t_k$ is the time for sorting $k$ integers and $O(\min\{kn, n^2\})$ \cite{myung04}.
+	The modified algorithm also works for real demands and almost matches the runtime of the latter algorithm.
+	\item Despite the modifications, the algorithm computes the same solution to \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
+	This means that the runtimes of all algorithms that use Schrijver et al.'s \RRL algorithm as a subroutine are improved as well, in particular that of Schrijver et al.'s approximation algorithm for \RL and that of the PTAS for \RL by \citet{khanna97}.
 \end{itemize}
 
 
