@@ -1,9 +1,22 @@
 \section{Conclusion}
 
 In this work, the approximation algorithm for \RL by \citet{schrijver99} was presented.
-On the way, we have seen how a minimal solution to \RRL can be determined.
+On the way, we have seen how an, exact solution to \RRL can be determined in $\cO(k n^2)$ time, where $k$ is the number of non-zero demands.
+In this solution, all but at most $\lfloor \frac{n}{2} \rfloor$ demands are split.
+These are rerouted in a way to achieve a ringload of $L \leq \Lopt + \frac{3}{2}D$, where $\Lopt$ is the optimal binary ringload and $D$ the maximal demand.
+Since its publication, the algorithm has further been used by \citet{khanna97} to obtain a polynomial-time approximation scheme for \RL.
 
+Also, there is still active research on the approximation quality of Schrijver et al.'s algorithm:
+It turns out that the constant $\frac{3}{2}$ is only a rough upper bound.
+The "best" upper bound $\alpha \in \R$ would be the infimum of all $\beta \in \R$ such that the following holds true:
+\begin{quote}
+	For all $n \in \N$, $x_i, y_i \in \R_{\geq 0}$ such that $x_i + y_i \leq 1$ for all $i \in [n]$, there exist $z_i \in \R_{\geq 0}$ such that for all $i \in [n]$
+	\begin{equation}
+		(z_i = y_i \quad \text{ or } \quad z_i = -x_i) 
+		\quad \text{ and } \quad \abs{\sum_{i=1}^k z_i - \sum_{i = 1}^n z_i} \leq \beta \quad \forall k \in [n] \ .
+	\end{equation}
+\end{quote}
+The latest results on this problem have shown that $\alpha \leq \frac{19}{14}$ and $\alpha \geq \frac{11}{10}$ \cite{skutella16, daubel19}.
 
-\citet{khanna97} uses this algorithm to obtain a PTAS for \RL.
 
 To this day, the exact upper bound remains an open question.
