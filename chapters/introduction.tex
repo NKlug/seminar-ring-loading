@@ -26,7 +26,6 @@ Thus, we focus on the case where for every two nodes $i < j$, we have one demand
 A demand $d_{i, j}$ can be routed two ways around the ring.
 We say that a demand is routed \emph{forward} or \emph{through the front}, if it does not use the edge $\{n, 1\}$.
 Otherwise, we say that the demand is routed \emph{backwards} or \emph{through the back}.
-
 Next, we can formally define routings in a ring of size $n$.
 \begin{definition}[Routing]
 	\label{def:routing}
@@ -152,28 +151,15 @@ From such a routing an approximation of an optimal binary routing can be easily 
 In this work, Schrijver et al.'s algorithm is presented and its correctness proven.
 This involves two steps: First, deriving an algorithm for computing an optimal real-valued routing and second, transforming it into a binary routing.
 
-\citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
-In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
-This runtime is almost optimal, since in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
-The improved time-complexity is interesting for several reasons:
-\begin{itemize}
-	\item The best currently known runtime for computing an $\Lopt + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
-	The proposed modifications improve this runtime by a factor of $k$.
-	\item The best currently known runtime for solving \RRL is $O(k + t_k)$ for integer demands \cite{wang05}, where $t_k$ is the time for sorting $k$ integers and $O(\min\{kn, n^2\})$ \cite{myung04}.
-	The modified algorithm also works for real demands and almost matches the runtime of the latter algorithm.
-	\item Despite the modifications, the algorithm computes the same solution to \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
-	This means that the runtimes of all algorithms that use Schrijver et al.'s \RRL algorithm as a subroutine are improved as well, in particular that of Schrijver et al.'s approximation algorithm for \RL and that of the PTAS for \RL by \citet{khanna97}.
-\end{itemize}
-
-
-%Already shown: Tight bound $L^\mathrm{opt} \leq 2 L^\ast$ (take references from däubel intro!! TODO).
-%
-%\citet{schrijver99} achieve an additive bound of $L^\mathrm{opt} + \frac{3}{2}D$.
-%This bound has since been improved to $1.3$ but the improvement based on the same algorithm.
-%It is therefore still sensible to review and understand the algorithm presented by \citet{schrijver99} in the late 1990s.
-%
-%The authors of \cite{schrijver99} claim that their algorithm runs in $O(k n^2)$, where $k$ is the number of non-zero demands.
-%
-%In this work, I show that the ideas presented by \citet{schrijver99} can be extended to an algorithm that has a time-complexity in $\cO(n^2)$.
-%This is almost optimal, as the encoding length of an instance is in $\Theta(k)$ and in the worst case $k = \binom{n}{2} \in \cO(n^2)$.
-%The modified algorithm strongly relies on the principles of dynamic programming and uses a different, more efficient way of routing demands.
+%\citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
+%In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
+%This runtime is almost optimal, since in the worst case $k = \binom{n}{2} \in \Theta(n^2)$.
+%The improved time-complexity is interesting for several reasons:
+%\begin{itemize}
+%	\item The best currently known runtime for computing an $\Lopt + \frac{3}{2}D$ approximation to \RL is $O(k n^2)$.
+%	The proposed modifications improve this runtime by a factor of $k$.
+%	\item The best currently known runtime for solving \RRL is $O(k + t_k)$ for integer demands \cite{wang05}, where $t_k$ is the time for sorting $k$ integers and $O(\min\{kn, n^2\})$ \cite{myung04}.
+%	The modified algorithm also works for real demands and almost matches the runtime of the latter algorithm.
+%	\item Despite the modifications, the algorithm computes the same solution to \RRL as Schrijver et al.'s algorithm, which is particularly aesthetic in the sense that at most $\lfloor\frac{n}{2}\rfloor$ demands are split while the others are routed all front or all back.
+%	This means that the runtimes of all algorithms that use Schrijver et al.'s \RRL algorithm as a subroutine are improved as well, in particular that of Schrijver et al.'s approximation algorithm for \RL and that of the PTAS for \RL by \citet{khanna97}.
+%\end{itemize}

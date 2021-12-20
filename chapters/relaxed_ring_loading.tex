@@ -1,11 +1,12 @@
 \section{An Algorithm for Relaxed Ring Loading}
 \label{sec:relaxed-ring-loading}
 
-We begin by deriving an exact, polynomial-time algorithm for \RRL.
+In this section, we derive the exact, polynomial-time algorithm for \RRL invented by \citet{schrijver99}.
+Considering that we want to use the real-valued routing obtained from this algorithm to approximate an optimal binary routing, it is desirable to determine such a real-valued routing $\Phi$ in which all but at most $\lfloor \frac{n}{2} \rfloor$ demands are already routed all front or all back.
 
 \subsection{Minimal Solutions}
 
-We aim to find a special kind of solution:
+Minimal solutions have this property:
 
 \begin{definition}
 	Let $\Phi^\ast$ be an optimal solution to an instance of \RRL.
@@ -20,20 +21,13 @@ While this definition might seem arbitrary at first glance, minimal solutions ar
 \end{theorem}
 
 This result is quite remarkable, as we can have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ non-zero demands.
-This means that a minimal solution to \RRL is already almost binary.
-We will later use this fact to obtain a true binary routing which approximates the optimal routing in the corresponding \RL instance.
-
 Before proving the theorem, it is sensible to introduce some additional notation and terminology.
-From now on, for the sake of simpler notation, we consider the \RRL instance size $n \in \N$ as fixed.
+From now on, we consider the \RRL instance $I$ of size $n \in \N$ as fixed.
 \begin{notation}
 	Let $i, j \in \N$ with $i < j$.
-	We define the half-open intervals
-	\begin{enumerate}
- 		\item $[i, j) \coloneqq \{i, i+1, \ldots, j-1\}$;
- 		\item $[j, i) \coloneqq \{j, j+1, \ldots, n-1, n, 1, 2, \ldots, i-1\}$.
-	\end{enumerate}
-	Open and closed intervals are defined similarly.
+	We define the half-open interval $[i, j) \coloneqq \{i, i+1, \ldots, j-1\}$.
 \end{notation}
+
 \begin{definition}
 	Let $i, j, u, v \in [n]$, $i < j, u < v$ and $d_{i,j}, d_{u, v}$ be two demands of a \RRL instance.
 	We say that
