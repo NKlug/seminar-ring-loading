@@ -30,12 +30,11 @@ From now on, we consider the \RRL instance $I$ of size $n \in \N$ as fixed.
 	\begin{enumerate}
 		\item $d_{i, j}$ and $d_{u, v}$ are \emph{crossing} if $i, j, u, v$ are pairwise distinct and $i < u < j < h$ or $u < i < h < j$.
 		\item $d_{i, j}$ and $d_{u, v}$ are \emph{parallel} if they are not crossing.
-		\item If $d_{i, j}$ and $d_{u, v}$ are parallel, the edge $\{k, k+1\}$ is \emph{in between}
-		$d_{i,j}$ and $d_{u, v}$ if it lies on the front route of exactly one of the demands.
-		\Todo{fix definition.}
+		\item Let $d_{i, j}$ and $d_{u, v}$ be parallel with $j < v$.
+		The edge $\{k, k+1\}$ is \emph{in between} $d_{i,j}$ and $d_{u, v}$ if it lies on the front route of exactly one of the demands (in case $i \geq u$) or if it lies on the back routes of both demands (in case $j \leq u$).
 	\end{enumerate}
 \end{definition}
-Crossing and parallel demands are most easily understood visually.
+These definitions, especially that of edges in between parallel demands, might seem complicated, but can be more easily understood visually.
 See \cref{fig:parallel-demands} for some examples.
 
 \input{figures/parallel_demands}
@@ -93,7 +92,7 @@ With these preparations, we can now conduct the proof of \cref{theo:number-of-sp
 The existence of minimal solutions is not clear, a priori.
 In the following, we will show that minimal solutions always exist by providing an algorithm.
 
-\subsection{\textsc{RelaxedRingLoading} with Capacities}
+\subsection{Relaxed Ring Loading with Capacities}
 
 In order to construct a minimal solution, we first consider a generalization of \RRL by appending an edge capacity $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
 The resulting problem, \textsc{RelaxedRingLoadingWithCapacities} (\RRLWC), is to determine a real-valued routing $\Phi^\ast$ such that $L_k(\Phi^\ast) \leq C_k$ for all $k \in [n]$.
@@ -122,6 +121,10 @@ A cut therefore "splits" the ring into two parts.
 		\end{equation}
 	\end{enumerate}
 \end{definition}
+
+\input{figures/ring_cut_example}
+
+Examples for the definitions above can be found in \cref{fig:cut-example}.
 
 \begin{definition}
 	An cut $\{g, h\}$ is satisfies the \emph{cut condition} if
