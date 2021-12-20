@@ -31,13 +31,14 @@ that is, $z_i$ is the change of traffic on front route of $d_{i, j}$.
 This allows us to formulate the total change of traffic on any edge $\{k, k+1\}$, $k \in [2m]$ and determine the new link load $L_k'$:
 \begin{equation}
 	\label{eq:load-change}
-	L_k' = L_k + \sum_{i \in [m], k \in [i, i+m)} z_i - \sum_{i \in [m], k \notin [i, i+m)} y_i \ .
+	L_k' = L_k + \sum_{i \in [m], k \in [i, i+m)} z_i - \sum_{i \in [m], k \notin [i, i+m)} z_i \ .
 \end{equation}
 Here, we have $k \in [i, i+m)$ if and only if the edge $\{k,k+1\}$ lies on the front route of $d_{i, i+m}$.
 
 
 The following theorem shows that there is a way to reroute the demands in $S'$ such that the maximal edge load remains bounded.
 \begin{lemma}
+	\label{lemma:reroute-demands}
 	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$ be such that $x_i + y_i \leq D$ for $D \in \R_{\geq 0}$.
 	Then there exist $z_i \in \R$, $i \in [m]$ such that:
 	\begin{align}
@@ -62,23 +63,30 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 	where $D = \max_{1 \leq i < j \leq n} d_{i, j}$ is the largest demand.
 \end{theorem}
 \begin{proof}
-	
+	For all $d_{i, i+m} \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
+	Choose $z_i, i \in [m]$ like in \cref{lemma:reroute-demands} with $D = \max_{1 \leq i < j \leq n} d_{i, j}$.
+	We construct the binary routing $\Phi'$ by setting $\Phi'(i, j) \coloneqq \Phi(i, j)$ for all $d_{i,j} \notin S$.
+	For all demands $d_{i, j}$ that are split by $\Phi$, we set
+	\begin{equation}
+		\Phi'(i, j) = \begin{cases}
+			1, & \text{if } z_i = y_i \\
+			0, & \text{if } z_i = -x_i
+		\end{cases}
+	\end{equation}
+	where $z_i$ corresponds to the demand $d_{i, j}$ in $S$.
+	We get:
+	\begin{align}
+		L(\Phi') - L(\Phi) &= \max_{k \in [n]} (L_k(\Phi') - L(\Phi)) 
+		\leq \max_{k \in [n]} (L_k(\Phi') - L_k(\Phi))\\
+		& \stackrel{\ref{eq:load-change}}{=} \max_{k \in [m]} \left(\sum_{i \in [m], k \in [i, i+m)} z_i - \sum_{i \in [m], k \notin [i, i+m)} z_i\right)\\
+		&= \max_{k \in [m]} \abs{\sum_{i = 1}^k z_i - \sum_{i = k+1}^m z_i }\\
+		&= \max_{k \in [m]} \abs{2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i } \ . \label{eq:partial-reroutes}
+	\end{align}
+	Because both $\sum_{i = 1}^k z_i$ and $\sum_{i = 1}^m z_i$ lie in the interval $[-\frac{D}{2}, \frac{D}{2}]$, 
+	we have 
+	\begin{equation}
+		2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i \in [-\frac{3}{2}D, \frac{3}{2}D] \ .
+	\end{equation}
+	Thus we get $L(\Phi') - L(\Phi) \leq \frac{3}{2}D$, or equivalently $L(\Phi') \leq L(\Phi) + \frac{3}{2}D$.
+	Observing that $L(\Phi) \leq L^\mathrm{opt}$ concludes the proof.
 \end{proof}
-
-\begin{corollary}
-	Let $I$ be an instance of \RL with optimal (binary) ringload $L^\mathrm{opt}$.
-	Then \cref{algo:rrl} and the technique in 
-\end{corollary}
-
-
-The idea for solving an instance of \RL is the following:
-First, we compute a solution to the same instance in \RRL.
-As \cref{lemma:number-of-split-demands} states, \cref{algo:rrl} yields a solution $\phi$ in which at most $\lfloor\frac{n}{2}\rfloor$ demands are split; the remainder is either routed all front or all back.
-Now, we iteratively unsplit those demands.
-Of course, this does not always yield the optimal solution $L^\mathrm{opt}$ to the ring loading instance.
-However, the way in which we unsplit the demands approximates $L^\mathrm{opt}$ with an additive error of at most $\frac{3}{2}D$, where $D$ is the largest demand.
-
-The procedure for unsplitting is given in \cref{algo:rl}.
-
-\input{figures/rl_algorithm}
-

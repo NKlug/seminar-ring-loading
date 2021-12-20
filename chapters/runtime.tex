@@ -77,14 +77,14 @@ Also, one can show that all demands that are not parallel to any of the initial 
 Hence the new subroutine computes an output with the same properties as Step~3 in \cref{algo:rrl}.
 We furthermore observe that for each $i \in [n]$, $r[i]$ is increased at most $n$ times, implying the runtime is in $\cO(n^2)$.
 
-In \cref{algo:rrl}, while the edge capacities must not be updated in each iteration of Step~3, they must be known before Step~4.
+While the edge capacities must not be updated in each iteration of Step~3, they must be known before Step~4.
 The residual capacities are simply the difference between the original capacities and the edge loads.
 Again using a recursion, the edge loads resulting from the binary "pre-routing" obtained in Step~3 can be computed in $\cO(n^2)$ time.
 
 \begin{lemma}
 	\label{lemma:link-loads}
-	For all $k \in [n]$ let $L_k^\mathrm{f}$ and $L_k^\mathrm{b}$ be the total traffic that is routed forward and backward, respectively, through the edge $\{k, k+1\}$ by the routing $\Phi$. 
-	With $L_{-1}^\mathrm{b} \coloneqq L_n^\mathrm{b}$, the following holds true:
+	For all $k \in [n]$ let $L_k^\mathrm{f}(\Phi)$ and $L_k^\mathrm{b}(\Phi)$ be the total traffic that is routed forward and backward, respectively, through the edge $\{k, k+1\}$ by the routing $\Phi$. 
+	With $L_0^\mathrm{b} \coloneqq L_n^\mathrm{b}$, the following holds true:
 		\begin{align}
 		L_k^\mathrm{f}(\Phi) &\coloneqq \begin{cases}
 			\sum_{j = 2}^n d_{1,j} \cdot \Phi(1, j), & \text{if } i = 1 \\
@@ -100,5 +100,5 @@ Again using a recursion, the edge loads resulting from the binary "pre-routing" 
 In Step~4 of \cref{algo:rrl}, the minimal slacks on the front routes of the remaining demands have to be determined.
 Doing this the naïve way takes $\cO(n^2)$ time per demand, so $\cO(n^3)$ time in total (again utilizing \cref{eq:recursive-dac}).
 This, too, can be improved to $\cO(n^2)$.
-The precise way to do this cannot be discussed in this work. 
-The interested reader is referred to the appendix.
+The precise way to do this is quite lengthy and can hence not be discussed in this work. 
+The interested reader is instead referred to the appendix.
