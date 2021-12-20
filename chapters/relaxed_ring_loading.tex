@@ -1,19 +1,20 @@
 \section{An Algorithm for Relaxed Ring Loading}
 \label{sec:relaxed-ring-loading}
 
-In this section, we derive the exact, polynomial-time algorithm for \RRL invented by \citet{schrijver99}.
-Considering that we want to use the real-valued routing obtained from this algorithm to approximate an optimal binary routing, it is desirable to determine such a real-valued routing $\Phi$ in which all but at most $\lfloor \frac{n}{2} \rfloor$ demands are already routed all front or all back.
+In this section, Schrijver et al.'s \cite{schrijver99} algorithm for \RRL is presented.
+Remarkably, this algorithm computes a real-valued routing $\Phi$ in which all but at most $\lfloor \frac{n}{2} \rfloor$ demands are already routed all front or all back.
+This makes it easy to approximate an optimal binary routing, as will be shown later.
 
 \subsection{Minimal Solutions}
 
-Minimal solutions have this property:
+We aim to determine a minimal routing:
 
 \begin{definition}
 	Let $\Phi^\ast$ be an optimal solution to an instance of \RRL.
 	We say that $\Phi^\ast$ is \emph{minimal} if there exists no other optimal routing $\Phi'$ such that $L_i(\Phi') \leq L_i(\Phi^\ast)$ for all $1 \leq i \leq n$ and $L_j(\Phi') < L_j(\Phi^\ast)$ for at least one $j$.
 \end{definition}
-While this definition might seem arbitrary at first glance, minimal solutions are of a particularly aesthetic form.
 
+Minimal routings have the desired property of most demands being routed all front or all back.
 \begin{theorem}
 	\label{theo:number-of-splits}
 	Let $\Phi^\ast$ be a minimal solution to an instance of \RRL of size $n$.
@@ -23,11 +24,6 @@ While this definition might seem arbitrary at first glance, minimal solutions ar
 This result is quite remarkable, as we can have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ non-zero demands.
 Before proving the theorem, it is sensible to introduce some additional notation and terminology.
 From now on, we consider the \RRL instance $I$ of size $n \in \N$ as fixed.
-\begin{notation}
-	Let $i, j \in \N$ with $i < j$.
-	We define the half-open interval $[i, j) \coloneqq \{i, i+1, \ldots, j-1\}$.
-\end{notation}
-
 \begin{definition}
 	Let $i, j, u, v \in [n]$, $i < j, u < v$ and $d_{i,j}, d_{u, v}$ be two demands of a \RRL instance.
 	We say that
@@ -43,8 +39,13 @@ Crossing and parallel demands are most easily understood visually.
 See \cref{fig:parallel-demands} for some examples.
 
 \input{figures/parallel_demands}
-Next, we prove the following lemma.
 
+\begin{notation}
+	Let $i, j \in \N$ with $i < j$.
+	We write $[i, j)$ for the set $\{i, i+1, \ldots, j-1\}$.
+\end{notation}
+
+Next, we prove the following lemma.
 \begin{lemma}
 	\label{lemma:parallel-demands}
 	Let $\Phi^\ast$ be a minimal routing and $d_{i, j}$ and $d_{u, v}$ be parallel demands.
@@ -92,12 +93,12 @@ With these preparations, we can now conduct the proof of \cref{theo:number-of-sp
 The existence of minimal solutions is not clear, a priori.
 In the following, we will show that minimal solutions always exist by providing an algorithm.
 
-\subsection{\RRL with Capacities}
+\subsection{\textsc{RelaxedRingLoading} with Capacities}
 
 In order to construct a minimal solution, we first consider a generalization of \RRL by appending an edge capacity $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
 The resulting problem, \textsc{RelaxedRingLoadingWithCapacities} (\RRLWC), is to determine a real-valued routing $\Phi^\ast$ such that $L_k(\Phi^\ast) \leq C_k$ for all $k \in [n]$.
-We denote instance of this problem with $(I, C)$, where $I$ is an \RRL instance and $C = (C_k)_{k \in [n]}$ the capacities.
-This problem does not always have feasible solutions.
+We denote instances of this problem with $(I, C)$, where $I$ is an \RRL instance and $C = (C_k)_{k \in [n]}$ the capacities.
+\RRLWC does not always have feasible solutions.
 In the following, we show a necessary and sufficient condition for the existence of feasible solutions.
 
 \begin{definition}
@@ -122,7 +123,7 @@ A cut therefore "splits" the ring into two parts.
 	\end{enumerate}
 \end{definition}
 
-\begin{definition}[Cut Condition]
+\begin{definition}
 	An cut $\{g, h\}$ is satisfies the \emph{cut condition} if
 	\begin{equation}
 		D_{g,h} \leq C_g + C_h \ .
@@ -164,22 +165,22 @@ The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple di
 	This will contradict the minimality of $I$, implying that no such instance exists.
 	
  	We begin by picking any non-zero demand $d_{i,j}$ with $j - i \geq 2$.
- 	(If none such demand should exist, we can always obtain one by renumbering the nodes through "rotating".)
+ 	(If no such demand should exist a priori, we can always obtain one by renumbering the nodes through "rotating".)
  	Let $\{g, h\}$ be a cut that minimizes
  	\begin{equation}
- 		\widehat{M} \coloneqq \min_{\substack{ \{g', h'\} \text{ cut},\\ g, h \in [i, j)}}
+ 		\overline{\mu} \coloneqq \min_{\substack{ \{g', h'\} \text{ cut},\\ g, h \in [i, j)}}
  		C_{g'} + C_{h'} - D_{g', h'} \ .
  	\end{equation}
- 	$\widehat{M}$ is the minimal slack of any cut that lies on the front route of $d_{i, j}$.
+ 	$\overline{\mu}$ is the minimal slack of any cut that lies on the front route of $d_{i, j}$.
 	
-	We construct a new instance $I'$ by routing $\frac{M}{2} \coloneqq \min(\frac{\widehat{M}}{2}, d_{i, j})$ traffic of $d_{i,j}$ along the front route and the remaining $d_{i,j} - \frac{M}{2}$ along the back route (if $d_{i,j} < \frac{\widehat{M}}{2}$, we send all traffic through the front).
-	Especially, $M \leq \widehat{M}$.
+	We construct a new instance $I'$ by routing $\frac{\mu}{2} \coloneqq \min(\frac{\overline{\mu}}{2}, d_{i, j})$ traffic of $d_{i,j}$ along the front route and the remaining $d_{i,j} - \frac{\mu}{2}$ along the back route (if $d_{i,j} < \frac{\overline{\mu}}{2}$, we send all traffic through the front).
+	Especially, $\mu \leq \overline{\mu}$.
 	We set the capacities of the new instance accordingly, that is
 	\begin{equation}
 		C_k' \coloneqq 
 		\begin{cases}
-			C_k - \frac{M}{2}, & \text{if } k \in [i, j)\\
-			C_k - (d_{i,j} - \frac{M}{2}) & \text{if } k \notin [i, j)
+			C_k - \frac{\mu}{2}, & \text{if } k \in [i, j)\\
+			C_k - (d_{i,j} - \frac{\mu}{2}) & \text{if } k \notin [i, j)
 		\end{cases} \ , \quad \forall k \in [n] \ .
 	\end{equation}
 	The demands remain the same with the exception of $d_{i,j}$, which is now $0$.
@@ -187,15 +188,15 @@ The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple di
 	
 	By construction, all cuts $\{s, t\}$ in $I'$ that lie on the front route of $d_{i,j}$ still satisfy the cut condition:
 	\begin{equation}
-		D_{s,t}' = D_{s,t} \leq C_{s} + C_{t} - M = (C_{s} - \frac{M}{2}) + (C_{t} - \frac{M}{2}) \stackrel{\mathrm{Def.}}{=} C_{s}' + C_{t}' \ .
+		D_{s,t}' = D_{s,t} \leq C_{s} + C_{t} - \mu = (C_{s} - \frac{\mu}{2}) + (C_{t} - \frac{\mu}{2}) \stackrel{\mathrm{Def.}}{=} C_{s}' + C_{t}' \ .
 	\end{equation}
-	The first equality follows from the fact that $d_{i,j}$ does not contribute to $D_{s,t}$ and $D_{s,t}'$, the inequality from the choice of $M$.
+	The first equality follows from the fact that $d_{i,j}$ does not contribute to $D_{s,t}$ and $D_{s,t}'$, the inequality from the choice of $\mu$.
 	
 	Similarly, all cuts $\{s, t\}$ crossed by $d_{i,j}$ satisfy the cut condition:
 	Assume w.l.o.g. $s \notin [i, j)$, $t \in [i, j)$, then the following holds true:
 	\begin{align}
 		D_{s,t}' &= D_{s,t} - d_{i,j} \leq C_s + C_t - d_{i,j} \\
-		&= \left(C_s - \left(d_{i,j} - \frac{M}{2}\right)\right) + \left(C_h - \frac{M}{2}\right) \stackrel{\mathrm{Def.}}{=} C_s' + C_t' \ .
+		&= \left(C_s - \left(d_{i,j} - \frac{\mu}{2}\right)\right) + \left(C_h - \frac{\mu}{2}\right) \stackrel{\mathrm{Def.}}{=} C_s' + C_t' \ .
 	\end{align}
 	Here, the first equality results from $d_{i,j}$ no longer contributing to the demand across the cuts it crosses.
 	The inequality is simply the cut condition in $I$.
@@ -204,14 +205,14 @@ The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple di
 	This means that
 	\begin{equation}
 		\label{eq:dst-capacity-inequality}
-		D_{s,t} = D_{s,t}' > C_s' + C_h' \stackrel{\mathrm{Def.}}{=} \left(C_s - \left(d_{ij} - \frac{M}{2}\right)\right) + \left(C_h - \left(d_{ij} - \frac{M}{2}\right)\right) \ .
+		D_{s,t} = D_{s,t}' > C_s' + C_h' \stackrel{\mathrm{Def.}}{=} \left(C_s - \left(d_{ij} - \frac{\mu}{2}\right)\right) + \left(C_h - \left(d_{ij} - \frac{\mu}{2}\right)\right) \ .
 	\end{equation}
 %	or equivalently $D_{s,t} +  2(d_{i,j} - \frac{M}{2}) > C_s + C_h$.
 	We now consider the cuts $\{s, g\}$ and $\{t, h\}$.
 	We get the following inequality for the sum of demands across the cuts $\{s, g\}$ and $\{t, h\}$ in the original instance:
 	\begin{align}
 		D_{s,g} + D_{t,h} &\geq D_{g,h} + D_{s,t} + 2 d_{i,j} \label{eq:diagonal-cut-inequality}\\
-		&> (C_g + C_h - M) +  \left(C_s - \left(d_{i,j} - \frac{M}{2}\right)\right) + \left(C_h - \left(d_{ij} - \frac{M}{2}\right)\right) + 2 d_{i,j} \label{eq:strict-capacity-inequality}\\
+		&> (C_g + C_h - \mu) +  \left(C_s - \left(d_{i,j} - \frac{\mu}{2}\right)\right) + \left(C_h - \left(d_{ij} - \frac{\mu}{2}\right)\right) + 2 d_{i,j} \label{eq:strict-capacity-inequality}\\
 		&= (C_g + C_h) + (C_s + C_t) \ .
 	\end{align}
 	Here, \ref{eq:diagonal-cut-inequality} follows from \cref{lemma:parallel-diagonal-cuts}.
@@ -323,7 +324,7 @@ For that, we make the following three observations.
 	Let $d_{i ,j}$ and $d_{u, v}$, $d_{i, j} \neq d_{u, v}$ be parallel demands, $\{g, g+1\}$ an edge in between and $\{g, h\}$ a cut.
 	Then at most one of $d_{i ,j}$ and $d_{u, v}$ crosses $d_{u, v}$.
 \end{lemma}
-The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a distinction over the position of the edge $\{h, h+1\}$.
+The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a distinction of the position of the edge $\{h, h+1\}$.
 \begin{lemma}
 	\label{lemma:parallel-to-tight-cut}
 	Let $d_{i, j}$ be parallel to a tight cut $\{g, h\}$.
@@ -387,8 +388,14 @@ This is especially the case for all cuts that are tight in the beginning, implyi
 In Step 4 of \cref{algo:rrl}, the remaining cuts are split using the technique from the proof of \cref{theo:cut-condition}.
 
 This shows the correctness of Schrijver et al.'s \cite{schrijver99} algorithm for \RRL.
-It is fairly easy to see that the algorithm's runtime is in $\cO(k n^2)$, as claimed by the authors.
-With some modifications, however, this runtime can be improved to $\cO(n^2)$, as will later be discussed in \cref{sec:runtime}.
+The authors claim that the algorithm's runtime is in $\cO(k n^2)$, where $k$ is the number of non-zero demands.
+This is fairly easy to see:
+Computing the demand across any cut can be done using \cref{eq:cut-demand-definition} in $\cO(k)$ time.
+There are $\binom{n}{2}$ cuts, which puts the runtime of Step 1 in $\cO(k n^2)$.
+Step 2 can be carried out in $\cO(n^2)$ using the definition of the capacities in $\cref{eq:minimal-capacities}$.
+One can verify that each iteration of the Step 3 and 4 takes $\cO(n^2)$ time, meaning that both loops are also in $\cO(k n^2)$.
+
+%With some modifications, however, this runtime can be improved to $\cO(n^2)$, as will later be discussed in \cref{sec:runtime}.
 
 %	Once a cut becomes tight in \cref{algo:rrl}, it remains tight.
 %\end{lemma}

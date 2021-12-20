@@ -31,12 +31,18 @@ that is, $z_i$ is the change of traffic on front route of $d_{i, j}$.
 This allows us to formulate the total change of traffic on any edge $\{k, k+1\}$, $k \in [2m]$ and determine the new link load $L_k'$:
 \begin{equation}
 	\label{eq:load-change}
-	L_k' = L_k + \sum_{i \in [m], k \in [i, i+m)} z_i - \sum_{i \in [m], k \notin [i, i+m)} z_i \ .
+	L_k' = L_k + \sum_{\substack{i \in [m],\\ k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m],\\ k \notin[i, i+m)}} z_i \ .
 \end{equation}
-Here, we have $k \in [i, i+m)$ if and only if the edge $\{k,k+1\}$ lies on the front route of $d_{i, i+m}$.
+Here, we again have $k \in [i, i+m)$ if and only if the edge $\{k,k+1\}$ lies on the front route of $d_{i, i+m}$.
+We also note that for all $k \in [m]$
+\begin{equation}
+	\label{eq:load-increase-equality}
+	L_k' - L_k 
+	= \sum_{\substack{i \in [m],\\ k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m],\\ k \notin[i, i+m)}} z_i 
+	= L_{k + m} - L_{k + m}' \ .
+\end{equation}
 
-
-The following theorem shows that there is a way to reroute the demands in $S'$ such that the maximal edge load remains bounded.
+The following lemma shows that there is a way to reroute the demands in $S'$ such that the maximal edge load remains bounded.
 \begin{lemma}
 	\label{lemma:reroute-demands}
 	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$ be such that $x_i + y_i \leq D$ for $D \in \R_{\geq 0}$.
@@ -47,12 +53,14 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 	\end{align}
 \end{lemma}
 \begin{proof}
-	We iteratively define the $z_i$.
+	We iteratively define the variables $z_i$.
 	Set $z_1 \coloneqq y_1$.
 	Then, for $k \in [n]$, let $z_i, 1 \leq i < k$ be such that $\sum_{i=1}^{k-1} z_i \in \left[-\frac{D}{2}, \frac{D}{2}\right]$.
 	Since $x_k + y_k \leq D$, at least one of the inequalities $\sum_{i=1}^{k-1} z_i + y_k \leq \frac{D}{2}$, $\sum_{i=1}^{k-1} z_i - x_i \geq -\frac{D}{2}$ holds true.
-	Choose $z_k = y_k$ or $z_k = -x_k$ accordingly.	
+	We choose $z_k = y_k$ or $z_k = -x_k$ accordingly.	
 \end{proof}
+
+We summarize the approximation quality of the rerouting in the following theorem.
 \begin{theorem}
 	\label{theo:ring-loading-algorithm}
 	Let $\Phi$ be the routing obtained from \cref{algo:rrl} and $\Lopt$ be the ringload of an optimal binary routing.
@@ -75,12 +83,19 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 	\end{equation}
 	where $z_i$ corresponds to the demand $d_{i, j}$ in $S$.
 	We get:
+	\begin{equation}
+		L(\Phi') - L(\Phi) 
+		= \max_{k \in [n]} (L_k(\Phi') - L(\Phi)) 
+		\leq \max_{k \in [n]} (L_k(\Phi') - L_k(\Phi)) \ .
+	\end{equation}
+	We observed that the link loads in the contracted instance change by the same amount as those in the original instance.
+	This yields
 	\begin{align}
-		L(\Phi') - L(\Phi) &= \max_{k \in [n]} (L_k(\Phi') - L(\Phi)) 
-		\leq \max_{k \in [n]} (L_k(\Phi') - L_k(\Phi))\\
-		& \stackrel{\ref{eq:load-change}}{=} \max_{k \in [m]} \left(\sum_{i \in [m], k \in [i, i+m)} z_i - \sum_{i \in [m], k \notin [i, i+m)} z_i\right)\\
-		&= \max_{k \in [m]} \abs{\sum_{i = 1}^k z_i - \sum_{i = k+1}^m z_i }\\
-		&= \max_{k \in [m]} \abs{2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i } \ . \label{eq:partial-reroutes}
+		\max_{k \in [n]} (L_k(\Phi') - L_k(\Phi)) 
+		&\stackrel{\mathclap{(\ref{eq:load-change})}}{=} \max_{k \in [2m]} \left(\sum_{\substack{i \in [m], k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m], k \notin[i, i+m)}} z_i \right)\\
+		&\stackrel{\mathclap{(\ref{eq:load-increase-equality})}}{=} \max_{k \in [m]} \abs{\sum_{\substack{i \in [m], k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m], k \notin[i, i+m)}} z_i} \\
+		& = \max_{k \in [m]} \abs{\sum_{i = 1}^k z_i - \sum_{i = k+1}^m z_i }\\
+		& = \max_{k \in [m]} \abs{2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i } \ . \label{eq:partial-reroutes}
 	\end{align}
 	Because both $\sum_{i = 1}^k z_i$ and $\sum_{i = 1}^m z_i$ lie in the interval $[-\frac{D}{2}, \frac{D}{2}]$, 
 	we have 
@@ -90,3 +105,7 @@ The following theorem shows that there is a way to reroute the demands in $S'$ s
 	Thus we get $L(\Phi') - L(\Phi) \leq \frac{3}{2}D$, or equivalently $L(\Phi') \leq L(\Phi) + \frac{3}{2}D$.
 	Observing that $L(\Phi) \leq \Lopt$ concludes the proof.
 \end{proof}
+
+This result completes the derivation of the approximation algorithm for \RL presented by \citet{schrijver99}.
+The proof of \cref{lemma:reroute-demands} shows that the rerouting of split demands can be carried out in $\cO(n)$ time.
+In total this puts the runtime of the algorithm in $O(k n^2 + n) = O(k n^2)$. 

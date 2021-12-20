@@ -137,19 +137,19 @@ The basic idea is to first solve the following problem.
 \begin{center}
 	\begin{mdframed}
 		\centering
-		\textsc{Relaxed Ring Loading} (\textsc{RRL})\\[0.7em]
+		\textsc{RelaxedRingLoading} (\textsc{RRL})\\[0.7em]
 		\begin{tabular}{rl}
 			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
 			{\bfseries Output}: & Real-valued routing $\Phi$ that minimizes $\max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
 \end{center}
-In contrast to \RL, this problem can be solved in polynomial time, as it can be formulated as a linear program.
+In contrast to \RL, this problem can be solved in polynomial time, as it can also be formulated as a linear program.
 We will see in \cref{sec:relaxed-ring-loading} that \RRL always has solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
 From such a routing an approximation of an optimal binary routing can be easily obtained, as will be shown in \cref{sec:ring-loading}.
 
-In this work, Schrijver et al.'s algorithm is presented and its correctness proven.
-This involves two steps: First, deriving an algorithm for computing an optimal real-valued routing and second, transforming it into a binary routing.
+%In this work, Schrijver et al.'s algorithm is presented and its correctness proven.
+%This involves two steps: First, deriving an algorithm for computing an optimal real-valued routing and second, transforming it into a binary routing.
 
 %\citet{schrijver99} claim that their algorithm has a time-complexity of $O(k n^2)$, where $k$ is the number of non-zero demands.
 %In this work, I show that through the use of dynamic programming and some modification the complexity can be reduced to $\cO(n^2)$, which seems to be a novel result.
