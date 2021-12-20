@@ -57,7 +57,7 @@ With these preparations, we can now formulate the ring loading problem in mathem
 		\textsc{RingLoading} (\textsc{RL})\\[0.7em]
 		\begin{tabular}{rl}
 			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j} \in \R_{\geq 0}$ for all $1 \leq i<j\leq n$.\\
-			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L = \max_{i \in [n]} L_i(\Phi)$.
+			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
 \end{center}
@@ -140,7 +140,7 @@ The idea is to first solve the following problem.
 		\textsc{RelaxedRingLoading} (\textsc{RRL})\\[0.7em]
 		\begin{tabular}{rl}
 			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
-			{\bfseries Output}: & Real-valued routing $\Phi$ that minimizes $\max_{i \in [n]} L_i(\Phi)$.
+			{\bfseries Output}: & Real-valued routing $\Phi$ that minimizes $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
 \end{center}
