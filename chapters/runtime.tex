@@ -62,7 +62,7 @@ Altogether, we can replace Step 3 with the following subroutine:
 		\For{$g \in [n]$}{
 			\For{$i \in [n]$}{
 				\While{$r[i] \neq i$ and $d_{i, r[i]}$ is parallel to $\{g, t[g]\}$}{
-					 Route $d_{i, j}$ to miss $\{g, h\}$\;
+					 Route $d_{i, r[i]}$ to miss $\{g, h\}$\;
 					 $r[i] = ((r[i] + 1) \mod n) + 1$\;
 				}	
 			}
@@ -83,21 +83,21 @@ Again using a recursion, the edge loads resulting from the binary "pre-routing" 
 
 \begin{lemma}
 	\label{lemma:link-loads}
-	For all $k \in [n]$ let $L_k^\mathrm{f}$ and $L_k^\mathrm{b}$ be the total traffic that is routed forward and backward, respectively, through the edge $\{k, k+1\}$ and let $\Phi$ be any routing. 
+	For all $k \in [n]$ let $L_k^\mathrm{f}$ and $L_k^\mathrm{b}$ be the total traffic that is routed forward and backward, respectively, through the edge $\{k, k+1\}$ by the routing $\Phi$. 
 	With $L_{-1}^\mathrm{b} \coloneqq L_n^\mathrm{b}$, the following holds true:
 		\begin{align}
-		L_k^\mathrm{f} &\coloneqq \begin{cases}
-			\sum_{j = 2}^n d_{1,j} \cdot \phi(1, j), & \text{if } i = 1 \\
-			L_{i-1}^\mathrm{f} - \sum_{j = 1}^{i-1} d_{j,i} \cdot \phi(j, i) + \sum_{j = i}^{n} d_{i,j} \cdot \phi(i, j) & \text{if } i > 1
+		L_k^\mathrm{f}(\Phi) &\coloneqq \begin{cases}
+			\sum_{j = 2}^n d_{1,j} \cdot \Phi(1, j), & \text{if } i = 1 \\
+			L_{i-1}^\mathrm{f} - \sum_{j = 1}^{i-1} d_{j,i} \cdot \Phi(j, i) + \sum_{j = i}^{n} d_{i,j} \cdot \Phi(i, j) & \text{if } i > 1
 		\end{cases} \ , \\
-		L_k^\mathrm{b} &\coloneqq \begin{cases}
-			\sum_{i = 1}^n \sum_{j = i+1}^n d_{i,j} \cdot (1 - \phi(i, j)) & \text{if } i = n\\
-			L_{i-1}^\mathrm{b} - \sum_{j = i}^{n} d_{i, j} \cdot (1 - \phi(i, j)) + \sum_{j = 1}^{i-1} d_{i,j} \cdot(1 - \phi(i, j)) & \text{if } i < n
+		L_k^\mathrm{b}(\Phi) &\coloneqq \begin{cases}
+			\sum_{i = 1}^n \sum_{j = i+1}^n d_{i,j} \cdot (1 - \Phi(i, j)) & \text{if } i = n\\
+			L_{i-1}^\mathrm{b} - \sum_{j = i}^{n} d_{i, j} \cdot (1 - \Phi(i, j)) + \sum_{j = 1}^{i-1} d_{i,j} \cdot(1 - \Phi(i, j)) & \text{if } i < n
 		\end{cases} \ .
 	\end{align}
 \end{lemma}
 
-In Step~5 of \cref{algo:rrl}, the minimal slacks on the front routes of the remaining demands have to be determined.
+In Step~4 of \cref{algo:rrl}, the minimal slacks on the front routes of the remaining demands have to be determined.
 Doing this the naïve way takes $\cO(n^2)$ time per demand, so $\cO(n^3)$ time in total (again utilizing \cref{eq:recursive-dac}).
 This, too, can be improved to $\cO(n^2)$.
 The precise way to do this cannot be discussed in this work. 
