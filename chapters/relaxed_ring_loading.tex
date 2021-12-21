@@ -21,14 +21,14 @@ Minimal routings have the desired property of most demands being routed all fron
 	Then $\Phi^\ast$ splits at most $\lfloor \frac{n}{2} \rfloor$ demands.
 \end{theorem}
 
-This result is quite remarkable, as we can have up to $\binom{n}{2} = \frac{n(n-1)}{2}$ non-zero demands.
+This result is quite remarkable, as we can have up to $\binom{n}{2} = \frac{n(n-1)}{2} \in \Theta(n^2)$ non-zero demands.
 Before proving the theorem, it is sensible to introduce some additional notation and terminology.
-From now on, we consider the \RRL instance $I$ of size $n \in \N$ as fixed.
+Also, from now on we consider the \RRL instance $I$ of size $n \in \N$ as fixed.
 \begin{definition}
-	Let $i, j, u, v \in [n]$, $i < j, u < v$ and $d_{i,j}, d_{u, v}$ be two demands of a \RRL instance.
+	Let $i, j, u, v \in [n]$, $i < j, u < v$ and $d_{i,j}, d_{u, v}$ be two demands.
 	We say that
 	\begin{enumerate}
-		\item $d_{i, j}$ and $d_{u, v}$ are \emph{crossing} if $i, j, u, v$ are pairwise distinct and $i < u < j < h$ or $u < i < h < j$.
+		\item $d_{i, j}$ and $d_{u, v}$ are \emph{crossing} if $i, j, u, v$ are pairwise distinct and $i < u < j < h$ or $u < i < h < j$;
 		\item $d_{i, j}$ and $d_{u, v}$ are \emph{parallel} if they are not crossing.
 		\item Let $d_{i, j}$ and $d_{u, v}$ be parallel with $j < v$.
 		The edge $\{k, k+1\}$ is \emph{in between} $d_{i,j}$ and $d_{u, v}$ if it lies on the front route of exactly one of the demands (in case $i \geq u$) or if it lies on the back routes of both demands (in case $j \leq u$).
@@ -39,12 +39,12 @@ See \cref{fig:parallel-demands} for some examples.
 
 \input{figures/parallel_demands}
 
-\begin{notation}
-	Let $i, j \in \N$ with $i < j$.
-	We write $[i, j)$ for the set $\{i, i+1, \ldots, j-1\}$.
-\end{notation}
+%\begin{notation}
+%	Let $i, j \in \N$ with $i < j$.
+%	We write $[i, j)$ for the set $\{i, i+1, \ldots, j-1\}$.
+%\end{notation}
 
-Next, we prove the following lemma.
+For the proof of \cref{theo:number-of-splits}, we require the following lemma.
 \begin{lemma}
 	\label{lemma:parallel-demands}
 	Let $\Phi^\ast$ be a minimal routing and $d_{i, j}$ and $d_{u, v}$ be parallel demands.
@@ -76,7 +76,7 @@ Next, we prove the following lemma.
 	Altogether, the existence of the routing $\Phi'$ contradicts the minimality of $\Phi^\ast$.
 \end{proof}
 
-With these preparations, we can now conduct the proof of \cref{theo:number-of-splits}.
+We can now conduct the proof of \cref{theo:number-of-splits}.
 \begin{proof}[Proof of \cref{theo:number-of-splits}]
 	Let $\Phi^\ast$ be a minimal routing and let $S \coloneqq \{(i, j)\ |\ 0 < \Phi^\ast(i, j) < 1\}$ be the set of indices of demands that are split by $\Phi^\ast$.
 	Furthermore, let $(i, j), (u, v) \in S$.
@@ -96,7 +96,7 @@ In the following, we will show that minimal solutions always exist by providing 
 
 In order to construct a minimal solution, we first consider a generalization of \RRL by appending an edge capacity $C_k \in \R_{\geq 0}$ for each edge $\{k, k+1\}$.
 The resulting problem, \textsc{RelaxedRingLoadingWithCapacities} (\RRLWC), is to determine a real-valued routing $\Phi^\ast$ such that $L_k(\Phi^\ast) \leq C_k$ for all $k \in [n]$.
-We denote instances of this problem with $(I, C)$, where $I$ is an \RRL instance and $C = (C_k)_{k \in [n]}$ the capacities.
+We denote instances of this problem by $(I, C)$, where $I$ is an \RRL instance and $C = (C_k)_{k \in [n]}$ the capacities.
 \RRLWC does not always have feasible solutions.
 In the following, we show a necessary and sufficient condition for the existence of feasible solutions.
 
@@ -136,7 +136,7 @@ Examples for the definitions above can be found in \cref{fig:cut-example}.
 	A cut is \emph{tight} if its slack is $0$.
 \end{definition}
 
-The cut condition is quite similar to the message of the max-flow-min-cut theorem from the theory of network flows:
+The cut condition resembles the max-flow-min-cut theorem from the theory of network flows:
 The maximum flow passing through any (source-target) cut must never be greater than the cut's capacity.
 In the framework of \RRLWC, we get a similar result:
 
@@ -145,6 +145,7 @@ In the framework of \RRLWC, we get a similar result:
 	An instance $(I, C)$ of \RRLWC is feasible if and only if it satisfies the cut condition.
 \end{theorem}
 For the proof, we will need the following lemma.
+
 \begin{lemma}
 	\label{lemma:parallel-diagonal-cuts}
 	Let $\{g, h\}$, $\{s, t\}$ be two parallel cuts and $d_{i, j}$ parallel to both cuts.
@@ -153,7 +154,8 @@ For the proof, we will need the following lemma.
 		D_{s,g} + D_{t,h} \geq D_{g,h} + D_{s,t} + 2 d_{i,j} \ .
 	\end{equation}
 \end{lemma}
-The proof of \cref{lemma:parallel-diagonal-cuts} can be conducted by a simple distinction of cases.
+The proof can be conducted by showing that all demands that cross at least one of the cuts $\{g, h\}$, $\{s, t\}$ also cross as many of the cuts $\{s, g\}$, $\{t, h\}$.
+This can be shown by a simple distinction of cases.
 
 \begin{proof}[Proof of \cref{theo:cut-condition}]
 	If in an instance $I$ a cut $\{g, h\}$ does not satisfy the cut condition, we have $D_{g, h} > C_g + C_h$.
@@ -244,7 +246,7 @@ With the help of \cref{theo:cut-condition} it is easy to determine the optimal r
 
 We now have almost all the tools we need to formulate an algorithm.
 Starting with a \RRL instance $I$, the basic idea is the following:
-First, choose capacities such that (1) the cut condition is satisfied and (2) every solution complying with the capacities is minimal.
+First, choose capacities such that (1) the cut condition is satisfied and (2) every solution complying with these capacities is minimal.
 Then, route the demands all front or all back until only mutually crossing demands remain (we will see how this can be done in the following).
 Finally, split the remaining demands using the strategy used in the proof of \cref{theo:cut-condition}.
 
@@ -252,14 +254,14 @@ Let $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
 We construct the capacities $C = (C_k)_{k \in [n]}$ in an iterative fashion, starting at $k = 1$:
 \begin{equation}
 	\label{eq:minimal-capacities}
-	C_k \coloneqq \max \left(\max_{1 \leq g < k}(D_{g, k} - C_g), \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})\right)
+	C_k \coloneqq \max \left(\max_{1 \leq g < k}(D_{g, k} - C_g), \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})\right) \ .
 \end{equation}
 
 We note that:
 \begin{proposition}
 	The instance $(I, C)$ is feasible.
 \end{proposition}
-This follows immediately from the first argument in the outer maximum in \cref{eq:minimal-capacities}.
+This follows immediately from the first argument in the maximum in \cref{eq:minimal-capacities}.
 
 \begin{lemma}
 	\label{lemma:capacities-bounded}
@@ -346,20 +348,19 @@ The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a disti
 	Assume the edge $\{g, g+1\}$ is not contained in a tight cut.
 	Let $\nu \coloneqq \min_{h \neq g} C_g + C_h - D_{g, h}$.
 	Define $C_g' = C_g - \nu$ and $C_k' = C_k$ for all $k \in [n], k \neq g$.
-	Then every cut still satisfies the cut condition and $C_g' < C_g$.
+	Then every cut still satisfies the cut condition for the capacities $C_k'$ and we have $C_g' < C_g$.
 	But in the proof of \cref{theo:routing-with-capacities-is-minimal} we have shown that no such set of capacities can exist.
 \end{proof}
 
-We can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
-
+Finally, we can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
 \input{figures/rll_algorithm}
 
 The basic idea of the algorithm is the following:
 After computing the demands across the cuts and the capacities, the demands are routed all front or all back until only mutually crossing demands remain.
-In each iteration, an edge $\{g, g+1\}$ in between two parallel demands $d_{i, j}$, $d_{u, v}$ is selected.
-Let $\{g, h\}$ be a tight cut, whose existence is guaranteed by \cref{lemma:edge-in-tight-cut}.
-\cref{lemma:parallel-demands-cross-cut} then implies that at most one of the demands crosses $\{g, h\}$ and \cref{lemma:parallel-to-tight-cut} determines the routing of the non-crossing demand.
-After decreasing the edge capacities accordingly and recomputing the demands across the cuts, we are left with an instance of \RRLWC with one less non-zero demand.
+In each iteration of Step~3, an edge $\{g, g+1\}$ in between two parallel demands $d_{i, j}$, $d_{u, v}$ is selected.
+We find a tight cut $\{g, h\}$, whose existence is guaranteed by \cref{lemma:edge-in-tight-cut}.
+\cref{lemma:parallel-demands-cross-cut} then implies that at most one of the demands crosses $\{g, h\}$ and  by \cref{lemma:parallel-to-tight-cut} the routing of the non-crossing demand is uniquely determined.
+After decreasing the edge capacities accordingly and adjusting the demands across the cuts, we are left with an instance of \RRLWC with one less non-zero demand.
 It remains to see that in \cref{lemma:edge-in-tight-cut} still holds true for the new, smaller instance:
 
 \begin{lemma}
@@ -367,9 +368,9 @@ It remains to see that in \cref{lemma:edge-in-tight-cut} still holds true for th
 	During the execution of Step 3 of \cref{algo:rrl}, the cut slacks are non-increasing.
 \end{lemma}
 \begin{proof}
-	Let $C_k$, $k \in [n]$ be the capacities before an it an iteration of the while-loop (Step 3) of \cref{algo:rrl} and let $d_{i, j}$ be the demand that is routed during the iteration.
-	Let $\{g, h\}$ be any cut.
-	
+	Let $C_k$, $k \in [n]$ be the capacities before an it an iteration of the while-loop (Step 3) of \cref{algo:rrl} and let $d_{i, j}$ be the demand that is routed during this iteration.
+	Let $\{g, h\}$ be any cut and let $C_k'$ be the new capacities and $D_{g, h}'$ the new demand across $\{g, h\}$.
+	We distinguish two cases:
 	\begin{enumerate}[align=left]
 		\item[Case 1: $d_{i, j}$ crosses $\{g, h\}$]{\mbox{}\\
 			Then exactly one of the capacities $C_g$, $C_h$ was decreased by $d_{i, j}$.
@@ -380,13 +381,12 @@ It remains to see that in \cref{lemma:edge-in-tight-cut} still holds true for th
 		}
 		\item[Case 2: $d_{i, j}$ is parallel to $\{g, h\}$]{\mbox{}\\
 			Then the demand across $\{g, h\}$ does not change, but the capacities $C_g$, $C_h$ might have been decreased.
-			Thus, the slack of $\{g, h\}$ does not increase.
+			Thus, the slack of $\{g, h\}$ does not increase. \qedhere
 		}
 	\end{enumerate}
 \end{proof}
 
-This shows that cuts that are tight during any iteration of Step 3 remain tight.
-This is especially the case for all cuts that are tight in the beginning, implying \cref{lemma:edge-in-tight-cut} does indeed hold true in each iteration.
+This shows that cuts that are tight during any iteration of Step 3 remain tight, which is especially the case for all cuts that are tight in the beginning, implying \cref{lemma:edge-in-tight-cut} does indeed hold true in each iteration.
 
 In Step 4 of \cref{algo:rrl}, the remaining cuts are split using the technique from the proof of \cref{theo:cut-condition}.
 
