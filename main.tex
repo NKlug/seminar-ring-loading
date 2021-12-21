@@ -26,8 +26,15 @@
 \thispagestyle{empty}		% leerer Seitenstil, also keine Seitennummer auf der Titelseite
 \begin{titlepage}
 \seminarkopf 			% Titelblatt (wie in kopf.tex definiert)
-\begin{abstract} 
-	This will be the abstract.
+\begin{abstract}
+	The ring loading problem arises during the planning of SONET rings.
+	Given a cycle graph of $n > 1$ nodes and a traffic demand for each pair of nodes, the problem is to determine a routing in which each demand is routed either completely in the clockwise or completely in the counterclockwise direction around the ring.
+	
+	Since this problem is NP-complete, Schrijver, Seymour and Winkler presented an approximation algorithm in their paper "The Ring Loading Problem".
+	This algorithm computes approximations that exceed the optimal solution by at most $\frac{3}{2}D$, where $D$ is the maximal demand.
+	In the process, an optimal solution to the relaxed ring loading problem is determined, which allows demands to be routed both ways at the same time.
+	
+	In this work, Schrijver et al.'s algorithm is presented and its correctness proven.	
 \end{abstract} 
 \end{titlepage}
 
