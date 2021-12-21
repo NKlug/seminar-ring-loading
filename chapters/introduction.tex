@@ -4,7 +4,7 @@ The ring loading problem first arose in the planning of \textbf{S}ynchronous \te
 In SONET, several add-drop multiplexers (ADMs) and other components are connected by predominantly optical fibers.
 One prominent SONET topology is the bidirectional path-switched ring, which is safe to the failure of a single link or node due to its connectivity.
 In a SONET ring, the routing of node-to-node network traffic is fixed: Unless a failure occurs, the traffic between any two nodes is either always routed in the clockwise or the counter-clockwise direction.
-The ring loading problem arises in the planning of SONET rings.
+The ring loading problem arises in the planning of such rings.
 ADMs have a limited capacity of traffic they can send or receive through any link.
 Hence the maximal workload on any link must be determined from estimated node-to-node network traffic demands during planning.
 This involves computing the optimal routing of these demands around the ring, that is, the routing that minimizes the maximal load on any link
@@ -16,20 +16,21 @@ In this work parts of this paper are presented.
 We begin by formalizing the problem.
 The SONET ring is modeled by an undirected cycle graph consisting of $n \in \N$ nodes.
 We number the nodes consecutively in the counter-clockwise direction with the numbers $1, 2, \dots, n$.
-For the ease of notation, it makes sense to interpret the node numbers as representatives of the equivalence classes of $\Z/n\Z$.
+For the ease of notation, it makes sense to interpret the node numbers as the equivalence classes of $\Z/n\Z$.
 This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$.
 Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the traffic that has to be routed through from node $i$ to node $j$.
-In practice, the demands from $i$ to $j$ and $j$ to $i$ can differ.
-However, XYZ have shown that we can without loss of generality combine these two opposing demands into one single demand from $i$ to $j$ and still obtain the same optimal routing.
+For simpler notation, we only allow one demand per pair of nodes.
+As we will see, this does not oversimplify the problem.
+Also, \citet{schrijver99} claim that their algorithm can be easily extended to the case of two (or more) demands per pair.
 Thus, we focus on the case where for every two nodes $i < j$, we have one demand $d_{i,j}$.
 
 A demand $d_{i, j}$ can be routed two ways around the ring.
 We say that a demand is routed \emph{forward} or \emph{through the front}, if it does not use the edge $\{n, 1\}$.
 Otherwise, we say that the demand is routed \emph{backwards} or \emph{through the back}.
-Next, we can formally define routings in a ring of size $n$.
+Next, we can formally define routings.
 \begin{definition}[Routing]
 	\label{def:routing}
-	A \emph{real-valued routing} is a function 
+	A \emph{real-valued routing} in a ring of size $n \in \N$ is a function 
 	\begin{equation}
 		\Phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow [0, 1] \ .
 	\end{equation}
@@ -75,11 +76,11 @@ the problem is NP-complete.
 \end{theorem}
 \begin{proof}[Proof (Sketch)]
 	A routing $\Phi$ restricted to the non-zero demands serves a witness of size $\cO(k)$.
-	Using \cref{eq:edge-load} we can determine the maximal edge load $L$ in polynomial time and check whether $L \leq T$.
+	Using \cref{eq:edge-load} we can determine the maximal edge load $L(\Phi)$ in polynomial time and check whether $L(\Phi) \leq T$.
 	Thus, \RL is in NP.
 	
 	To show completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
-	This problem asks whether, given $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ such that 
+	This problem asks whether, given an instance $J$ consisting of $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ such that 
 	\begin{equation}
 		\sum_{i \in S} z_i = \frac{1}{2}  \sum_{i \in [m]} z_i = \sum_{j \in [m] \setminus S} z_j\ .
 	\end{equation}
@@ -90,7 +91,7 @@ the problem is NP-complete.
 	\end{align}
 	All other demands are set to $0$.
 	The constructed instance is visualized in \cref{fig:partition-rl-instance}.
-	Furthermore we set, $T = \sum_{i \in [m]} z_i$.
+	Furthermore, we set $T = \sum_{i \in [m]} z_i$.
 	
 	Now, let $J$ be a Yes-instance of \textsc{Partition}.
 	Then there exists a solution $A \subseteq [m]$.
@@ -115,8 +116,7 @@ the problem is NP-complete.
 		A' \coloneqq \{i \ |\ i \in [m] \text{ and } \Phi(i, m+2) = 1\}
 	\end{equation} 
 	is a solution to the \textsc{Partition} instance $J$.
-	
-	This shows NP-completeness and concludes the proof.
+	This shows NP-completeness.
 %	In fact, the routing $\Phi$ is the only routing with ringload $\leq T$ in $J'$.
 %	To see this, let $\Phi'$ be another routing and assume that any of the demands $d_{m+1, m+2}, d_{m+2, m+3}$ is routed backwards, w.l.o.g. $d_{m+1, m+2}$.
 %	Then we have
