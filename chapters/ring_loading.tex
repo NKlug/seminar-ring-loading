@@ -2,17 +2,17 @@
 \label{sec:ring-loading}
 
 In this section, we see how we can transform the real-valued routing $\Phi$ determined by \cref{algo:rrl} into a binary routing that approximates the optimal routing.
-Let $L_i = L_i(\Phi)$ be the edges loads induced by $\Phi$ and $S$ be the set of demands that are split.
+Let $L_i = L_i(\Phi)$ be the edge loads induced by $\Phi$ and $S$ be the set of demands that are split.
 In order to obtain a binary routing, we simply have to reroute the demands in $S$ all front or all back -- ideally without increasing the maximal edge load by too much. 
 As we have seen, all demands in $S$ are mutually crossing and $\abs{S} \leq \lfloor \frac{n}{2} \rfloor$.
-That means, each node is an endpoint of at most one demand.
+That means that each node is an endpoint of at most one demand.
 For simplicity, we remove all nodes $i \in [n]$ that are not endpoints of any demand.
-When rerouting any split demand, the loads on the two edges incident to $i$ change by the same amount.
+When rerouting any split demand, the loads on the two edges incident to such nodes $i$ change by the same amount.
 Hence, we replace the edges $\{i-1, i\}$ and $\{i, i+1\}$ with a single new edge $\{i', i'+1\}$ and set 
 \begin{equation}
 	L_{i'} \coloneqq \max(L_{i-1}, L_i) \ .
 \end{equation}
-For rerouting the split demands, it suffices to consider this contracted instance $I'$ of size $2m$, where $m \coloneqq \abs{S}$.
+For rerouting the split demands, it suffices to consider this "contracted" instance $I'$ of size $2m$, where $m \coloneqq \abs{S}$.
 We can rewrite $S$ in a simpler way as $S' = \{d_{i, i+m}\ |\ i \in [m]\}$.
 
 For all $d_{i, i+m} \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
@@ -45,8 +45,8 @@ We also note that for all $k \in [m]$
 The following lemma shows that there is a way to reroute the demands in $S'$ such that the maximal edge load remains bounded.
 \begin{lemma}
 	\label{lemma:reroute-demands}
-	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$ be such that $x_i + y_i \leq D$ for $D \in \R_{\geq 0}$.
-	Then there exist $z_i \in \R$, $i \in [m]$ such that:
+	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$, be such that $x_i + y_i \leq D$ for $D \in \R_{\geq 0}$.
+	Then there exist $z_i \in \R$, $i \in [m]$, such that:
 	\begin{align}
 		(z_i = y_i \quad \text{ or } \quad z_i = -x_i) 
 		\quad \text{ and } \quad \sum_{i=1}^k z_i \in \left[-\frac{D}{2}, \frac{D}{2}\right] \quad \forall k \in [m] \ .
@@ -106,6 +106,6 @@ We summarize the approximation quality of the rerouting in the following theorem
 	Observing that $L(\Phi) \leq \Lopt$ concludes the proof.
 \end{proof}
 
-This result completes the derivation of the approximation algorithm for \RL presented by \citet{schrijver99}.
 The proof of \cref{lemma:reroute-demands} shows that the rerouting of split demands can be carried out in $\cO(n)$ time.
-In total this puts the runtime of the algorithm in $O(k n^2 + n) = O(k n^2)$. 
+In total this puts the runtime of the approximation algorithm in $O(k n^2 + n) = O(k n^2)$. 
+This result completes the derivation of Schrijver et al.'s \RL algorithm and concludes this work.
