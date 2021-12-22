@@ -218,10 +218,10 @@ This can be shown by a simple distinction of cases.
 	\begin{align}
 		D_{s,g} + D_{t,h} &\geq D_{g,h} + D_{s,t} + 2 d_{i,j} \label{eq:diagonal-cut-inequality}\\
 		&> (C_g + C_h - \mu) +  \left(C_s - \left(d_{i,j} - \frac{\mu}{2}\right)\right) + \left(C_h - \left(d_{ij} - \frac{\mu}{2}\right)\right) + 2 d_{i,j} \label{eq:strict-capacity-inequality}\\
-		&= (C_g + C_h) + (C_s + C_t) \ .
+		&= (C_s + C_g) + (C_t + C_h) \ .
 	\end{align}
 	Here, \ref{eq:diagonal-cut-inequality} follows from \cref{lemma:parallel-diagonal-cuts}.
-	The strict inequality results from the choice of $\{g, h\}$ and $M$ and \cref{eq:dst-capacity-inequality}.
+	The strict inequality results from the choice of $\{g, h\}$ and $\mu$ and \cref{eq:dst-capacity-inequality}.
 	Altogether, this means that $D_{s,g} > C_s + C_g$ or $D_{t,h} > C_t + C_h$, showing that at least one of the cuts $\{s, g\}$, $\{t, h\}$ must have violated the cut condition in $I$; a contradiction to the choice of $I$.
 	
 	Thus all cuts in $I'$ satisfy the cut condition.
@@ -327,7 +327,7 @@ For that, we make the following three observations.
 \begin{lemma}
 	\label{lemma:parallel-demands-cross-cut}
 	Let $d_{i ,j}$ and $d_{u, v}$, $d_{i, j} \neq d_{u, v}$ be parallel demands, $\{g, g+1\}$ an edge in between and $\{g, h\}$ a cut.
-	Then at most one of $d_{i ,j}$ and $d_{u, v}$ crosses $d_{u, v}$.
+	Then at most one of $d_{i ,j}$ and $d_{u, v}$ crosses $\{g, h\}$.
 \end{lemma}
 The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a distinction of the position of the edge $\{h, h+1\}$.
 \begin{lemma}
@@ -352,7 +352,7 @@ The proof of \cref{lemma:parallel-demands-cross-cut} can be conducted by a disti
 	But in the proof of \cref{theo:routing-with-capacities-is-minimal} we have shown that no such set of capacities can exist.
 \end{proof}
 
-Finally, we can formulate Schrijver et al.s' \cite{schrijver99} algorithm:
+Finally, we can formulate Schrijver et al.s' \cite{schrijver99} algorithm (\cref{algo:rrl}).
 \input{figures/rll_algorithm}
 
 The basic idea of the algorithm is the following:

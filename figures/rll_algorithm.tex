@@ -11,12 +11,12 @@
 				Choose link $\{g, g+1\}$ that lies in between $d_{i,j}$ and $d_{u, v}$\;
 				Find a tight cut $\{g, h\}$\;
 				Route $d_{i, j}$ or $d_{u, v}$ to miss the cut $\{g, h\}$\;
-				Decrease capacities accordingly and adjust demands across cuts $D_{i, j}$\;
+				Decrease capacities accordingly and adjust demands across cuts\;
 			}
 			\nl\ForEach{unrouted demand $d_{i, j}$}{
 				Compute minimal slack $\mu$ on the front route of $d_{i, j}$\;
 				Route $\min(d_{i, j}, \frac{\mu}{2})$ forward and the remainder backwards\;
-				Decrease capacities accordingly and adjust demands across cuts $D_{i, j}$.
+				Decrease capacities accordingly and adjust demands across cuts.
 			}
 %			\nl\Return{Routing $\Phi$}
 		\end{mdframed}

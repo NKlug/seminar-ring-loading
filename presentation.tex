@@ -1,7 +1,7 @@
 
 \documentclass[8pt]{beamer}
 
-\usepackage[english]{babel}
+\usepackage[german]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{pdfpages}
 \usepackage{color}
@@ -31,7 +31,7 @@
 
 \MakeOuterQuote{"}
 
-\usetikzlibrary{positioning,backgrounds, fit, patterns,shapes, snakes, chains, arrows, decorations.markings, arrows.meta}
+\usetikzlibrary{calc, positioning,backgrounds, fit, patterns,shapes, snakes, chains, arrows, decorations.markings, arrows.meta}
 %\tikzexternalize[prefix=out/figures/]
 \newcolumntype{Y}{>{\centering\arraybackslash}X} % centered equidistant columns
 
@@ -97,11 +97,11 @@
 
 \AtBeginSection[]{}
 
-\title[]{The Ring Loading Problem}
+\title[]{Das Ring Loading Problem}
 %\subtitle{Seminar \glqq Mathematische Aspekte des maschinellen Lernens\grqq}
 \author[Nikolas Klug]{Nikolas Klug}
-\institute[University of Augsburg]{University of Augsburg}
-\date{\nth{16} December 2021}
+\institute[Universität Augsburg]{Universität Augsburg}
+\date{23. Dezember 2021}
 
 
 \begin{document}
@@ -113,26 +113,103 @@
 	}
 	\addtocounter{framenumber}{-1}
 
-	\begin{frame}{Overview}
+	\begin{frame}{Quelle}
 %		\begin{NoHyper}
 %			\tableofcontents[]
 %		\end{NoHyper}
 
-		Main sources:\\
-		\emph{The Ring Loading Problem}\\
-		 Alexander Schrijver, Paul Seymour, Peter Winkler, 2020.\\
+		Hauptquelle:\\
+		\emph{The Ring Loading Problem},\\
+		 Alexander Schrijver, Paul Seymour, Peter Winkler, 1999,\\
+		 \emph{SIAM Review 41 (4).}\\
 	\end{frame}
 	
-	\section{Stochastical basics}
-	\begin{frame}{Training data}
-		\begin{definition}
-			For $1 \leq i \leq N$, let $x_i: (\Omega, \cF) \rightarrow (\R^n, \cB(\R^n))$ be independent and identically distributed random variables with $x_i \sim P_{data}$.\\
-			$P_{data}$ is the distribution of the training data over the sample space $\R^n$.\\
-			The \emph{training data} is a realization $(x_1(\omega), x_2(\omega), \dots, x_N(\omega))$ of random variables $x_i$ for some $\omega \in \Omega$.
-		\end{definition}
-		We write $X_i \coloneqq x_i(\omega)$ and $(X_1, \dots, X_n)$.
+	\begin{frame}{Problemstellung}
+		Problem stammt aus Praxis...
 	\end{frame}
 
+	\section{Formalisierung}
+	
+	\begin{frame}{Formalisierung}
+		\begin{columns}
+			\column{0.6\linewidth}
+			demands\\
+			routings\\
+			edge loads\\
+			\column{0.4\linewidth}
+			\input{figures/empty_ring}
+		\end{columns} 
+	\end{frame}
+
+	\begin{frame}{Formalisierung}
+		Ring Loading Problem
+	\end{frame}
+
+	\begin{frame}{NP-Vollständigkeit}
+		Ring Loading ist NP-Vollständig + Beweis
+	\end{frame}
+
+	\begin{frame}{Relaxed Ring Loading}
+		Relaxed Ring Loading
+	\end{frame}
+	
+	\begin{frame}{Relaxed Ring Loading}
+		Relaxed Ring Loading
+	\end{frame}
+	
+	\begin{frame}{Approximations Algorithmus}
+		Überblick über Approximations algo: 1. Bestimme "dünn-besetzte" Lösung von RRL 2. Reroute split demands 
+	\end{frame}
+
+	\begin{frame}{Minimale Lösungen}
+		Definition Minimaler Lösungen
+	\end{frame}
+
+	\begin{frame}{Charakterisiung minimaler Lösungen}
+		Theorem: nur wenige gesplittete demands	\\
+		Definitionen crossing, parallel	
+	\end{frame}
+		
+	\begin{frame}{RelaxedRingLoading mit Kapazitäten}
+		Definition Kapazitäten und Problem mit Kapazitäten	
+	\end{frame}
+	
+	\begin{frame}{Schnitte}
+		Definition Schnitte, schneiden, demand across cut, cut condition
+	\end{frame}
+
+	\begin{frame}{Charakterisierung der Lösbarkeit}
+		Lösbar genau dann wenn cut condition erfüllt + Beweis
+	\end{frame}
+
+	\begin{frame}{On the way to an algorithm...}
+		Definition der Kapazitäten + einige Beobachtungen dazu.
+	\end{frame}
+
+	\begin{frame}{Einige Beobachtungen}
+		Definition der Kapazitäten + einige Beobachtungen dazu.
+	\end{frame}
+
+	\begin{frame}{Der Algorithmus}
+		Definition der Kapazitäten + einige Beobachtungen dazu.
+	\end{frame}
+
+	\section{Transformation in ein binäres Routing}
+	\begin{frame}{Transformation in ein binäres Routing}
+		Schrumpfen der Instanz
+	\end{frame}
+
+	\begin{frame}{Umrouten gesplitter Nachfragen}
+		Änderung der Kantenlast
+	\end{frame}
+
+	\begin{frame}{Wahl des Umroutings}
+		content...
+	\end{frame}
+	
+	\begin{frame}{Approximationsgüte}
+		content...
+	\end{frame}
 	
 	\begin{frame}[allowframebreaks]
 		\nocite{*}
