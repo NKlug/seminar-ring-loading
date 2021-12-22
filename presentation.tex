@@ -162,12 +162,13 @@
 			Knotenmenge $V = [n] = \{1, 2, 3, \dots, n\}$.\\
 			Kantenmenge $E = \{\{k, k+1\}\ |\ k \in [n]\}$\\
 			~\\\pause
-			Für jedes Paar von Knoten $i, j \in [n], i < j$: \emph{Nachfrage} (engl. demand) $d_{i, j} \in \R_{\geq 0}$.
-			
+			Für jedes Paar von Knoten $i, j \in [n], i < j$: \emph{Nachfrage} (engl. demand) $d_{i, j} \in \R_{\geq 0}$.\\
+			~\\\pause
+			$d_{i,j}$ wird \emph{vorwärts} gerouted, falls die Kante $\{n, 1\}$ nicht genutzt wird.\\
+			Sonst wird $d_{i,j}$ \emph{rückwärts} gerouted.
 			\column{0.4\linewidth}
 			\input{figures/empty_ring}
 		\end{columns} 
-		Instanzgröße: $\cO(K \log D + \log n)$, wobei $D$ maximale Nachfrage und $K$ Anzahl nicht-negativer Nachfragen
 	\end{frame}
 	
 	\begin{frame}{Routings und Lasten}
@@ -196,7 +197,7 @@
 		\end{columns} 
 	\end{frame}
 
-	\begin{frame}{Das RingLoading Problem}
+	\begin{frame}{Das Ring Loading Problem}
 		\begin{center}
 			\begin{mdframed}
 				\centering
@@ -206,7 +207,8 @@
 					{\bfseries Ausgabe}: & Binäres Routing $\Phi$, welches $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$ minimiert.
 				\end{tabularx}
 			\end{mdframed}
-		\end{center}
+		\end{center}\pause
+		Instanzgröße: $\cO(K \log D + \log n)$, wobei $D$ maximale Nachfrage und $K$ Anzahl nicht-negativer Nachfragen.
 	\end{frame}
 
 	\begin{frame}{NP-Vollständigkeit}
@@ -216,19 +218,101 @@
 		\end{quote}\pause
 		\begin{mytheorem}
 			\RL als Entscheidungsproblem ist NP-vollständig.
-		\end{mytheorem}
+		\end{mytheorem}\pause
 		\begin{proof}\let\qed\relax
-			\RL liegt in NP: Routing ist Zertifikat der Größe $\cO(K)$\\
-			
+			\underline{\RL liegt in NP:} Routing ist Zertifikat der Größe $\cO(K)$\\\pause
+			\underline{NP-Vollständigkeit:}\\
+			Wir reduzieren \textsc{PARTITION}.
+		    Eine Instanz $J$ besteht aus $m$ natürlichen Zahlen $z_1, \ldots, z_m \in \N$.\\
+		    Frage: Existiert eine Menge $S \subseteq [m]$, sodass:
+			\begin{equation}
+				\sum_{i \in S} z_i = \frac{1}{2} \sum_{i \in [m]} z_i = \sum_{j \in [m] \setminus S} z_j\ .
+			\end{equation}
 		\end{proof}
 	\end{frame}
 
 	\begin{frame}
-		content...
+		\begin{columns}
+		\column{0.6\linewidth}
+		Wir konstruieren die folgende \RL Instanz:
+		\centering
+		\begin{tikzpicture}[font=\scriptsize, node/.style={circle,thick,draw},
+			l_2/.style={line width =0.25mm},
+			scale=1, transform shape]
+			% equidistant points and arc
+			\foreach \x [count=\p] in {0,...,7} {
+				\node[shape=circle,fill=black, scale=0.5] (\p) at (\x*45-135:2) {};
+			};
+			\foreach \x [count=\p] in {0,...,3} {
+				\draw (225 + \x*45:1.7) node {\p};
+				%				\draw (-30-\x*60:2.4) node {$\bar{\p}$};
+			}; 
+			\draw (225 + 4*45:1.7) node {$m$};
+			\draw (225 + 5*45:1.7) node {$m+1$};
+			\draw (225 + 6*45:1.6) node {$m+2$};
+			\draw (225 + 7*45:1.45) node {$m+3$};
+			
+			\draw[l_2] (5) arc (45:360:2);
+			\draw[line width =1.3pt, line cap=round, dash pattern=on 0pt off 10pt] (12:2) arc(12:35:2);
+			
+			
+			\draw[<->] (1)  to [out=157.5,in=-90] (180:2.5) to [out=90,in=-170](7);
+			\draw[<->] (2)  to [out=-157.5,in=-67.5] (-157.5:2.8) to [out=112.5,in=-180] (7);
+			\draw[<->] (3)  to [out=-112.5,in=-45] (-135:3.2) to [out=135,in=-190] (7);
+			\draw[<->] (4)  to [out=67.5,in=-22.5] (67.5:3) to [out=157.5,in=100] (7);
+			\draw[<->] (5)  to [out=112.5,in=0] (90:2.7) to [out=180,in=85] (7);
+			
+			\draw[<->] (6)  to [out=160,in=22.5] (112.5:2.2) to [out=-157.5,in=60] (7);
+			\draw[<->] (8)  to [out=100,in=-135] (150:2.2) to [out=45,in=-155] (7);
+			
+			\node (a) at (-142:2.3) {$z_1$};
+			\node (b) at (-105:2.45) {$z_2$};
+			\node (c) at (-85:2.8) {$z_3$};
+			\node (d) at (45:3.1) {$z_4$};
+			\node (e) at (58:2.5) {$z_m$};
+			\node (d) at (95:2.3) {$\frac{T}{2}$};
+			\node (f) at (175:2.2) {$\frac{T}{2}$};
+			
+			\node (left) at (-3, 0) {};
+			\node (right) at (3, 0) {};
+			%		\draw[dashed] (1) -- (3) -- (5) -- (1);
+			% axes
+			%		\draw [dotted, gray] (-2.6,0) -- (2.6,0);
+			%		\draw [dotted, gray] (0,-2.15) -- (0,2.15);
+		\end{tikzpicture}\\
+		wobei $T =\sum_{i \in [m]} z_i$.\\\pause
+		\column{.4\linewidth}
+		Sei $A \subseteq [m]$ Lösung von Partition.
+		Wir wählen
+		\begin{align}
+			\Phi(i, m+2) &= 1 \quad \forall i \in A \\
+			\Phi(i, m+2) &= 0 \quad \forall i \in [m] \setminus A \\
+			\Phi(m+1, m+2) & = \Phi(m+2, m+3) = 1 \ .
+		\end{align}\pause
+		
+		Sei $\Phi$ Lösung der \RL Instanz.
+		Dann löst
+		\begin{equation}
+			A' \coloneqq \{i \ |\ i \in [m] \text{ and } \Phi(i, m+2) = 1\}
+		\end{equation}
+		die \textsc{Partition} Instanz.
+		\qed
+	\end{columns}
 	\end{frame}
 
 	\begin{frame}{Relaxed Ring Loading}
-		Relaxed Ring Loading
+		Für den Approximationsalgorithmus lösen wir zunächst folgendes Problem:
+		\vspace{5mm}
+		\begin{center}
+			\begin{mdframed}
+				\centering
+				\textsc{RelaxedRingLoading} (\textsc{RRL})\\[0.7em]
+				\begin{tabular}{rl}
+					{\bfseries Eingabe}: & Ringgröße $n \in \N$, und Nachfragen $d_{i, j} \in \R_{\geq 0}$ für alle $1 \leq i<j\leq n$.\\
+					{\bfseries Ausgabe}: & Reellwertiges Routing $\Phi$, welches $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$ minimiert.
+				\end{tabular}
+			\end{mdframed}
+		\end{center}
 	\end{frame}
 	
 	\begin{frame}{Relaxed Ring Loading}
