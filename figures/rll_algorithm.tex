@@ -4,7 +4,7 @@
 %	\DontPrintSemicolon
 	\begin{algorithm}[H]
 		\begin{mdframed}[backgroundcolor=green!10,linecolor=white,innerleftmargin=25pt,leftmargin=-25pt,rightmargin=15pt]
-			\KwIn{Ring size $n \in \N$, demands $d_{i,j}$, $1 \leq i < j \leq n$.}
+			\KwIn{Ring size $n \in \N$, demands $d_{i,j} \in \R_{\geq 0}$ for all $i, j \in [n], i < j$.}
 			\nl Compute demands across cuts $D_{i, j}$ and $M = \max_{1 \leq i < j \leq n} D_{i,j}$\;
 			\nl Compute the capacities $C_k$ in \cref{eq:minimal-capacities}\;
 			\nl\While{there exist parallel demands $d_{i,j}, d_{u, v}$}{

@@ -1,6 +1,6 @@
 \begin{figure}
 	\centering
-	\begin{minipage}[t]{.4\textwidth}
+	\begin{subfigure}[t]{.4\textwidth}
 		\begin{tikzpicture}[font=\scriptsize, node/.style={circle,thick,draw},
 		l_2/.style={line width =0.25mm},
 		scale=1, transform shape]
@@ -25,9 +25,10 @@
 		%		\draw [dotted, gray] (0,-2.15) -- (0,2.15);
 		\end{tikzpicture}
 		\subcaption{$d_{1, 4}$ and $d_{2, 5}$ are crossing.}
-	\end{minipage}
-	\hspace{1cm}
-	\begin{minipage}[t]{.4\textwidth}
+	\end{subfigure}
+%	\hspace{1cm}
+	\begin{subfigure}[t]{.4\textwidth}
+		\captionsetup{width=1.1\linewidth}
 		\begin{tikzpicture}[font=\scriptsize, node/.style={circle,thick,draw},
 		l1_green/.style={thick, green!80!black},
 		l1_red/.style={thick, blue!80!white},
@@ -64,10 +65,10 @@
 		%		\draw [dotted, gray] (-2.6,0) -- (2.6,0);
 		%		\draw [dotted, gray] (0,-2.15) -- (0,2.15);
 		\end{tikzpicture}
-		\subcaption{$d_{2,4}$, $d_{2, 5}$ and $d_{6, 8}$ are parallel.}
-	\end{minipage}
+		\subcaption{$d_{2,4}$, $d_{2, 5}$ and $d_{6, 8}$ are pairwise parallel.}
+	\end{subfigure}
 	\caption{Examples of crossing and parallel demands.
-		In (b), the green edges lie in between $d_{2, 5}$ and $d_{2, 8}$.
+		In (b), the green edges lie in between $d_{2, 5}$ and $d_{6, 8}$.
 		The blue edge is the only edge in between $d_{2, 4}$ and $d_{2, 5}$.}
 	\label{fig:parallel-demands}
 \end{figure}

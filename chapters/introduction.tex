@@ -18,7 +18,7 @@ The SONET ring is modeled by an undirected cycle graph consisting of $n \in \N$ 
 We number the nodes consecutively in the counter-clockwise direction with the numbers $1, 2, \dots, n$.
 For the ease of notation, we also refer to node $1$ as node $n+1$.
 This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$, where $[n] \coloneqq \{1, 2, \ldots, n\}$.
-Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the traffic that has to be routed through from node $i$ to node $j$.
+Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the network traffic that has to be routed from node $i$ to node $j$ (hence we call the commodity that is being routed "traffic").
 For simpler notation, we only allow one demand per pair of nodes.
 As we will see, this does not oversimplify the problem.
 Also, \citet{schrijver99} claim that their algorithm can be easily extended to the case of two (or more) demands per pair.
