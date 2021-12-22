@@ -26,6 +26,9 @@
 \usepackage[super]{nth}
 \usepackage{autonum} % auto equation numbering
 \usepackage{bbm}
+\usepackage{scalerel,stackengine}
+\usepackage{mdframed}
+\usepackage{array}
 
 \captionsetup*[subfigure]{position=bottom}
 
@@ -34,12 +37,14 @@
 \usetikzlibrary{calc, positioning,backgrounds, fit, patterns,shapes, snakes, chains, arrows, decorations.markings, arrows.meta}
 %\tikzexternalize[prefix=out/figures/]
 \newcolumntype{Y}{>{\centering\arraybackslash}X} % centered equidistant columns
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
 
 \bibliographystyle{plainnat}
 \usetheme[block=transparent]{metropolis}
-%\usecolortheme{orchid}
-%\setbeamercolor{block body}{use=structure,fg=black,bg=blue!20!white}
-%\setbeamercolor{block title}{use=structure,fg=black,bg=blue!40!white}
+\usecolortheme{orchid}
+\setbeamercolor{block body}{use=structure,fg=black,bg=structure.bg}
+\setbeamercolor{block title}{use=structure,fg=black,bg=structure.bg}
 \setbeamertemplate{frame footer}{\insertshortauthor\hfill\insertshortinstitute}
 \setbeamercolor{footline}{fg=gray}
 
@@ -59,11 +64,21 @@
 \newcommand{\cG}{\mathcal{G}}
 \newcommand{\cD}{\mathcal{D}}
 \newcommand{\cF}{\mathcal{F}}
+\newcommand{\cO}{\mathcal{O}}
 \newcommand{\cZ}{\mathcal{Z}}
 \newcommand{\cB}{\mathcal{B}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\E}{\mathbb{E}}
+\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\fL}{\mathfrak{L}}
+\newcommand{\RL}{\textsc{RingLoading}\xspace}
+\newcommand{\RRL}{\textsc{RRL}\xspace}
+\newcommand{\RRLWC}{\textsc{RRLwC}\xspace}
+\newcommand{\dOne}{\mathbbm{1}}
+\newcommand{\Lopt}{L^{\mathrm{opt}}}
+
+\newcommand\equalhat{\mathrel{\stackon[1.5pt]{=}{\stretchto{%
+				\scalerel*[\widthof{=}]{\wedge}{\rule{1ex}{3ex}}}{0.5ex}}}}
 
 \makeatletter
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
@@ -78,8 +93,18 @@
 \def\etal{\emph{et al}\onedot}
 \makeatother
 
-\newcommand{\pdata}{{p_{data}}}
-\newcommand{\pmodel}{{p_{model}}}
+
+\makeatletter
+\def\th@claim{%
+	\normalfont % body font
+	\setbeamercolor{block title example}{bg=red!65!black,fg=white}
+	\setbeamercolor{block body example}{bg=red!80!black!20,fg=black}
+	\setbeamercolor{example text}{fg=red}
+	\def\inserttheoremblockenv{exampleblock}
+}
+\makeatother
+\theoremstyle{claim}
+\newtheorem{mytheorem}[theorem]{Theorem}
 
 %\theoremstyle{theorem}
 %\newtheorem{lemma}[definition]{Lemma}
@@ -113,19 +138,19 @@
 	}
 	\addtocounter{framenumber}{-1}
 
-	\begin{frame}{Quelle}
+	\begin{frame}{Hauptquelle}
 %		\begin{NoHyper}
 %			\tableofcontents[]
 %		\end{NoHyper}
 
-		Hauptquelle:\\
 		\emph{The Ring Loading Problem},\\
 		 Alexander Schrijver, Paul Seymour, Peter Winkler, 1999,\\
 		 \emph{SIAM Review 41 (4).}\\
 	\end{frame}
 	
 	\begin{frame}{Problemstellung}
-		Problem stammt aus Praxis...
+		Das Ring Loading Problem tritt bei der Planung von SONET Ringen auf.
+		
 	\end{frame}
 
 	\section{Formalisierung}
@@ -133,20 +158,73 @@
 	\begin{frame}{Formalisierung}
 		\begin{columns}
 			\column{0.6\linewidth}
-			demands\\
-			routings\\
-			edge loads\\
+			Ring $\equalhat$ Graph mit $n$ Knoten.\\
+			Knotenmenge $V = [n] = \{1, 2, 3, \dots, n\}$.\\
+			Kantenmenge $E = \{\{k, k+1\}\ |\ k \in [n]\}$\\
+			~\\\pause
+			Für jedes Paar von Knoten $i, j \in [n], i < j$: \emph{Nachfrage} (engl. demand) $d_{i, j} \in \R_{\geq 0}$.
+			
+			\column{0.4\linewidth}
+			\input{figures/empty_ring}
+		\end{columns} 
+		Instanzgröße: $\cO(K \log D + \log n)$, wobei $D$ maximale Nachfrage und $K$ Anzahl nicht-negativer Nachfragen
+	\end{frame}
+	
+	\begin{frame}{Routings und Lasten}
+		\begin{columns}
+			\column{0.6\linewidth}
+			\begin{definition}[Routing]
+			\label{def:routing}
+			Ein \emph{reellwertiges Routing} in einem Ring der Größe $n \in \N$ ist eine Funktion
+			\begin{equation}
+				\Phi: \{(i, j)\ |\ i, j \in [n], i < j \} \rightarrow [0, 1] \ .
+				\end{equation}
+				Ein \emph{binäres Routing} ist ein reellwertiges Routing $\Phi$, das nur Werte in $\{0, 1\}$ annimmt. 
+			\end{definition}\pause		
+			\begin{definition}[Kantenlast, Ringlast]
+				\label{def:edge-load}
+				Sei $\Phi$ ein Routing.
+				Für jede Kante $\{k, k+1\}$, $k \in [n]$, definieren wir die \emph{Kantenlast} $L_k(\Phi)$ als:
+				\begin{equation}
+					\label{eq:edge-load}
+					L_k(\Phi) \coloneqq \sum_{\substack{1 \leq i < j \leq n,\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{1 \leq i < j \leq n,\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
+				\end{equation}
+				Die \emph{Ringlast} $L(\Phi)$ ist die maximale Kantenlast des Routings $\Phi$.
+			\end{definition}
 			\column{0.4\linewidth}
 			\input{figures/empty_ring}
 		\end{columns} 
 	\end{frame}
 
-	\begin{frame}{Formalisierung}
-		Ring Loading Problem
+	\begin{frame}{Das RingLoading Problem}
+		\begin{center}
+			\begin{mdframed}
+				\centering
+				\textsc{RingLoading}\\[0.7em]
+				\begin{tabularx}{\textwidth}{rl}
+					{\bfseries Eingabe}: & Ringgröße $n \in \N$, und Nachfragen $d_{i, j} \in \R_{\geq 0}$ für alle $1 \leq i<j\leq n$.\\
+					{\bfseries Ausgabe}: & Binäres Routing $\Phi$, welches $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$ minimiert.
+				\end{tabularx}
+			\end{mdframed}
+		\end{center}
 	\end{frame}
 
 	\begin{frame}{NP-Vollständigkeit}
-		Ring Loading ist NP-Vollständig + Beweis
+		\RL als Entscheidungsproblem:
+		\begin{quote}
+			"Gegeben eine \RL Instanz und $T \in \N$, existiert ein binäres Routing $\Phi$ mit Ringlast $L(\Phi) \leq T$?"
+		\end{quote}\pause
+		\begin{mytheorem}
+			\RL als Entscheidungsproblem ist NP-vollständig.
+		\end{mytheorem}
+		\begin{proof}\let\qed\relax
+			\RL liegt in NP: Routing ist Zertifikat der Größe $\cO(K)$\\
+			
+		\end{proof}
+	\end{frame}
+
+	\begin{frame}
+		content...
 	\end{frame}
 
 	\begin{frame}{Relaxed Ring Loading}
@@ -212,7 +290,7 @@
 	\end{frame}
 	
 	\begin{frame}[allowframebreaks]
-		\nocite{*}
+		\nocite{schrijver99, karp72}
 		\bibliography{bibliography.bib}
 	\end{frame}
 

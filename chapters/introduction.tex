@@ -42,7 +42,7 @@ If $\Phi(i, j) \in (0, 1)$, we say that $\Phi$ \emph{splits} the demand $d_{i, j
 \begin{definition}[Edge load, Ringload]
 	\label{def:edge-load}
 	Let $\Phi$ be a (real-valued) routing.
-	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{edge load} $L_k$ as the total traffic that is routed through that edge:
+	For every edge $\{k, k+1\}$, $k \in [n]$, we define the \emph{edge load} $L_k(\Phi)$ as the total traffic that is routed through that edge:
 	\begin{equation}
 		\label{eq:edge-load}
 		L_k(\Phi) \coloneqq \sum_{\substack{1 \leq i < j \leq n,\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{1 \leq i < j \leq n,\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
@@ -55,7 +55,7 @@ With these preparations, we can now formulate the ring loading problem in mathem
 \begin{center}
 	\begin{mdframed}
 		\centering
-		\textsc{RingLoading} (\textsc{RL})\\[0.7em]
+		\textsc{RingLoading}\\[0.7em]
 		\begin{tabular}{rl}
 			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j} \in \R_{\geq 0}$ for all $1 \leq i<j\leq n$.\\
 			{\bfseries Output}: & Binary routing $\Phi$ that minimizes $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$.
