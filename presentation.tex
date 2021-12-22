@@ -106,6 +106,7 @@
 \theoremstyle{claim}
 \newtheorem{mytheorem}[theorem]{Theorem}
 \newtheorem{mylemma}[theorem]{Lemma}
+\newtheorem{mycorollary}[theorem]{Korollar}
 
 %\theoremstyle{theorem}
 %\newtheorem{lemma}[definition]{Lemma}
@@ -433,11 +434,11 @@
 			Eine Instanz $(I, C)$ ist genau dann lösbar, wenn jeder Schnitt die Schnittbedingung erfüllt.
 		\end{mytheorem}\pause
 		\begin{proof}\let\qed\relax
-			"$\Leftarrow$": Angenommen $\{g, h\}$ erfüllt nicht die Schnittbedingung, d.h.
+			"$\Leftarrow$": Annahme: $\{g, h\}$ erfüllt nicht die Schnittbedingung, d.h.
 			\begin{equation}
 				D_{g, h} > C_g + C_h \ .
 			\end{equation}\pause
-			Aber alle Nachfragen, die zu $D_{g, h}$ beitragen, müssen durch $\{g, g+1\}$ und $\{h, h+1\}$ gerouted werden.
+			Alle Nachfragen, die zu $D_{g, h}$ beitragen, müssen durch $\{g, g+1\}$ und $\{h, h+1\}$ gerouted werden.
 		\end{proof}
 		\begin{center}
 			\scalebox{0.8}{
@@ -448,14 +449,80 @@
 
 	\begin{frame}[t]
 		"$\Rightarrow$":
+		Angenommen es gibt Instanzen, die nicht lösbar sind, obwohl jeder Schnitt die Schnittbedingung erfüllt.\\
+		Betrachte die kleinste dieser Instanzen bzgl. der Ringgröße und der Anzahl nicht-negativer Nachfragen.
+		\\~\\
+		\visible<2->{Wähle nicht-negative Nachfrage $d_{i, j}$ mit $j > i+1$.}
+		\begin{columns}
+			\column{0.5\linewidth}
+			\visible<3->{
+			\begin{equation}
+				\mu \coloneqq \min_{\substack{ \{g', h'\} \text{ cut},\\ g, h \in [i, j)}} C_{g'} + C_{h'} - D_{g', h'}
+			\end{equation}
+			}
+		\\~\\
+			\visible<2->{
+				Route $\min(\frac{\mu}{2}, d_{i, j})$ vorwärts und den Rest rückwärts.\\
+				Wir erhalten eine neue Instanz, die eine Nachfrage weniger hat.\\
+				~\\
+				Zeige: In der neuen Instanz erfüllt immer noch jeder Schnitt die Schnittbedingung.
+			}
+			\column{0.4\linewidth}
+			\visible<2->{\input{figures/empty_ring}}
+		\end{columns}
 	\end{frame}
 
-	\begin{frame}{On the way to an algorithm...}
-		Definition der Kapazitäten + einige Beobachtungen dazu.
+	\begin{frame}{Optimale Ringlast}
+		\begin{mycorollary}
+			Sei $I$ eine Instanz von \RRL.
+			Die Ringlast eines optimalen Routings ist $\frac{M}{2}$.
+			Dabei ist $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
+		\end{mycorollary}\pause
+		\begin{proof}
+			Die Instanz $(I, C)$ mit Kapazitäten $C_k \coloneqq \frac{M}{2}$ erfüllt die Schnittbedingung:
+			\begin{equation}
+				D_{s, t} \leq M = \frac{M}{2} + \frac{M}{2} = C_s + C_t \ .
+			\end{equation}
+			Also ist die Ringlast $\leq \frac{M}{2}$.\pause
+			
+			Sei $\{g, h\}$ ein Schnitt mit $D_{g, h} = \frac{M}{2}$.
+			Dann muss durch eine der Kanten $\{g, g+1\}$, $\{h, h+1\}$ mindestens $\frac{M}{2}$ Last geroutet werden.
+			Also ist die Ringlast $\geq \frac{M}{2}$.
+		\end{proof}
 	\end{frame}
 
-	\begin{frame}{Einige Beobachtungen}
-		Definition der Kapazitäten + einige Beobachtungen dazu.
+	\begin{frame}{Wahl von Kapazitäten}
+		Sei $M \coloneqq \max_{1 \leq g < h \leq n} D_{g, h}$.
+		Für den Algorithmus wählen wir iterativ folgende Kapazitäten:
+		\begin{equation}
+			C_k \coloneqq \max \left(\max_{1 \leq g < k}(D_{g, k} - C_g), \max_{k < h \leq n}(D_{k, h} - \frac{M}{2})\right) \ .
+		\end{equation}
+
+		Es gilt:
+		\begin{enumerate}
+			\item In der Instanz $(I, C)$ erfüllt die Schnittbedingung.
+			\item Jede zulässige Lösung ist minimal.
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}{Zwei Beobachtungen}
+		\begin{columns}
+			\column{0.5\linewidth}
+			\visible<1->{\begin{mylemma}
+				Seien $d_{i, j}$, $d_{u, v}$ parallele Nachfragen, $\{g, g+1\}$ eine Kante zwischen $d_{i, j}$ und $d_{u, v}$ und $\{g, h\}$ ein Schnitt.
+				Dann überquert höchstens eine der Nachfragen den Schnitt.
+			\end{mylemma}
+			}
+			\visible<2->{
+				\begin{mylemma}
+					Sei $d_{i, j}$ parallel zu einem straffen Schnitt $\{g, h\}$.
+					Dann muss $d_{i, j}$ parallel zu $\{g, h\}$ geroutet werden.
+				\end{mylemma}
+			}
+			\column{0.4\linewidth}
+			\input{figures/empty_ring}
+		\end{columns}
+
 	\end{frame}
 
 	\begin{frame}{Der Algorithmus}
@@ -483,22 +550,67 @@
 
 	\section{Transformation in ein binäres Routing}
 	\begin{frame}{Transformation in ein binäres Routing}
-		Schrumpfen der Instanz
+		Sei $\Phi$ ein minimales Routing.\\
+		Es werden nur sich gegenseitig schneidende Nachfragen aufgeteilt:
+		\vspace{5mm}
+		\begin{center}
+				\input{figures/empty_ring}
+		\end{center}
+		\vspace{5mm}
+		Erhalten Instanz der Größe $2m$, wobei $m$ die Anzahl der aufgeteilten Nachfragen ist.
 	\end{frame}
 
-	\begin{frame}{Umrouten gesplitter Nachfragen}
-		Änderung der Kantenlast
+	\begin{frame}{Umrouten aufgeteilter Nachfragen}
+		Seien $x_i, y_i$ die Anteile an $d_{i, i+m}$, die vorwärts bzw. rückwärts gerouted werden.
+		\vspace{5mm}
+		\begin{center}
+			\input{figures/empty_ring}
+		\end{center}
+		\vspace{5mm}
+		Sei $z_i = y_i$, falls $d_{i, i+m}$ ganz vorwärts bzw. $z_i = -x_i$, falls $d_{i, i+m}$ ganz rückwärts gerouted wird.\pause
+		Die Gesamtlast einer Kante nach dem Umrouten ist:
+		\begin{equation}
+			L_k' = L_k + \sum_{\substack{i \in [m],\\ k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m],\\ k \notin[i, i+m)}} z_i
+		\end{equation}
+	
 	\end{frame}
 
 	\begin{frame}{Wahl des Umroutings}
-		content...
+		Idee:\\
+		Wähle das Umrouting so, dass 
+		\begin{align}
+			\max_{k \in [2m]} L_k' - L_k &= \max_{k \in [2m]} \sum_{\substack{i \in [m],\\ k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m],\\ k \notin[i, i+m)}} z_i\\
+			&= \max_{k \in [m]} \abs{2\sum_{i = 1}^k z_i - \sum_{i = 1}^m z_i }
+		\end{align}
+		möglichst klein ist.\pause
+		\begin{mylemma}
+			Man kann die $z_i$ so wählen, dass für alle $k \in [m]$ gilt:
+			\begin{equation}
+				\sum_{i = 1}^k z_i \in [-\frac{D}{2}, \frac{D}{2}] \ .
+			\end{equation}
+			Dabei ist $D$ die maximale Nachfrage und $z_i = y_i$ oder $z_i = x_i$ für alle $i \in [m]$.
+		\end{mylemma}
 	\end{frame}
 	
 	\begin{frame}{Approximationsgüte}
-		content...
+		\begin{mytheorem}
+			Sei $\Phi$ ein minimales Routing.
+			Dann könnten die aufgeteilten Nachfragen in $\cO(n)$ Zeit so umgerouted werden, dass das erhaltene binäre Routing $\Phi'$ eine Ringlast von
+			\begin{equation}
+				L(\Phi') \leq \Lopt + \frac{3}{2} D
+			\end{equation}
+			hat, wobei $D$ die maximale Nachfrage und $\Lopt$ die Ringlast eines optimalen binären Routings ist.
+		\end{mytheorem}
+		\begin{proof}
+			Wir haben gesehen, dass
+			\begin{equation}
+				L(\Phi') \leq L(\Phi) + \frac{3}{2} D \ .
+			\end{equation}
+			Außerdem gilt $L(\Phi) \leq \Lopt$.
+		\end{proof}
 	\end{frame}
 	
-	\begin{frame}[allowframebreaks]
+	\begin{frame}{Quellen}
 		\nocite{schrijver99, karp72}
 		\bibliography{bibliography.bib}
 	\end{frame}
