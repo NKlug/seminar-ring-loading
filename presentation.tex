@@ -11,7 +11,7 @@
 \usepackage{physics} % norm
 \usepackage{tikz}
 \usepackage{tkz-euclide}
-\usepackage{enumitem}
+%\usepackage{enumitem}
 \usepackage{pgfplots}
 \usepackage{multicol}
 \usepackage{tabularx}
@@ -22,7 +22,7 @@
 \usepackage{subcaption}
 \usepackage{csquotes} % automatic left quotation marks
 \usepackage{booktabs}
-\usepackage[noline]{algorithm2e}
+\usepackage[]{algorithm2e}
 \usepackage[super]{nth}
 \usepackage{autonum} % auto equation numbering
 \usepackage{bbm}
@@ -43,8 +43,8 @@
 \bibliographystyle{plainnat}
 \usetheme[block=transparent]{metropolis}
 \usecolortheme{orchid}
-\setbeamercolor{block body}{use=structure,fg=black,bg=structure.bg}
-\setbeamercolor{block title}{use=structure,fg=black,bg=structure.bg}
+\setbeamercolor{block body}{use=structure,fg=structure.fg,bg=structure.bg}
+\setbeamercolor{block title}{use=structure,fg=structure.fg,bg=structure.bg}
 \setbeamertemplate{frame footer}{\insertshortauthor\hfill\insertshortinstitute}
 \setbeamercolor{footline}{fg=gray}
 
@@ -97,7 +97,7 @@
 \makeatletter
 \def\th@claim{%
 	\normalfont % body font
-	\setbeamercolor{block title example}{bg=red!65!black,fg=white}
+	\setbeamercolor{block title example}{bg=red!65!black,fg=structure.bg}
 	\setbeamercolor{block body example}{bg=red!80!black!20,fg=black}
 	\setbeamercolor{example text}{fg=red}
 	\def\inserttheoremblockenv{exampleblock}
@@ -105,6 +105,7 @@
 \makeatother
 \theoremstyle{claim}
 \newtheorem{mytheorem}[theorem]{Theorem}
+\newtheorem{mylemma}[theorem]{Lemma}
 
 %\theoremstyle{theorem}
 %\newtheorem{lemma}[definition]{Lemma}
@@ -233,7 +234,7 @@
 
 	\begin{frame}
 		\begin{columns}
-		\column{0.6\linewidth}
+		\column{0.55\linewidth}
 		Wir konstruieren die folgende \RL Instanz:
 		\centering
 		\begin{tikzpicture}[font=\scriptsize, node/.style={circle,thick,draw},
@@ -281,8 +282,8 @@
 			%		\draw [dotted, gray] (0,-2.15) -- (0,2.15);
 		\end{tikzpicture}\\
 		wobei $T =\sum_{i \in [m]} z_i$.\\\pause
-		\column{.4\linewidth}
-		Sei $A \subseteq [m]$ Lösung von Partition.
+		\column{.45\linewidth}
+		Sei $A \subseteq [m]$ Lösung von \textsc{Partition}.
 		Wir wählen
 		\begin{align}
 			\Phi(i, m+2) &= 1 \quad \forall i \in A \\
@@ -315,33 +316,138 @@
 		\end{center}
 	\end{frame}
 	
-	\begin{frame}{Relaxed Ring Loading}
-		Relaxed Ring Loading
-	\end{frame}
 	
-	\begin{frame}{Approximations Algorithmus}
-		Überblick über Approximations algo: 1. Bestimme "dünn-besetzte" Lösung von RRL 2. Reroute split demands 
+	\begin{frame}{Idee des Approximationsalgorithmus}
+		Sei $I$ eine \RL Instanz.
+		\begin{enumerate}
+			\item[1.] Bestimme Lösung des relaxierten Problems, in der möglichst wenige Nachfragen aufgeteilt werden.
+			\item[2.] Route die aufgeteilten Nachfragen so um, dass sich die Ringlast möglichst wenig erhöht.
+		\end{enumerate}
 	\end{frame}
 
 	\begin{frame}{Minimale Lösungen}
-		Definition Minimaler Lösungen
+		\begin{definition}
+			Sei $\Phi^\ast$ eine Optimallösung einer \RRL Instanz.
+			$\Phi^\ast$ heißt \emph{minimal}, falls \emph{kein} anderes optimales Routing $\Phi'$ existiert, sodass:
+			\begin{align}
+				L_i(\Phi') &\leq L_i(\Phi^\ast) \quad \text{ für alle } i \in [n] \ ,\\
+				L_j(\Phi') &< L_j(\Phi^\ast) \quad \text{ für mindestens ein } j \in [n] \ .
+			\end{align}
+		\end{definition}\pause
+		\begin{mytheorem}
+			Sei $\Phi^\ast$ eine Minimallösung einer \RRL Instanz der Größe $n$.
+			Dann werden in $\Phi^\ast$ höchstens $\lfloor \frac{n}{2} \rfloor$ Nachfragen aufgeteilt.
+		\end{mytheorem}
 	\end{frame}
 
-	\begin{frame}{Charakterisiung minimaler Lösungen}
-		Theorem: nur wenige gesplittete demands	\\
-		Definitionen crossing, parallel	
+	\begin{frame}{Parallele und schneidende Nachfragen}
+		\begin{columns}
+		\column{0.6\linewidth}
+		\begin{definition}
+			Seien $i, j, u, v \in [n]$, $i < j, u < v$ und $d_{i,j}, d_{u, v}$ zwei Nachfragen.
+			\begin{itemize}
+				\item<1-> $d_{i, j}$ und $d_{u, v}$ \emph{schneiden sich}, falls $i, j, u, v$ paarweise verschieden sind und $i < u < j < h$ oder $u < i < h < j$.
+				\item<2-> $d_{i, j}$ und $d_{u, v}$ sind \emph{parallel}, falls sie sich nicht schneiden.
+				\item<3-> Seien $d_{i, j}$ und $d_{u, v}$ parallel und $j < v$.
+				Die Kante $\{k, k+1\}$ liegt \emph{zwischen} $d_{i,j}$ und $d_{u, v}$, falls sie auf der vorderen Route von genau einer der Nachfragen liegt (falls $i \geq u$) oder falls sie auf der hinteren Route beider Nachfragen liegt (falls $j \leq u$).
+			\end{itemize}
+		\end{definition}
+		\column{0.4\linewidth}
+		\visible<1->{\input{figures/empty_ring}}
+		\end{columns}
+	\end{frame}
+
+	\begin{frame}
+		\begin{mylemma}
+			Sei $\Phi^\ast$ ein minimales Routing und $d_{i, j}$, $d_{u, v}$ parallele Nachfragen.
+			Dann werden durch keiner der Kanten zwischen $d_{i, j}$ und $d_{u, v}$ beide Nachfragen gerouted.
+		\end{mylemma}
+		\vspace{5mm}
+		\begin{proof}[Beweisskizze.]\let\qed\relax
+			Seien $d_{i, j}$ und $d_{u, v}$ zwei Nachfragen, $\{k, k+1\}$ eine Kante zwischen $d_{i, j}$ und $d_{g, h}$.
+			Seien $\alpha, \beta$ die Anteile, die durch $\{k, k+1\}$ gerouted werden und o.B.d.A. $\alpha < \beta$.
+		\end{proof}
+		\begin{center}
+			\begin{minipage}{0.4\linewidth}
+					\input{figures/empty_ring}
+			\end{minipage}
+			\hspace{1.3cm}
+			\begin{minipage}{0.4\linewidth}
+				\input{figures/empty_ring}
+			\end{minipage}	
+		\end{center}
+		\qed
+	\end{frame}
+
+	\begin{frame}
+		\begin{mytheorem}
+			Sei $\Phi^\ast$ eine Minimallösung einer \RRL Instanz der Größe $n$.
+			Dann werden in $\Phi^\ast$ höchstens $\lfloor \frac{n}{2} \rfloor$ Nachfragen aufgeteilt.
+		\end{mytheorem}
+		\begin{proof}
+			Sei $S \coloneqq \{(i, j)\ |\ 0 < \Phi^\ast(i, j) < 1\}$ und $(i, j), (u, v) \in S$.\\\pause
+			Dann können $d_{i,j}$ und $d_{u, v}$ nicht parallel sein.\pause
+			\\~\\
+			Da das für alle $(i, j), (u, v) \in S$ gilt, tritt jeder Index in $[n]$ in höchstens einem Tupel in $S$ auf.\\
+			Dies impliziert $\abs{S} \leq \lfloor \frac{n}{2} \rfloor$.
+			
+		\end{proof}
 	\end{frame}
 		
-	\begin{frame}{RelaxedRingLoading mit Kapazitäten}
-		Definition Kapazitäten und Problem mit Kapazitäten	
+	\begin{frame}{Relaxed Ring Loading mit Kapazitäten}
+		Verallgemeinerung von \textsc{RelaxedRingLoading}:\\ Führe für jede Kante eine Kapazität $C_k \in \R_{\geq 0}$ ein, die nicht überschritten werden darf, d.h. jedes \emph{zulässige} Routing $\Phi$ muss
+		\begin{equation}
+			L_k(\Phi) \leq C_k \quad \text{für alle } k \in [n]
+		\end{equation}
+		erfüllen.\\\pause
 	\end{frame}
 	
 	\begin{frame}{Schnitte}
-		Definition Schnitte, schneiden, demand across cut, cut condition
+		\begin{columns}
+		\column{0.6\linewidth}
+		\begin{definition}
+			Ein \emph{Schnitt} $\{g, h\}$ ist eine Menge von zwei verschiedenen Kanten $\{g, g+1\}$, $\{h, h+1\}$.
+			\\~\\
+			\visible<2->{Die \emph{Nachfrage über den Schnitt} $\{g, h\}$ ist die Summe aller Nachfragen, die den Schnitt überqueren:
+			\begin{equation}
+				D_{g,h} \coloneqq \sum_{d_{i,j} \text{ überquert } \{g, h\} } d_{i, j}\ .
+			\end{equation}
+			}
+			\\~\\
+			\visible<3->{Ein Schnitt $\{g, h\}$ erfüllt die \emph{Schnittbedingung}, falls
+				\begin{equation}
+					D_{g,h} \leq C_g + C_h \ .
+				\end{equation}
+				$C_g + C_h - D_{g, h}$ heißt \emph{Schlupf} (engl. slack).
+				Falls der Schlupf $0$ ist, heißt der Schnitt \emph{straff}.
+			}
+		\end{definition}
+				
+		\column{0.4\linewidth}
+			\input{figures/empty_ring}
+		\end{columns}
 	\end{frame}
 
 	\begin{frame}{Charakterisierung der Lösbarkeit}
-		Lösbar genau dann wenn cut condition erfüllt + Beweis
+		\begin{mytheorem}
+			Eine Instanz $(I, C)$ ist genau dann lösbar, wenn jeder Schnitt die Schnittbedingung erfüllt.
+		\end{mytheorem}\pause
+		\begin{proof}\let\qed\relax
+			"$\Leftarrow$": Angenommen $\{g, h\}$ erfüllt nicht die Schnittbedingung, d.h.
+			\begin{equation}
+				D_{g, h} > C_g + C_h \ .
+			\end{equation}\pause
+			Aber alle Nachfragen, die zu $D_{g, h}$ beitragen, müssen durch $\{g, g+1\}$ und $\{h, h+1\}$ gerouted werden.
+		\end{proof}
+		\begin{center}
+			\scalebox{0.8}{
+			\input{figures/empty_ring}
+		}
+	\end{center}
+	\end{frame}
+
+	\begin{frame}[t]
+		"$\Rightarrow$":
 	\end{frame}
 
 	\begin{frame}{On the way to an algorithm...}
@@ -353,7 +459,26 @@
 	\end{frame}
 
 	\begin{frame}{Der Algorithmus}
-		Definition der Kapazitäten + einige Beobachtungen dazu.
+		\begin{center}
+			\begin{algorithm}[H]
+				\begin{mdframed}[backgroundcolor=green!10,linecolor=white]
+					\KwIn{Ring size $n \in \N$, demands $d_{i,j}$, $1 \leq i < j \leq n$.}
+					\nl Berechne Nachfragen über Schnitte $D_{i, j}$ und $M = \max_{1 \leq i < j \leq n} D_{i,j}$\;
+					\nl Berechne die Kapazitäten $C_k$\;
+					\nl\While{es existieren parallele Nachfragen $d_{i,j}, d_{u, v}$}{
+						Wähle Kante $\{g, g+1\}$, die zwischen $d_{i,j}$ und $d_{u, v}$ liegt\;
+						Finde straffen Schnitt $\{g, h\}$\;
+						Route $d_{i, j}$ oder $d_{u, v}$ parallel zum Schnitt $\{g, h\}$\;
+						Verringere die Kapazitäten und passe die Nachfragen über die Schnitte an\;
+					}
+					\nl\ForEach{noch nicht geroutete Nachfrage $d_{i, j}$}{
+						Berechne minimalen Schlupf $\mu$ auf der vorderen Route von $d_{i, j}$\;
+						Route $\min(d_{i, j}, \frac{\mu}{2})$ vorwärts und den Rest rückwärts\;
+						Verringere die Kapazitäten und passe die Nachfragen über die Schnitte an\;
+					}
+				\end{mdframed}
+			\end{algorithm}
+		\end{center}
 	\end{frame}
 
 	\section{Transformation in ein binäres Routing}
