@@ -2,8 +2,8 @@
 \label{sec:ring-loading}
 
 In this section, we see how we can transform the real-valued routing $\Phi$ determined by \cref{algo:rrl} into a binary routing that approximates the optimal routing.
-Let $L_i = L_i(\Phi)$ be the edge loads induced by $\Phi$ and $S$ be the set of demands that are split.
-In order to obtain a binary routing, we simply have to reroute the demands in $S$ all front or all back -- ideally without increasing the maximal edge load by too much. 
+Let $L_i = L_i(\Phi)$ be the edge loads induced by $\Phi$ and $S$ be the set of indices of demands that are split.
+In order to obtain a binary routing, we simply have to reroute these demands all front or all back -- ideally without increasing the maximal edge load by too much. 
 As we have seen, all demands in $S$ are mutually crossing and $\abs{S} \leq \lfloor \frac{n}{2} \rfloor$.
 That means that each node is an endpoint of at most one demand.
 For simplicity, we remove all nodes $i \in [n]$ that are not endpoints of any demand.
@@ -13,16 +13,16 @@ Hence, we replace the edges $\{i-1, i\}$ and $\{i, i+1\}$ with a single new edge
 	L_{i'} \coloneqq \max(L_{i-1}, L_i) \ .
 \end{equation}
 For rerouting the split demands, it suffices to consider this "contracted" instance $I'$ of size $2m$, where $m \coloneqq \abs{S}$.
-We can rewrite $S$ in a simpler way as $S' = \{d_{i, i+m}\ |\ i \in [m]\}$.
+We can rewrite $S$ in a simpler way as $S' = \{(i, i+m)\ |\ i \in [m]\}$.
 
-For all $d_{i, i+m} \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
-Rerouting $d_{i, i+m}$, e.g. by routing it all front increases the the edge loads on the front route of $d_{i, i+m}$ by $y_i$, while those on the back route are decreased by $y_i$.
+For all $(i, i+m) \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
+Rerouting $d_{i, i+m}$, e.g. by routing it all front increases the edge loads on the front route of $d_{i, i+m}$ by $y_i$, while those on the back route are decreased by $y_i$.
 Similarly, routing $d_{i, i+m}$ all back increases the loads on the back route and decreases those in the front by $x_i$, respectively.
 
 Now, assume that all demands in $S'$ have been routed either all front or all back.
-For each $d_{i, i+m} \in S'$ we define
+For each $(i, i+m) \in S'$ we define
 \begin{equation}
-	z_i = \begin{cases}
+	z_i \coloneqq \begin{cases}
 		y_i, &\text{if } d_{i, i+m} \text{ is routed all front} \\
 		-x_i, &\text{if } d_{i, i+m} \text{ is routed all back}
 	\end{cases} \ ,
@@ -34,7 +34,7 @@ This allows us to formulate the total change of traffic on any edge $\{k, k+1\}$
 	L_k' = L_k + \sum_{\substack{i \in [m],\\ k \in [i, i+m)}} z_i - \sum_{\substack{i \in [m],\\ k \notin[i, i+m)}} z_i \ .
 \end{equation}
 Here, we again have $k \in [i, i+m)$ if and only if the edge $\{k,k+1\}$ lies on the front route of $d_{i, i+m}$.
-We also note that for all $k \in [m]$
+We also note that for all $k \in [m]$ we have
 \begin{equation}
 	\label{eq:load-increase-equality}
 	L_k' - L_k 
@@ -45,11 +45,10 @@ We also note that for all $k \in [m]$
 The following lemma shows that there is a way to reroute the demands in $S'$ such that the maximal edge load remains bounded.
 \begin{lemma}
 	\label{lemma:reroute-demands}
-	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$, be such that $x_i + y_i \leq D$ for $D \in \R_{\geq 0}$.
-	Then there exist $z_i \in \R$, $i \in [m]$, such that:
+	Let $x_i, y_i \in \R_{\geq 0}, i \in [m]$, $D \in \R_{\geq 0}$, be such that $x_i + y_i \leq D$.
+	Then there exist $z_1, \dots, z_m \in \R$ with $z_i = y_i$ or $z_i = -x_i$ for all $i \in [m]$, such that
 	\begin{align}
-		(z_i = y_i \quad \text{ or } \quad z_i = -x_i) 
-		\quad \text{ and } \quad \sum_{i=1}^k z_i \in \left[-\frac{D}{2}, \frac{D}{2}\right] \quad \forall k \in [m] \ .
+		\sum_{i=1}^k z_i \in \left[-\frac{D}{2}, \frac{D}{2}\right] \quad \forall k \in [m] \ .
 	\end{align}
 \end{lemma}
 \begin{proof}
@@ -63,7 +62,7 @@ The following lemma shows that there is a way to reroute the demands in $S'$ suc
 We summarize the approximation quality of the rerouting in the following theorem.
 \begin{theorem}
 	\label{theo:ring-loading-algorithm}
-	Let $\Phi$ be the routing obtained from \cref{algo:rrl} and $\Lopt$ be the ringload of an optimal binary routing.
+	Let $\Phi$ be the routing obtained from \cref{algo:rrl} and let $\Lopt$ be the ringload of an optimal binary routing.
 	Then the demands that are split by $\Phi$ can be rerouted such that the resulting binary routing $\Phi'$ has a ringload of
 	\begin{equation}
 		L(\Phi') \leq \Lopt + \frac{3}{2}D \ ,
@@ -71,9 +70,9 @@ We summarize the approximation quality of the rerouting in the following theorem
 	where $D = \max_{1 \leq i < j \leq n} d_{i, j}$ is the largest demand.
 \end{theorem}
 \begin{proof}
-	For all $d_{i, i+m} \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
+	For all $(i, i+m) \in S'$, let $x_i$, $y_i$ be the amount of traffic of $d_{i, i+m}$ that $\Phi$ routes through the front and the back, respectively.
 	Choose $z_i, i \in [m]$ like in \cref{lemma:reroute-demands} with $D = \max_{1 \leq i < j \leq n} d_{i, j}$.
-	We construct the binary routing $\Phi'$ by setting $\Phi'(i, j) \coloneqq \Phi(i, j)$ for all $d_{i,j} \notin S$.
+	We construct the binary routing $\Phi'$ by setting $\Phi'(i, j) \coloneqq \Phi(i, j)$ for all $(i, j) \notin S$.
 	For all demands $d_{i, j}$ that are split by $\Phi$, we set
 	\begin{equation}
 		\Phi'(i, j) = \begin{cases}
@@ -81,7 +80,7 @@ We summarize the approximation quality of the rerouting in the following theorem
 			0, & \text{if } z_i = -x_i
 		\end{cases}
 	\end{equation}
-	where $z_i$ corresponds to the demand $d_{i, j}$ in $S$.
+	where $z_i$ corresponds to indices $(i, i+m)$ in $S$.
 	We get:
 	\begin{equation}
 		L(\Phi') - L(\Phi) 
@@ -108,4 +107,4 @@ We summarize the approximation quality of the rerouting in the following theorem
 
 The proof of \cref{lemma:reroute-demands} shows that the rerouting of split demands can be carried out in $\cO(n)$ time.
 In total this puts the runtime of the approximation algorithm in $O(k n^2 + n) = O(k n^2)$. 
-This result completes the derivation of Schrijver et al.'s \RL algorithm and concludes this work.
+This result completes Schrijver et al.'s algorithm for \RL and concludes the section.

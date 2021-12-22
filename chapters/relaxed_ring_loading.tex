@@ -394,7 +394,7 @@ This is fairly easy to see:
 Computing the demand across any cut can be done using \cref{eq:cut-demand-definition} in $\cO(K)$ time.
 There are $\binom{n}{2}$ cuts, which puts the runtime of Step 1 in $\cO(K n^2)$.
 Step 2 can be carried out in $\cO(n^2)$ using the definition of the capacities in \cref{eq:minimal-capacities}.
-One can verify that each iteration of the Step 3 and 4 takes $\cO(n^2)$ time, meaning that both loops are also in $\cO(K n^2)$.
+One can verify that each iteration of Steps 3 and 4 takes $\cO(n^2)$ time, meaning that both loops are also in $\cO(K n^2)$.
 
 %With some modifications, however, this runtime can be improved to $\cO(n^2)$, as will later be discussed in \cref{sec:runtime}.
 
