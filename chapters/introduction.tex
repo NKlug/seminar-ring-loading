@@ -7,7 +7,7 @@ In a SONET ring, the routing of node-to-node network traffic is fixed: Unless a 
 The ring loading problem arises in the planning of such rings.
 ADMs have a limited capacity of traffic they can send or receive through any link.
 Hence the maximal workload on any link must be determined from estimated node-to-node network traffic demands during planning.
-This involves computing the optimal routing of these demands around the ring, that is, the routing that minimizes the maximal load on any link
+This involves computing the optimal routing of these demands around the ring, that is, the routing that minimizes the maximal load on any link.
 As it turns out, determining such a routing is quite difficult.
 
 In the paper "The Ring Loading Problem" from 1999, the authors Schrijver, Seymour and Winkler~\cite{schrijver99} derived an approximation algorithm for the ring loading problem.
@@ -16,8 +16,8 @@ In this work parts of this paper are presented.
 We begin by formalizing the problem.
 The SONET ring is modeled by an undirected cycle graph consisting of $n \in \N$ nodes.
 We number the nodes consecutively in the counter-clockwise direction with the numbers $1, 2, \dots, n$.
-For the ease of notation, it makes sense to interpret the node numbers as the equivalence classes of $\Z/n\Z$.
-This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$.
+For the ease of notation, we also refer to node $1$ as node $n+1$.
+This means that we can write the edge set as $E = \{\{i, i+1\}\ |\ i \in [n]\}$, where $[n] \coloneqq \{1, 2, \ldots, n\}$.
 Now, for every two nodes $i \neq j$ we are given a (traffic) demand $d_{i, j} \in \R_{\geq 0}$, which represents the traffic that has to be routed through from node $i$ to node $j$.
 For simpler notation, we only allow one demand per pair of nodes.
 As we will see, this does not oversimplify the problem.
@@ -32,12 +32,12 @@ Next, we can formally define routings.
 	\label{def:routing}
 	A \emph{real-valued routing} in a ring of size $n \in \N$ is a function 
 	\begin{equation}
-		\Phi: \{(i, j)\ | \ 1 \leq i < j \leq n\} \rightarrow [0, 1] \ .
+		\Phi: \{(i, j)\ | \ i, j \in [n], i < j\} \rightarrow [0, 1] \ .
 	\end{equation}
 	A \emph{binary routing} is a real routing $\Phi$ which only takes values in $\{0, 1\}$. 
 \end{definition}
 We interpret the value $\Phi(i, j)$ as the fraction of the demand $d_{i, j}$ that is routed through the front.
-If $\Phi(i, j) \in (0, 1)$, we say that $\Phi$ \emph{splits} the demand $d_{i, j}$.
+If $\Phi(i, j) \in (0, 1)$ holds, we say that $\Phi$ \emph{splits} the demand $d_{i, j}$.
 
 \begin{definition}[Edge load, Ringload]
 	\label{def:edge-load}
@@ -47,7 +47,7 @@ If $\Phi(i, j) \in (0, 1)$, we say that $\Phi$ \emph{splits} the demand $d_{i, j
 		\label{eq:edge-load}
 		L_k(\Phi) \coloneqq \sum_{\substack{1 \leq i < j \leq n,\\ k \in [i, j)}} d_{i, j} \Phi(i, j) + \sum_{\substack{1 \leq i < j \leq n,\\ k \notin [i, j)}} d_{i, j} (1 - \Phi(i, j)) \ .
 	\end{equation}
-	The \emph{ringload} $L(\Phi)$ is the maximal load under the routing $\Phi$.
+	The \emph{ringload} $L(\Phi)$ is the maximal edge load under the routing $\Phi$.
 \end{definition}
 Observe that in \cref{def:edge-load}, we have $k \in [i, j)$ if and only if the edge $\{k, k+1\}$ lies on the front route of the demand $d_{i, j}$.
 
@@ -62,8 +62,8 @@ With these preparations, we can now formulate the ring loading problem in mathem
 		\end{tabular}
 	\end{mdframed}
 \end{center}
-We can encode an instance of \RL in $\cO(k \log D + \log n)$ space, where $k \in \N$ is the number of non-zero demands and $D = \max_{1 \leq i < j \leq n}d_{i, j}$ the maximal demand.
-In general, we have $k \in \cO(n^2)$.
+We can encode an instance of \RL in $\cO(K \log D + \log n)$ space, where $K \in \N$ is the number of non-zero demands and $D = \max_{1 \leq i < j \leq n}d_{i, j}$ the maximal demand.
+In general, we have $K \in \cO(n^2)$.
 
 As mentioned above, determining the optimal ringload of any \RL instance is quite difficult.
 If we formulate \RL as a decision problem, by asking
@@ -75,30 +75,30 @@ the problem is NP-complete.
 	\RL in its decision form is NP-complete.
 \end{theorem}
 \begin{proof}[Proof (Sketch)]
-	A routing $\Phi$ restricted to the non-zero demands serves a witness of size $\cO(k)$.
+	A routing $\Phi$ restricted to the non-zero demands serves as a witness of size $\cO(k)$.
 	Using \cref{eq:edge-load} we can determine the maximal edge load $L(\Phi)$ in polynomial time and check whether $L(\Phi) \leq T$.
 	Thus, \RL is in NP.
 	
 	To show completeness, we follow the proof given in \cite{schrijver99} and reduce \textsc{Partition} \cite{karp72}.
-	This problem asks whether, given an instance $J$ consisting of $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ such that 
+	This problem asks whether, given an instance $J$ consisting of $m$ positive integers $\{z_1, \ldots, z_m\} \subset \N$, there exists a subset $S \subseteq [m]$ that fulfills
 	\begin{equation}
 		\sum_{i \in S} z_i = \frac{1}{2}  \sum_{i \in [m]} z_i = \sum_{j \in [m] \setminus S} z_j\ .
 	\end{equation}
 	We construct a \RL instance $J'$ of size $m + 3$ with the following demands:
 	\begin{align}
-			d_{i, m+2} &= z_i \quad \forall i \in [m], \\
-			d_{m, m+1} &= d_{m+1, m+2} = \frac{1}{2}  \sum_{i \in [m]} z_i \ . 
+			d_{i, m+2} &\coloneqq z_i \quad \forall i \in [m], \\
+			d_{m, m+1} &\coloneqq d_{m+1, m+2} \coloneqq \frac{1}{2}  \sum_{i \in [m]} z_i \ . 
 	\end{align}
 	All other demands are set to $0$.
+	Furthermore, we set $T \coloneqq \sum_{i \in [m]} z_i$.
 	The constructed instance is visualized in \cref{fig:partition-rl-instance}.
-	Furthermore, we set $T = \sum_{i \in [m]} z_i$.
 	
-	Now, let $J$ be a Yes-instance of \textsc{Partition}.
+	Now, assume that $J$ is a Yes-instance of \textsc{Partition}.
 	Then there exists a solution $A \subseteq [m]$.
 	Consider the binary routing
 	\begin{align}
-		\Phi(i, m+2) &= 1 \quad \forall i \in A \\
-		\Phi(i, m+2) &= 0 \quad \forall i \in [m] \setminus A \\
+		\Phi(i, m+2) &= 1 \quad \forall i \in A \ , \\
+		\Phi(i, m+2) &= 0 \quad \forall i \in [m] \setminus A \ ,	 \\
 		\Phi(m+1, m+2) & = \Phi(m+2, m+3) = 1 \ .
 	\end{align}
 	We observe that $L_i \leq T$ for all $i \in [m] \cup \{m+3\}$ and that $L_{m+1} = L_{m+2} = T$.
@@ -109,7 +109,7 @@ the problem is NP-complete.
 %		= \frac{1}{2} \sum_{i \in S} z_i + \sum_{i \in [m] \setminus A} z_i 
 %		= L_{m+2} \ .
 %	\end{equation}
-	This implies that the constructed instance is a Yes-instance of \RL, as $L(\Phi) = T$.
+	This implies $L(\Phi) = T$ and thus the constructed instance is a Yes-instance of \RL.
 	
 	Similarly, it can be shown that if $J'$ is a Yes-instance with routing $\Phi$, the set 
 	\begin{equation}
@@ -139,7 +139,7 @@ The idea is to first solve the following problem.
 		\centering
 		\textsc{RelaxedRingLoading} (\textsc{RRL})\\[0.7em]
 		\begin{tabular}{rl}
-			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j}$ for all $1 \leq i<j\leq n$.\\
+			{\bfseries Input}: & Ring size $n \in \N, n > 1$ and demands $d_{i, j} \in \R_{\geq 0}$ for all $1 \leq i<j\leq n$.\\
 			{\bfseries Output}: & Real-valued routing $\Phi$ that minimizes $L(\Phi) = \max_{i \in [n]} L_i(\Phi)$.
 		\end{tabular}
 	\end{mdframed}
