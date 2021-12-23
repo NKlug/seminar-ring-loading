@@ -152,7 +152,32 @@
 	
 	\begin{frame}{Problemstellung}
 		Das Ring Loading Problem tritt bei der Planung von SONET Ringen auf.
-		
+		\vspace{1mm}
+		\begin{center}
+		\begin{tikzpicture}[font=\large, node/.style={circle,thick,draw},scale=0.8, transform shape]
+			\foreach \a in {1,2,...,6}{
+				\draw (\a*360/6: 3cm) node[] (\a) {\includegraphics[scale=0.01]{figures/adm.jpg}};
+			}
+			\foreach \a [count=\x from 2]in {1,2,...,5}{
+				\path[color=black](\a) edge node[pos=0.8,above=-1mm, sloped,gray]{} (\x) {};	
+			}
+			\draw[color=black](6) edge node[pos=0.8,above=-1mm, sloped,gray]{} (1) {};	
+			\path[->, color=black, line width=1pt](-4, 2)edge(2);
+			\node (a) at (-5, 1.7) {Add-Drop Multiplexer};
+			\path[->, color=black, line width=1pt](4, -2) edge(-30:2.8);
+			\node (a) at (5, -2.3) {Glasfaserkabel};
+			\path[color=black](1) edge  (60:4.5cm) {};	
+			\path[color=black](2) edge  (120:4.5cm) {};	
+			\path[color=black](3) edge  (180:4.5cm) {};
+			\path[color=black](4) edge  (240:4.5cm) {};
+			\path[color=black](5) edge  (300:4.5cm) {};
+			\path[color=black](6) edge  (0:4.5cm) {};			
+			\node[] at (-6, 0) {};
+			\node[] at (6, 0) {};
+		\end{tikzpicture}
+	\end{center}
+	\vskip0pt plus 1filll
+	\scriptsize{ADM Abbildung von I, Adamantios, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2432326}
 	\end{frame}
 
 	\section{Formalisierung}
