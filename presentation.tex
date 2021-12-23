@@ -146,8 +146,8 @@
 %		\end{NoHyper}
 
 		\emph{The Ring Loading Problem},\\
-		 Alexander Schrijver, Paul Seymour, Peter Winkler, 1999,\\
-		 \emph{SIAM Review 41 (4).}\\
+		 Alexander Schrijver, Paul Seymour, Peter Winkler, \\
+		 \emph{SIAM Review 41 (4), 1999.}\\
 	\end{frame}
 	
 	\begin{frame}{Problemstellung}
@@ -159,9 +159,9 @@
 				\draw (\a*360/6: 3cm) node[] (\a) {\includegraphics[scale=0.01]{figures/adm.jpg}};
 			}
 			\foreach \a [count=\x from 2]in {1,2,...,5}{
-				\path[color=black](\a) edge node[pos=0.8,above=-1mm, sloped,gray]{} (\x) {};	
+				\path[color=black, line width=0.25mm](\a) edge node[pos=0.8,above=-1mm, sloped,gray]{} (\x) {};	
 			}
-			\draw[color=black](6) edge node[pos=0.8,above=-1mm, sloped,gray]{} (1) {};	
+			\draw[color=black, line width=0.25mm](6) edge (1) {};	
 			\path[->, color=black, line width=1pt](-4, 2)edge(2);
 			\node (a) at (-5, 1.7) {Add-Drop Multiplexer};
 			\path[->, color=black, line width=1pt](4, -2) edge(-30:2.8);
@@ -425,7 +425,7 @@
 		\begin{equation}
 			L_k(\Phi) \leq C_k \quad \text{für alle } k \in [n]
 		\end{equation}
-		erfüllen.\\\pause
+		erfüllen.\\
 	\end{frame}
 	
 	\begin{frame}{Schnitte}
@@ -480,7 +480,7 @@
 		\visible<2->{Wähle nicht-negative Nachfrage $d_{i, j}$ mit $j > i+1$.}
 		\begin{columns}
 			\column{0.5\linewidth}
-			\visible<3->{
+			\visible<2->{
 			\begin{equation}
 				\mu \coloneqq \min_{\substack{ \{g', h'\} \text{ cut},\\ g, h \in [i, j)}} C_{g'} + C_{h'} - D_{g', h'}
 			\end{equation}
@@ -554,8 +554,8 @@
 		\begin{center}
 			\begin{algorithm}[H]
 				\begin{mdframed}[backgroundcolor=green!10,linecolor=white]
-					\KwIn{Ring size $n \in \N$, demands $d_{i,j}$, $1 \leq i < j \leq n$.}
-					\nl Berechne Nachfragen über Schnitte $D_{i, j}$ und $M = \max_{1 \leq i < j \leq n} D_{i,j}$\;
+					\KwIn{Ringgröße $n \in \N$, Nachfragen $d_{i,j} \in \R_{\geq 0}$, $1 \leq i < j \leq n$.}
+					\nl Berechne alle Nachfragen über Schnitte $D_{i, j}$ und $M = \max_{1 \leq i < j \leq n} D_{i,j}$\;
 					\nl Berechne die Kapazitäten $C_k$\;
 					\nl\While{es existieren parallele Nachfragen $d_{i,j}, d_{u, v}$}{
 						Wähle Kante $\{g, g+1\}$, die zwischen $d_{i,j}$ und $d_{u, v}$ liegt\;
@@ -611,7 +611,7 @@
 		\begin{mylemma}
 			Man kann die $z_i$ so wählen, dass für alle $k \in [m]$ gilt:
 			\begin{equation}
-				\sum_{i = 1}^k z_i \in [-\frac{D}{2}, \frac{D}{2}] \ .
+				\sum_{i = 1}^k z_i \in \left[-\frac{D}{2}, \frac{D}{2}\right] \ .
 			\end{equation}
 			Dabei ist $D$ die maximale Nachfrage und $z_i = y_i$ oder $z_i = x_i$ für alle $i \in [m]$.
 		\end{mylemma}
