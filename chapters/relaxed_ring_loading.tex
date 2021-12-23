@@ -54,7 +54,7 @@ For the proof of \cref{theo:number-of-splits}, we require the following lemma.
 	Furthermore, assume w.l.o.g. that $\alpha \leq \beta$ and that $\{k, k+1\}$ lies on the front route of $d_{i, j}$; the other cases can be reasoned analogously.
 	
 	We now construct a new routing $\Phi'$ from $\Phi^\ast$ by rerouting traffic $\alpha$ of both demands such that it no longer passes through $\{k, k+1\}$.
-	This results in $d_{i, j}$ being routed all front or all back.
+	This results in $d_{i, j}$ being routed all back.
 	The rerouting of $d_{i, j}$ causes the loads on all edges on its front route to decrease by $\alpha$ and those on the back route to increase by $\alpha$.
 	Similarly, the rerouting of $d_{u, v}$ increases the loads on all edges on its back route by $\alpha$ and decreases those on its front route by $\alpha$.
 	
@@ -62,11 +62,11 @@ For the proof of \cref{theo:number-of-splits}, we require the following lemma.
 	Then we can write the load under the new routing as
 	\begin{equation}
 	L_l(\Phi') = L_l(\Phi^\ast) 
-	+ \alpha (\dOne_{\{l \notin [i, j)\}} - \dOne_{\{l \in [i, j)\}} +  \dOne_{\{l \in [g, h)\}} - \dOne_{\{l \notin [g, h)\}} )
+	+ \alpha (\dOne_{\{l \notin [i, j)\}} - \dOne_{\{l \in [i, j)\}} +  \dOne_{\{l \in [u, v)\}} - \dOne_{\{l \notin [u, v)\}} )
 	\end{equation}
 	Here, $\dOne_{\{\ldots\}}$ is the indicator function that is $1$ if the condition in the index is true and $0$ otherwise.
-	We assumed that $\{k, k+1\}$ lies on the front route of $d_{i, j}$, but also that it lies in between $d_{i, j}$ and $d_{g, h}$.
-	This implies $[g, h] \subset [i, j]$.
+	We assumed that $\{k, k+1\}$ lies on the front route of $d_{i, j}$, but also that it lies in between $d_{i, j}$ and $d_{u, v}$.
+	This implies $[u, v] \subset [i, j]$.
 	Hence, $l \notin [i, j)$ and $l \in [g, h)$ cannot both be true at the same time.
 	This shows $L_l(\Phi') \leq L_l(\Phi^\ast)$.
 	Furthermore, $k \in [i, j)$ and $k \notin [g, h)$ holds by definition of $k$.
@@ -165,7 +165,7 @@ This can be shown by a simple distinction of cases.
 	Let $I$ be the smallest such instance in terms of the ring size $n$ and among those, the instance with the smallest number of non-zero demands.
 	Note that $I$ has at least one non-zero demand, as it would otherwise satisfy the cut condition.
 	
-	We now construct another non-solvable instance $I'$ with one less non-zero demand and show that this instance still satisfies the cut condition.
+	We now construct another non-feasible instance $I'$ with one less non-zero demand and show that this instance still satisfies the cut condition.
 	This will contradict the minimality of $I$, implying that no such instance exists.
 	
  	We begin by picking any non-zero demand $d_{i,j}$ with $j - i \geq 2$.
@@ -356,8 +356,8 @@ The basic idea of the algorithm is the following:
 After computing the demands across the cuts and the capacities, the demands are routed all front or all back until only mutually crossing demands remain.
 In each iteration of Step~3, an edge $\{g, g+1\}$ in between two parallel demands $d_{i, j}$, $d_{u, v}$ is selected.
 We find a tight cut $\{g, h\}$, whose existence is guaranteed by \cref{lemma:edge-in-tight-cut}.
-\cref{lemma:parallel-demands-cross-cut} then implies that at most one of the demands crosses $\{g, h\}$, (w.l.o.g. $d_{i, j}$) and by \cref{lemma:parallel-to-tight-cut} the routing of the non-crossing demand is uniquely determined.
-Afterwards, the capacities of all of all edges that $d_{i, j}$ is routed through are decreased by $d_{i, j}$ and the demands across the cuts are adjusted similary.
+\cref{lemma:parallel-demands-cross-cut} then implies that at most one of the demands crosses $\{g, h\}$ (w.l.o.g. $d_{i, j}$), and by \cref{lemma:parallel-to-tight-cut} the routing of the non-crossing demand is uniquely determined.
+Afterwards, the capacities of all edges that $d_{i, j}$ is routed through are decreased by $d_{i, j}$ and the demands across the cuts are adjusted similary.
 We are left with an instance of \RRLWC with one less non-zero demand.
 It remains to see that \cref{lemma:edge-in-tight-cut} still holds true for the new, smaller instance:
 

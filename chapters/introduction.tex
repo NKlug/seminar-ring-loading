@@ -75,7 +75,7 @@ the problem is NP-complete.
 	\RL in its decision form is NP-complete.
 \end{theorem}
 \begin{proof}[Proof (Sketch)]
-	A routing $\Phi$ restricted to the non-zero demands serves as a witness of size $\cO(k)$.
+	A routing $\Phi$ restricted to the non-zero demands serves as a witness of size $\cO(K)$.
 	Using \cref{eq:edge-load} we can determine the maximal edge load $L(\Phi)$ in polynomial time and check whether $L(\Phi) \leq T$.
 	Thus, \RL is in NP.
 	
@@ -145,7 +145,7 @@ The idea is to first solve the following problem.
 	\end{mdframed}
 \end{center}
 In contrast to \RL, this problem can be solved in polynomial time, as it can also be formulated as a linear program.
-We will see in \cref{sec:relaxed-ring-loading} that \RRL always has solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
+We will see in \cref{sec:relaxed-ring-loading} that \RRL always has optimal solutions in which at most $\lfloor \frac{n}{2} \rfloor$ demands are routed both ways around the ring.
 From such a routing an approximation of an optimal binary routing can be easily obtained, as will be shown in \cref{sec:ring-loading}.
 
 %In this work, Schrijver et al.'s algorithm is presented and its correctness proven.

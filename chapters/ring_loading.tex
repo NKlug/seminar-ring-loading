@@ -80,7 +80,7 @@ We summarize the approximation quality of the rerouting in the following theorem
 			0, & \text{if } z_i = -x_i
 		\end{cases}
 	\end{equation}
-	where $z_i$ corresponds to indices $(i, i+m)$ in $S$.
+	where $z_i$ corresponds to the indices $(i, i+m)$ in $S$.
 	We get:
 	\begin{equation}
 		L(\Phi') - L(\Phi) 
@@ -106,5 +106,5 @@ We summarize the approximation quality of the rerouting in the following theorem
 \end{proof}
 
 The proof of \cref{lemma:reroute-demands} shows that the rerouting of split demands can be carried out in $\cO(n)$ time.
-In total this puts the runtime of the approximation algorithm in $O(k n^2 + n) = O(k n^2)$. 
+In total this puts the runtime of the approximation algorithm in $O(K n^2 + n) = O(K n^2)$. 
 This result completes Schrijver et al.'s algorithm for \RL and concludes the section.
