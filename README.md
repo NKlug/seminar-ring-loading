@@ -1,4 +1,4 @@
-# paper-ring-loading
+# The Ring Loading Problem
 This is the term paper I wrote during my M.Sc. degree in mathematics.
 In this work, I analyzed the approximation algorithm presented in the 1999 paper "The Ring Loading Problem" by Schrijver, Seymour and Winkler [1].
 
